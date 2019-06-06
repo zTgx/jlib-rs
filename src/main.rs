@@ -8,4 +8,5 @@ fn main() {
 
     let ret = Remote::new("ws://127.0.0.1:5060", false);
     ret.connect();
+    //ret.request_server_info();
 }

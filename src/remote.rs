@@ -1,14 +1,8 @@
 
 extern crate futures;
-extern crate tokio;
 extern crate websocket;
 
-use futures::future::Future;
-use futures::sink::Sink;
-use futures::stream::Stream;
-use futures::sync::mpsc;
 use std::io::stdin;
-use std::thread;
 use websocket::result::WebSocketError;
 use websocket::{ClientBuilder, OwnedMessage};
 
@@ -27,106 +21,36 @@ impl Remote {
         }
     }
 
-    pub fn connect(&self) -> bool {
-        let mut runtime = tokio::runtime::current_thread::Builder::new().build().unwrap();
+    pub fn connect(&self) {
+        extern crate ws;
 
-        let (usr_msg, stdin_ch) = mpsc::channel(0);
-	    thread::spawn(|| {
-            let mut input = String::new();
-            let mut stdin_sink = usr_msg.wait();
-            loop {
-                input.clear();
-                stdin().read_line(&mut input).unwrap();
-                let trimmed = input.trim();
+        use ws::{connect, CloseCode};
 
-                let (close, msg) = match trimmed {
-                    "/close" => (true, OwnedMessage::Close(None)),
-                    "/ping" => (false, OwnedMessage::Ping(b"PING".to_vec())),
-                    _ => (false, OwnedMessage::Text(trimmed.to_string())),
-                };
+        connect(self.addr, |out| {
 
-                stdin_sink
-                    .send(msg)
-                    .expect("Sending message across stdin channel.");
+            use serde_json::json;
+            let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
+            let compact = format!("{}", json);
+            println!("input : {}", compact);
+            out.send(compact).unwrap();
+            move |msg| {
 
-                if close {
-                    break;
-                }
+                println!("get : {}", msg);
+                let json = json!({ "id": "1", "command": "server_info" });
+                let compact = format!("{}", json);
+                println!("compact : {}", compact);
+                out.send(compact).unwrap();
+
+                // move |x| {
+                //     println!("x : {}", x);
+                    
+                //     out.close(CloseCode::Normal)
+                // };
+
+                out.close(CloseCode::Normal)
+                
             }
-        });
-
-	let runner = ClientBuilder::new(self.addr)
-		.unwrap()
-		.add_protocol("rust-websocket")
-		.async_connect_insecure()
-		.and_then(|(duplex, _)| {
-			let (sink, stream) = duplex.split();
-			stream
-				.filter_map(|message| {
-					//println!("Received Message: {:?}", message);
-
-                    //zhtian parse json
-                    {
-                        use serde::{Serialize, Deserialize};
-                        use serde_json::{Result, Value};
-                        
-                        if let OwnedMessage::Text(ref txt) = message {
-                            let x = txt.as_str();
-                            println!("txt : {}", x);
-
-                            #[derive(Serialize, Deserialize, Debug)]
-                            struct Resp {
-                                fee_base: i32,
-                                fee_ref: i32, 
-                                hostid: String, 
-                                ledger_hash: String,
-                                ledger_index: i64,
-                                ledger_time: i64, 
-                                load_base: i32, 
-                                load_factor: i32,
-                                pubkey_node: String, 
-                                random: String,
-                                reserve_base: i32,
-                                reserve_inc: i32,
-                                server_status: String,
-                                validated_ledgers: String, 
-                            }
-
-
-                            #[derive(Serialize, Deserialize, Debug)]
-                            struct Resption {
-                                id: i32,
-                                result: Resp,
-                                status: String,
-                                typeid: String,
-                            }
-
-                            if let Ok(v) = serde_json::from_str(x) as Result<Value> {
-                                println!("id : {:?}", v["id"]);
-                                println!("result : {:?}", v["result"]);
-                                println!("status : {:?}", v["status"]);
-                                println!("type : {:?}", v["type"]);
-
-                                println!("hash : {}", v["result"]["ledger_hash"]);
-                            }
-                            
-                        }
-                        
-                    }
-
-					match message {
-						OwnedMessage::Close(e) => Some(OwnedMessage::Close(e)),
-						OwnedMessage::Ping(d) => Some(OwnedMessage::Pong(d)),
-						_ => None,
-					}
-				})
-				.select(stdin_ch.map_err(|_| WebSocketError::NoDataAvailable))
-				.forward(sink)
-		});
-	
-        runtime.block_on(runner).unwrap();
-
-        true
+        }).unwrap()
     } 
 
     pub fn disconnect(&self) -> bool {
@@ -138,13 +62,15 @@ impl Remote {
     }
 
     //get 
-    pub fn requestServerInfo(&self) -> Box<ServerInfo> {
+    pub fn request_server_info(&self) -> Box<ServerInfo> {
+
         Box::new( ServerInfo {
-            ledger: String::from(""),
-            public_key: String::from(""),
-            state: String::from(""),
-            peers: vec![0;0],
-            version: String::from("Skywell.10.0.1"),
-        })
+                                    ledger: String::from(""),
+                                    public_key: String::from(""),
+                                    state: String::from("dddddd"),
+                                    peers: vec![0;0],
+                                    version: String::from("Skywell.10.0.1"),
+                                })
+        
     }
 }
