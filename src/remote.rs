@@ -11,7 +11,7 @@ use ws::{connect, CloseCode};
 use serde_json::json;
 
 use crate::Config;
-use crate::SubscribeCommand;
+use crate::command::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -97,12 +97,9 @@ impl Remote  {
         connect(config.addr, |out| { 
         let copy = info.clone();
 
-        use serde_json::json;
-        let json = json!({ "id": "1", "command": "server_info" });
-        let compact = format!("{}", json);
-        println!("compact : {}", compact);
-
-        out.send(compact).unwrap();
+        if let Ok(command) = ServerInfoCommand::default().to_string() {
+            out.send(command).unwrap();
+        }
 
         move |msg: ws::Message| {
             let c = msg.as_text()?;

@@ -65,9 +65,52 @@ impl Default for SubscribeCommand {
 
 //////////////////////
 /*
-SubscribeCommand 请求格式
+ServerInfoCommand 请求格式
 id: u64
 command: String
-streams: Vec<String>
-值分别为(固定值): 0, "subscribe", ["ledger","server","transactions"]
+值分别为(固定值): 1, "server_info"
 */
+#[derive(Serialize, Deserialize)]
+pub struct ServerInfoCommand {
+    #[serde(rename="id")]
+    id: u64,
+
+    #[serde(rename="command")]
+    command: String,
+}
+
+impl ServerInfoCommand {
+    pub fn with_params(id: u64, command: String) -> Box<Self> {
+        Box::new( 
+            ServerInfoCommand {
+                id: id,
+                command: command,
+            }
+        )
+    }
+
+    //TODO: 可抽离成trait
+    pub fn to_string(&self) -> Result<String> {
+        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
+        // let compact = format!("{}", json);
+
+        //https://crates.io/crates/serde_json
+        // Serialize it to a JSON string.
+        let j = serde_json::to_string(&self)?;
+
+        // Print, write to a file, or send to an HTTP server.
+        println!("{}", j);
+
+        Ok(j)
+    }
+}
+
+//实现default方法
+impl Default for ServerInfoCommand {
+    fn default() -> Self {
+        ServerInfoCommand { 
+            id: 1,
+            command: "server_info".to_string(),
+        }
+    }
+}
