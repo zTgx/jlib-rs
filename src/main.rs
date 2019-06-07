@@ -1,7 +1,9 @@
 
 mod remote;
+mod config;
 mod server_info;
 use remote::Remote;
+use config::Config;
 
 extern crate ws;
 use ws::{connect, CloseCode, Message};
@@ -10,6 +12,9 @@ static URL: &'static str = "ws://ts5.jingtum.com:5020";
 static URL2: &'static str = "ws://127.0.0.1:5060";
 fn main() {
     println!("Hello, world!");
+
+    let config: Box<Config> = Config::new(URL, false);
+    println!("config: {:?}", config);
 
     let ret = Remote::connect(|x| { match x {
         Ok(x) => { 
@@ -40,7 +45,7 @@ fn main() {
         }
 
         Err(_) => {
-            
+
         }
     });
 
