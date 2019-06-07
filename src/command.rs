@@ -4,15 +4,24 @@
 2, ServerInfoCommand
 */
 
-//command转换相关的trait
-pub trait CommandConversion {
-    //type T;
-    fn to_string(&self) -> Result<String>;
-}
+#![allow(unused)]
 
 use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
+
+use std::any::Any;
+
+
+//command转换相关的trait
+pub trait CommandConversion {
+    type T;
+    fn to_string(&self) -> Result<String>;
+    fn box_to_raw(&self) -> &dyn Any;
+
+    //TODO::待实现 Box<T> -> T的转换
+    //fn to_concrete<T>(&self, value: Box<dyn Any>) -> T ;
+}
 
 /*
 SubscribeCommand 请求格式
@@ -45,7 +54,8 @@ impl SubscribeCommand {
 }
 
 impl CommandConversion for SubscribeCommand {
-    pub fn to_string(&self) -> Result<String> {
+    type T = SubscribeCommand;
+    fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
 
@@ -58,6 +68,24 @@ impl CommandConversion for SubscribeCommand {
 
         Ok(j)
     }
+
+    fn box_to_raw(&self) -> &dyn Any {
+        // if let Ok(x) = value.downcast::<T>() {
+        //     x
+        // }
+
+        self
+    }
+
+    // fn to_concrete<T>(&self) -> T {
+    //     let def: Box<dyn CommandConversion> = Box::new(self);
+    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
+    //         Some(b) => b,
+    //         None => panic!("&a isn't a B!"),
+    //     };
+        
+    //     b
+    // }
 }
 
 //实现default方法
@@ -104,7 +132,8 @@ impl ServerInfoCommand {
 }
 
 impl CommandConversion for ServerInfoCommand {
-    pub fn to_string(&self) -> Result<String> {
+    type T = ServerInfoCommand;
+    fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
 
@@ -117,6 +146,24 @@ impl CommandConversion for ServerInfoCommand {
 
         Ok(j)
     }
+    
+    fn box_to_raw(&self) -> &dyn Any {
+        // if let Ok(x) = value.downcast::<T>() {
+        //     x
+        // }
+
+        self
+    }
+
+    // fn to_concrete<T>(&self) -> T {
+    //     let def: Box<dyn CommandConversion> = self;
+    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
+    //         Some(b) => b,
+    //         None => panic!("&a isn't a B!"),
+    //     };
+        
+    //     b
+    // }
 }
 
 //实现default方法
