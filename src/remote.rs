@@ -8,7 +8,7 @@ use websocket::{ClientBuilder, OwnedMessage};
 
 use crate::server_info::ServerInfo;
 use std::rc::Rc;
-    use std::any::Any;
+use std::any::Any;
 use std::cell::Cell;
 
 pub struct Conn {
@@ -84,41 +84,10 @@ impl Remote  {
             out.send(compact).unwrap();
 
             move |msg| {
-                println!("get : {}", msg);
-                //op(Ok(msg));
-
-                //request_server_info();
+                //println!("get : {}", msg);
                 out.close(CloseCode::Normal)
-
                 //Ok(())
             }
-
-
-            
-
-            //             let mut conn_real = Conn::new(Some(dumx.clone()));
-            // conn_real.request_server_info();
-
-            // Ok(())
-            // move |x| {
-            //     println!("get : {}", x);
-            //     let json = json!({ "id": "1", "command": "server_info" });
-            //     let compact = format!("{}", json);
-            //     println!("compact : {}", compact);
-            //     //op(Ok("xxxxllll".to_string()));
-
-            //     //out.send(compact).unwrap();
-
-            //     // move |x| {
-            //     //     println!("x : {}", x);
-                    
-            //     //     out.close(CloseCode::Normal)
-            //     // };
-
-                
-
-            //     out.close(CloseCode::Normal)                
-            // }
         }).unwrap()
     } 
 
@@ -130,34 +99,26 @@ impl Remote  {
         true
     }
 
-
     pub fn print_if(value: Rc<dyn Any>) -> String {
-        println!("print--------------------");
         match value.downcast::<Cell<String>>() {
             Ok(string) => {
                 return string.take();
             },
-
-            _ => { "".to_string() }
-
-        // return string.take();
-    }
+            Err(_) => { "".to_string() }
+        }
     }
 
-    //get 
     pub fn request_server_info<F> (op: F) -> Box<ServerInfo> 
         where F: Fn(Result<String, &'static str>) {
 
         extern crate ws;
         use ws::{connect, CloseCode};
         
-        let  info = Rc::new(Cell::new("".to_string()));
+        let info = Rc::new(Cell::new("".to_string()));
 
-let total = Rc::new(Cell::new(Dum::new("".to_string())));
 
         connect(Config::get_url(), |out| { 
         let copy = info.clone();
-        let my_total = total.clone();
 
         use serde_json::json;
         let json = json!({ "id": "1", "command": "server_info" });
@@ -167,24 +128,15 @@ let total = Rc::new(Cell::new(Dum::new("".to_string())));
         out.send(compact).unwrap();
 
         move |msg: ws::Message| {
-            println!("request server info : {}", msg);
-            //op(Ok(msg));
-
-            //request_server_info();
             let c = msg.as_text()?;
-            println!("c: {}", c);
             copy.set(c.to_string());
             
-            let nedu = Dum::new("cddddddegrgrgfdgdfdfdfdfdfdfd".to_string());
-my_total.set(nedu);
-
             out.close(CloseCode::Normal) 
         }
         
         }).unwrap();
         
         let re = Remote::print_if(info);
-        println!("re : {}", re);
         op(Ok(re));
 
         Box::new( ServerInfo {
