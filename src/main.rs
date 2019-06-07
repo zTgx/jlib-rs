@@ -21,8 +21,11 @@ fn main() {
     // };
     // b.to_string();
 
-    let config: Box<Rc<Config>> = Config::new("ws://ts5.jingtum.com:5020", false);
-    println!("config: {:?}", config);
+    // let config: Box<Rc<Config>> = Config::new("ws://ts5.jingtum.com:5020", false);
+    // println!("config: {:?}", config);
+
+    let config: Box<Rc<Config>> = Config::default_with_box();
+    println!("config : {:?}", config);
 
     let ret = Remote::with_config(config.clone(), |x| { match x {
         Ok(x) => { 

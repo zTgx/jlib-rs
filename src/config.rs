@@ -14,6 +14,21 @@ impl Config {
             local_sign: local_sign,
         } ))
     }
+
+    //调用default，返回值类型统一为：Box<Rc<Self>>
+    pub fn default_with_box() -> Box<Rc<Self>> {
+        Box::new(Rc::new( Config::default() ))
+    }
+}
+
+//实现default方法，不推荐直接使用。
+impl Default for Config {
+    fn default() -> Self {
+        Config { 
+            addr: "ws://ts5.jingtum.com:5020",
+            local_sign: false,
+        }
+    }
 }
 
 //实现fmt方法，或者使用#[derive(Debug)]
