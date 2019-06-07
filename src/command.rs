@@ -1,3 +1,15 @@
+/*
+此crate包含了所有到command, 已经实现到command有：
+1, SubscribeCommand
+2, ServerInfoCommand
+*/
+
+//command转换相关的trait
+pub trait CommandConversion {
+    //type T;
+    fn to_string(&self) -> Result<String>;
+}
+
 use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
@@ -30,8 +42,9 @@ impl SubscribeCommand {
             streams: streams,
         } )
     }
+}
 
-    //TODO: 可抽离成trait
+impl CommandConversion for SubscribeCommand {
     pub fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
@@ -88,8 +101,9 @@ impl ServerInfoCommand {
             }
         )
     }
+}
 
-    //TODO: 可抽离成trait
+impl CommandConversion for ServerInfoCommand {
     pub fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
