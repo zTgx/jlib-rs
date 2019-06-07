@@ -1,15 +1,16 @@
 
 extern crate futures;
-extern crate websocket;
-
-use std::io::stdin;
-use websocket::result::WebSocketError;
-use websocket::{ClientBuilder, OwnedMessage};
 
 use crate::server_info::ServerInfo;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
+
+extern crate ws;
+use ws::{connect, CloseCode};
+use serde_json::json;
+
+use crate::Config;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -30,26 +31,6 @@ impl Conn {
     }
 }
 
-pub struct Config {
-    addr: str,
-}
-impl Config {
-    pub fn get_url() -> &'static str {
-        "ws://ts5.jingtum.com:5020"
-    }
-}
-
-
-#[derive(Clone)]
-pub struct Dum {
-    pub text: String,
-}
-impl Dum {
-    pub fn new(s: String) -> Self {
-        Dum { text: s, }
-    }
-}
-
 pub struct Remote {
     addr: &'static str,
     local_sign: bool,
@@ -65,30 +46,28 @@ impl Remote  {
         }
     }
 
-    pub fn connect<F>(op: F) 
+    pub fn with_config<F>(config: Box<Rc<Config>>, op: F) 
         where F: Fn(Result<ws::Message, &'static str>) {
-        extern crate ws;
-        use ws::{connect, CloseCode};
 
-        connect(Config::get_url(), |out| {
+        let ws_message = Rc::new(Cell::new("".to_string()));
+
+        connect(config.addr, |out| {
             
-            let dumx = Rc::new(out);
-            let out = dumx.clone();
-            //self.f = None;
+            let cloned_ws_message = ws_message.clone();
 
-
-            use serde_json::json;
             let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
             let compact = format!("{}", json);
-            println!("input : {}", compact);
             out.send(compact).unwrap();
 
-            move |msg| {
-                //println!("get : {}", msg);
+            move |msg: ws::Message| {
+                let text = msg.as_text()?;
+                cloned_ws_message.set(text.to_string());
+
                 out.close(CloseCode::Normal)
-                //Ok(())
             }
-        }).unwrap()
+        }).unwrap();
+
+        op(Ok(ws::Message::text(Remote::print_if(ws_message))))
     } 
 
     pub fn disconnect(&self) -> bool {
@@ -104,20 +83,26 @@ impl Remote  {
             Ok(string) => {
                 return string.take();
             },
-            Err(_) => { "".to_string() }
+            Err(_) => { "None".to_string() }
         }
     }
 
-    pub fn request_server_info<F> (op: F) -> Box<ServerInfo> 
-        where F: Fn(Result<String, &'static str>) {
+    // pub fn convert_to_wsmessage(value: Rc<dyn Any>) -> Option<ws::Message> {
+    //     match value.downcast::<Cell<ws::Message>>() {
+    //         Ok(t) => {
+    //             return Some(t.take());
+    //         },
+    //         Err(_) => { None }
+    //     }
+    // }
 
-        extern crate ws;
-        use ws::{connect, CloseCode};
+    pub fn request_server_info<F> (config: Box<Rc<Config>>, op: F) -> Box<ServerInfo> 
+        where F: Fn(Result<String, &'static str>) {
         
         let info = Rc::new(Cell::new("".to_string()));
 
 
-        connect(Config::get_url(), |out| { 
+        connect(config.addr, |out| { 
         let copy = info.clone();
 
         use serde_json::json;

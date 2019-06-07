@@ -1,16 +1,17 @@
 use std::fmt;
+use std::rc::Rc;
 
 pub struct Config {
-    addr: &'static str, //服务器地址
-    local_sign: bool,   //本地签名
+    pub addr: &'static str, //服务器地址
+    pub local_sign: bool,   //本地签名
 }
 
 impl Config {
-    pub fn new(addr: &'static str, local_sign: bool) -> Box<Self> {
-        Box::new( Config {
+    pub fn new(addr: &'static str, local_sign: bool) -> Box<Rc<Self>> {
+        Box::new(Rc::new( Config {
             addr: addr,
             local_sign: local_sign,
-        })
+        } ))
     }
 }
 
