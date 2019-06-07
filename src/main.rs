@@ -9,7 +9,16 @@ use std::rc::Rc;
 extern crate ws;
 use ws::{connect, CloseCode, Message};
 
+mod command;
+use command::SubscribeCommand;
+
 fn main() {
+
+    let command = Box::new( SubscribeCommand::with_params(0, "subscribe".to_string(), vec!["ledger".to_string(),"server".to_string(),"transactions".to_string()]));
+    command.to_string();
+
+    let def = SubscribeCommand::default();
+    def.to_string();
 
     let config: Box<Rc<Config>> = Config::new("ws://ts5.jingtum.com:5020", false);
     println!("config: {:?}", config);

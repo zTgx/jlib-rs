@@ -7,6 +7,7 @@ pub struct Config {
 }
 
 impl Config {
+    //修改为Rc,是考虑到其他接口可能要重用config配置
     pub fn new(addr: &'static str, local_sign: bool) -> Box<Rc<Self>> {
         Box::new(Rc::new( Config {
             addr: addr,

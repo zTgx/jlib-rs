@@ -11,6 +11,7 @@ use ws::{connect, CloseCode};
 use serde_json::json;
 
 use crate::Config;
+use crate::SubscribeCommand;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -55,9 +56,9 @@ impl Remote  {
             
             let cloned_ws_message = ws_message.clone();
 
-            let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-            let compact = format!("{}", json);
-            out.send(compact).unwrap();
+            if let Ok(command) = SubscribeCommand::default().to_string() {
+                out.send(command).unwrap();
+            }
 
             move |msg: ws::Message| {
                 let text = msg.as_text()?;
@@ -86,16 +87,7 @@ impl Remote  {
             Err(_) => { "None".to_string() }
         }
     }
-
-    // pub fn convert_to_wsmessage(value: Rc<dyn Any>) -> Option<ws::Message> {
-    //     match value.downcast::<Cell<ws::Message>>() {
-    //         Ok(t) => {
-    //             return Some(t.take());
-    //         },
-    //         Err(_) => { None }
-    //     }
-    // }
-
+    
     pub fn request_server_info<F> (config: Box<Rc<Config>>, op: F) -> Box<ServerInfo> 
         where F: Fn(Result<String, &'static str>) {
         
