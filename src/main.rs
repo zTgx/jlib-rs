@@ -61,13 +61,24 @@ fn main() {
     //     }
     // });
 
-    Remote::request_ledger_closed(config.clone(), |x| match x {
+    // Remote::request_ledger_closed(config.clone(), |x| match x {
+    //     Ok(response) => {
+    //         println!("ledger hash  : {}", response.ledger_hash);
+    //         println!("ledger index : {}", response.ledger_index);
+    //     }
+
+    //     Err(_) => {
+    //     }
+    // });
+
+    Remote::request_ledger(config.clone(), Some(88670), None, true, |x| match x {
         Ok(response) => {
-            println!("ledger hash  : {}", response.ledger_hash);
-            println!("ledger index : {}", response.ledger_index);
-        }
+            println!("ledger : {:?}", response);
+            println!("account_hash: {}", response.account_hash);
+        },
 
         Err(_) => {
+
         }
     });
     
