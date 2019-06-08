@@ -20,7 +20,7 @@ fn main() {
     // Setup logging
     env_logger::init();
     info!("starting up");
-    
+
     // let def: Box<dyn CommandConversion> = SubscribeCommand::with_params(0, "subscribe".to_string(), vec!["ledger".to_string(),"server".to_string(),"transactions".to_string()]);
     // let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
     //     Some(b) => b,
@@ -34,30 +34,30 @@ fn main() {
     let config: Box<Rc<Config>> = Config::default_with_box();
     println!("config : {:?}", config);
 
-    let ret = Remote::with_config(config.clone(), |x| { match x {
-        Ok(response) => { 
-            // if let Ok(response) = x {                        
-            //     // use serde::{Serialize, Deserialize};
-            //     // use serde_json::{Result, Value};
-            //     // if let Ok(v) = serde_json::from_str(&x) as Result<Value> {
-            //     //     println!("v : {}", v["ledger_hash"]);
-            //     // }
+    // let ret = Remote::with_config(config.clone(), |x| { match x {
+    //     Ok(response) => { 
+    //         // if let Ok(response) = x {                        
+    //         //     // use serde::{Serialize, Deserialize};
+    //         //     // use serde_json::{Result, Value};
+    //         //     // if let Ok(v) = serde_json::from_str(&x) as Result<Value> {
+    //         //     //     println!("v : {}", v["ledger_hash"]);
+    //         //     // }
 
-            //     
-            // }
+    //         //     
+    //         // }
 
-            println!("Response fee_base : {}", response.fee_base);
+    //         println!("Response fee_base : {}", response.fee_base);
 
+    //     }
+    //     Err(err) => { println!("error: {}", err); }
+    // }});
+
+    Remote::request_server_info(config.clone(), |x| match x {
+        Ok(response) => {
+            println!("build_version : {}", response.build_version);
         }
-        Err(err) => { println!("error: {}", err); }
-    }});
 
-    // Remote::request_server_info(config.clone(), |x| match x {
-    //     Ok(x) => {
-    //         println!("request info : {}", x);
-    //     }
-
-    //     Err(_) => {
-    //     }
-    // });
+        Err(_) => {
+        }
+    });
 }

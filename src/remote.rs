@@ -9,11 +9,12 @@ use std::cell::Cell;
 extern crate ws;
 use ws::{connect, CloseCode};
 use serde_json::json;
+use serde_json::{Value};
 
 use crate::Config;
 
 use crate::commands::command_subscribe::*;
-use crate::commands::command::*;
+use crate::commands::command_serverinfo::*;
 use crate::commands::command_trait::*;
 
 
@@ -76,9 +77,7 @@ impl Remote  {
         //parse 
         let resp = Remote::print_if(ws_message);
         {
-            // use crate::command::SubscribeResponse;
-            use serde_json::{Value};
-
+            //TOD::解析的类可以抽象出来～～～
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
                 //println!("x : {:?}", x["result"]);
                 let x: String = x["result"].to_string();
@@ -110,38 +109,42 @@ impl Remote  {
         }
     }
     
-    pub fn request_server_info<F> (config: Box<Rc<Config>>, op: F) -> Box<ServerInfo> 
-        where F: Fn(Result<String, &'static str>) {
+    pub fn request_server_info<F> (config: Box<Rc<Config>>, op: F)
+        where F: Fn(Result<ServerInfoResponse, &'static str>) {
         
         let info = Rc::new(Cell::new("".to_string()));
 
-
         connect(config.addr, |out| { 
-        let copy = info.clone();
+            let copy = info.clone();
 
-        if let Ok(command) = ServerInfoCommand::default().to_string() {
-            out.send(command).unwrap();
-        }
+            if let Ok(command) = ServerInfoCommand::default().to_string() {
+                out.send(command).unwrap();
+            }
 
-        move |msg: ws::Message| {
-            let c = msg.as_text()?;
-            copy.set(c.to_string());
-            
-            out.close(CloseCode::Normal) 
-        }
+            move |msg: ws::Message| {
+                let c = msg.as_text()?;
+                copy.set(c.to_string());
+                
+                out.close(CloseCode::Normal) 
+            }
         
         }).unwrap();
         
-        let re = Remote::print_if(info);
-        op(Ok(re));
+        let resp = Remote::print_if(info);
+        println!("resp : {}", &resp);
+        {
+            //TOD::解析的类可以抽象出来～～～
+            if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+                let x: String = x["result"].to_string();
+                if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
+                    let x: String = x["info"].to_string();
+                    if let Ok(v) = serde_json::from_str(&x) as Result<ServerInfoResponse, serde_json::error::Error> {
+                        op(Ok(v))
+                    }
+                }
+            }
+        }
 
-        Box::new( ServerInfo {
-                                    ledger: String::from(""),
-                                    public_key: String::from(""),
-                                    state: String::from("dddddd"),
-                                    peers: vec![0;0],
-                                    version: String::from("Skywell.10.0.1"),
-                                })
-        
+
     }
 }
