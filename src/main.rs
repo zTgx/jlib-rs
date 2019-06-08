@@ -28,24 +28,29 @@ fn main() {
     println!("config : {:?}", config);
 
     let ret = Remote::with_config(config.clone(), |x| { match x {
-        Ok(x) => { 
-            // if let Ok(x) = x.into_text() {                        
-            //     use serde::{Serialize, Deserialize};
-            //     use serde_json::{Result, Value};
-            //     if let Ok(v) = serde_json::from_str(&x) as Result<Value> {
-            //         println!("v : {}", v["ledger_hash"]);
-            //     }
+        Ok(response) => { 
+            // if let Ok(response) = x {                        
+            //     // use serde::{Serialize, Deserialize};
+            //     // use serde_json::{Result, Value};
+            //     // if let Ok(v) = serde_json::from_str(&x) as Result<Value> {
+            //     //     println!("v : {}", v["ledger_hash"]);
+            //     // }
+
+            //     
             // }
+
+            println!("Response fee_base : {}", response.fee_base);
+
         }
         Err(err) => { println!("error: {}", err); }
     }});
 
-    Remote::request_server_info(config.clone(), |x| match x {
-        Ok(x) => {
-            println!("request info : {}", x);
-        }
+    // Remote::request_server_info(config.clone(), |x| match x {
+    //     Ok(x) => {
+    //         println!("request info : {}", x);
+    //     }
 
-        Err(_) => {
-        }
-    });
+    //     Err(_) => {
+    //     }
+    // });
 }

@@ -48,7 +48,7 @@ impl Remote  {
     }
 
     pub fn with_config<F>(config: Box<Rc<Config>>, op: F) 
-        where F: Fn(Result<ws::Message, &'static str>) {
+        where F: Fn(Result<SubscribeResponse, &'static str>) {
 
         let ws_message = Rc::new(Cell::new("".to_string()));
 
@@ -68,7 +68,24 @@ impl Remote  {
             }
         }).unwrap();
 
-        op(Ok(ws::Message::text(Remote::print_if(ws_message))))
+        //parse 
+        let resp = Remote::print_if(ws_message);
+        {
+            use crate::command::SubscribeResponse;
+            use serde_json::{Value};
+
+            if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+                //println!("x : {:?}", x["result"]);
+                let x: String = x["result"].to_string();
+                if let Ok(x) = serde_json::from_str(&x) as Result<SubscribeResponse, serde_json::error::Error> {
+                    println!("subscribe response : {:?}", x);
+
+                    op(Ok(x))
+                }
+            }
+        }
+
+        //op(Ok(ws::Message::text(resp)))
     } 
 
     pub fn disconnect(&self) -> bool {

@@ -99,10 +99,76 @@ impl Default for SubscribeCommand {
     }
 }
 
-// pub trait paser {
-//     type 
-//     fn to_string() -> Option<String>;
-// }
+/*
+SubscribeResponse 数据格式
+*/
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SubscribeResponse {
+    #[serde(rename="fee_base")]
+    pub fee_base: u64,
+
+    #[serde(rename="fee_ref")]
+    fee_ref: u64, 
+
+    #[serde(rename="hostid")]
+    hostid: String,
+
+    #[serde(rename="ledger_hash")] 
+    ledger_hash: String,
+
+    #[serde(rename="ledger_index")]
+    ledger_index: u64,
+
+    #[serde(rename="ledger_time")]
+    ledger_time: u64, 
+
+    #[serde(rename="load_base")]
+    load_base: u64, 
+
+    #[serde(rename="load_factor")]
+    load_factor: u64,
+    
+    #[serde(rename="pubkey_node")]
+    pubkey_node: String, 
+
+    #[serde(rename="random")]
+    random: String,
+
+    #[serde(rename="reserve_base")]
+    reserve_base: u64,
+
+    #[serde(rename="reserve_inc")]
+    reserve_inc: u64,
+
+    #[serde(rename="server_status")]
+    server_status: String,
+
+    #[serde(rename="validated_ledgers")]
+    validated_ledgers: String, 
+}
+impl SubscribeResponse {
+    pub fn with_params(fee_base: u64, fee_ref: u64, hostid: String, ledger_hash: String, ledger_index: u64, ledger_time: u64,
+                       load_base: u64, load_factor: u64, pubkey_node: String, random: String, reserve_base: u64, reserve_inc: u64,
+                       server_status: String, validated_ledgers: String) -> Box<Self> {
+        
+        Box::new( SubscribeResponse {
+            fee_base: fee_base,
+            fee_ref: fee_ref,
+            hostid: hostid,
+            ledger_hash: ledger_hash,
+            ledger_index: ledger_index,
+            ledger_time: ledger_time,
+            load_base: load_base,
+            load_factor: load_factor,
+            pubkey_node: pubkey_node,
+            random: random,
+            reserve_base: reserve_base,
+            reserve_inc: reserve_inc,
+            server_status: server_status,
+            validated_ledgers: validated_ledgers,
+        })
+    }
+}
 
 //////////////////////
 /*
