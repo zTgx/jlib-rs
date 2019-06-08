@@ -10,10 +10,17 @@ extern crate ws;
 use ws::{connect, CloseCode, Message};
 
 mod commands;
-//mod jingtum_lib::commands;
+
+#[macro_use]
+extern crate log;
+extern crate env_logger;
+
 
 fn main() {
-
+    // Setup logging
+    env_logger::init();
+    info!("starting up");
+    
     // let def: Box<dyn CommandConversion> = SubscribeCommand::with_params(0, "subscribe".to_string(), vec!["ledger".to_string(),"server".to_string(),"transactions".to_string()]);
     // let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
     //     Some(b) => b,
