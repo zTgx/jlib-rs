@@ -11,7 +11,10 @@ use ws::{connect, CloseCode};
 use serde_json::json;
 
 use crate::Config;
-use crate::command::*;
+
+use crate::commands::command_subscribe::*;
+use crate::commands::command::*;
+use crate::commands::command_trait::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -71,7 +74,7 @@ impl Remote  {
         //parse 
         let resp = Remote::print_if(ws_message);
         {
-            use crate::command::SubscribeResponse;
+            // use crate::command::SubscribeResponse;
             use serde_json::{Value};
 
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {

@@ -9,8 +9,8 @@ use std::rc::Rc;
 extern crate ws;
 use ws::{connect, CloseCode, Message};
 
-mod command;
-use command::*;
+mod commands;
+//mod jingtum_lib::commands;
 
 fn main() {
 
