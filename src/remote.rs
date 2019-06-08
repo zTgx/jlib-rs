@@ -18,7 +18,7 @@ use crate::commands::command_subscribe::*;
 use crate::commands::command_serverinfo::*;
 use crate::commands::command_ledger_closed::*;
 use crate::commands::command_request_ledger::*;
-
+use crate::commands::command_request_accountinfo::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -214,6 +214,43 @@ impl Remote  {
                 if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
                     let x: String = x["ledger"].to_string();
                     if let Ok(v) = serde_json::from_str(&x) as Result<RequestLedgerResponse, serde_json::error::Error> {
+                        op(Ok(v))
+                    }
+                }
+            }         
+    }
+
+    pub fn request_account_info<F>(config: Box<Rc<Config>>, account: String, op: F) 
+        where F: Fn(Result<RequestAccountInfoResponse, &'static str>) {
+
+            let info = Rc::new(Cell::new("".to_string()));
+
+            let account_rc = Rc::new(Cell::new(account));
+
+            connect(config.addr, |out| { 
+                let copy = info.clone();
+
+                let account = account_rc.clone();
+                if let Ok(command) = RequestAccountInfoCommand::with_params(account.take()).to_string() {
+                    out.send(command).unwrap();
+                }
+
+                move |msg: ws::Message| {
+                    let c = msg.as_text()?;
+                    copy.set(c.to_string());
+                    
+                    out.close(CloseCode::Normal) 
+                }
+            
+            }).unwrap();
+            
+            let resp = Remote::print_if(info);
+            println!("resp : {}", &resp);
+            if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+                let x: String = x["result"].to_string();
+                if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
+                    let x: String = x["account_data"].to_string();
+                    if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountInfoResponse, serde_json::error::Error> {
                         op(Ok(v))
                     }
                 }

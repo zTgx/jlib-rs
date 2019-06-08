@@ -71,10 +71,21 @@ fn main() {
     //     }
     // });
 
-    Remote::request_ledger(config.clone(), Some(88670), None, true, |x| match x {
+    // Remote::request_ledger(config.clone(), Some(88670), None, true, |x| match x {
+    //     Ok(response) => {
+    //         println!("ledger : {:?}", response);
+    //         println!("account_hash: {}", response.account_hash);
+    //     },
+
+    //     Err(_) => {
+
+    //     }
+    // });
+    
+    Remote::request_account_info(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), |x| match x {
         Ok(response) => {
             println!("ledger : {:?}", response);
-            println!("account_hash: {}", response.account_hash);
+            println!("Balance: {}", response.Balance);
         },
 
         Err(_) => {
