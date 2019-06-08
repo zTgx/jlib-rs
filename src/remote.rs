@@ -13,9 +13,10 @@ use serde_json::{Value};
 
 use crate::Config;
 
+use crate::commands::command_trait::*;
 use crate::commands::command_subscribe::*;
 use crate::commands::command_serverinfo::*;
-use crate::commands::command_trait::*;
+use crate::commands::command_ledger_closed::*;
 
 
 
@@ -91,15 +92,7 @@ impl Remote  {
 
         //op(Ok(ws::Message::text(resp)))
     } 
-
-    pub fn disconnect(&self) -> bool {
-        true
-    }
-
-    pub fn is_connected(&self) -> bool {
-        true
-    }
-
+    
     pub fn print_if(value: Rc<dyn Any>) -> String {
         match value.downcast::<Cell<String>>() {
             Ok(string) => {
@@ -145,6 +138,37 @@ impl Remote  {
             }
         }
 
+
+    }
+
+    pub fn request_ledger_closed<F>(config: Box<Rc<Config>>, op: F)
+        where F: Fn(Result<LedgerClosedResponse, &'static str>) {
+            let info = Rc::new(Cell::new("".to_string()));
+
+            connect(config.addr, |out| { 
+                let copy = info.clone();
+
+                if let Ok(command) = LedgerClosedCommand::default().to_string() {
+                    out.send(command).unwrap();
+                }
+
+                move |msg: ws::Message| {
+                    let c = msg.as_text()?;
+                    copy.set(c.to_string());
+                    
+                    out.close(CloseCode::Normal) 
+                }
+            
+            }).unwrap();
+            
+            let resp = Remote::print_if(info);
+            println!("resp : {}", &resp);
+            if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+                let x: String = x["result"].to_string();
+                if let Ok(x) = serde_json::from_str(&x) as Result<LedgerClosedResponse, serde_json::error::Error> {
+                    op(Ok(x));
+                }
+            }
 
     }
 }

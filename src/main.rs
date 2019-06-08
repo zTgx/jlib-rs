@@ -52,12 +52,23 @@ fn main() {
     //     Err(err) => { println!("error: {}", err); }
     // }});
 
-    Remote::request_server_info(config.clone(), |x| match x {
+    // Remote::request_server_info(config.clone(), |x| match x {
+    //     Ok(response) => {
+    //         println!("build_version : {}", response.build_version);
+    //     }
+
+    //     Err(_) => {
+    //     }
+    // });
+
+    Remote::request_ledger_closed(config.clone(), |x| match x {
         Ok(response) => {
-            println!("build_version : {}", response.build_version);
+            println!("ledger hash  : {}", response.ledger_hash);
+            println!("ledger index : {}", response.ledger_index);
         }
 
         Err(_) => {
         }
     });
+    
 }
