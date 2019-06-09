@@ -15,7 +15,6 @@ mod commands;
 extern crate log;
 extern crate env_logger;
 
-
 fn main() {
     // Setup logging
     env_logger::init();
@@ -82,10 +81,21 @@ fn main() {
     //     }
     // });
     
-    Remote::request_account_info(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), |x| match x {
+    // Remote::request_account_info(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), |x| match x {
+    //     Ok(response) => {
+    //         //println!("ledger : {:?}", response);
+    //         println!("Balance: {}", response.Balance);
+    //     },
+
+    //     Err(_) => {
+
+    //     }
+    // });
+
+    Remote::request_account_tums(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), |x| match x {
         Ok(response) => {
             //println!("ledger : {:?}", response);
-            println!("Balance: {}", response.Balance);
+            println!("Balance: {}", response.ledger_hash);
         },
 
         Err(_) => {
