@@ -1,7 +1,6 @@
 
 extern crate futures;
 
-use crate::server_info::ServerInfo;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;

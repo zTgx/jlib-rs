@@ -1,7 +1,6 @@
 
 mod remote;
 mod config;
-mod server_info;
 use remote::Remote;
 use config::Config;
 use std::rc::Rc;
