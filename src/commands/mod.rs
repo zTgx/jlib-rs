@@ -7,3 +7,4 @@ pub mod command_request_accountinfo;
 pub mod command_request_accounttums;
 pub mod command_request_account_relations;
 pub mod command_request_account_offer;
+pub mod command_request_account_tx;
