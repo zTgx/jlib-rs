@@ -102,7 +102,18 @@ fn main() {
     //     }
     // });
 
-    Remote::request_account_relations(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), Some("trust".to_string()), |x| match x {
+    // Remote::request_account_relations(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), Some("trust".to_string()), |x| match x {
+    //     Ok(response) => {
+    //         //println!("ledger : {:?}", response);
+    //         println!("ledger_hash: {}", response.ledger_hash);
+    //     },
+
+    //     Err(_) => {
+
+    //     }
+    // });   
+
+    Remote::request_account_offer(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), |x| match x {
         Ok(response) => {
             //println!("ledger : {:?}", response);
             println!("ledger_hash: {}", response.ledger_hash);
@@ -110,6 +121,7 @@ fn main() {
 
         Err(_) => {
 
-        }
+        }   
     });    
+ 
 }
