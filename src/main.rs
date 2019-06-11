@@ -9,6 +9,7 @@ extern crate ws;
 use ws::{connect, CloseCode, Message};
 
 mod commands;
+use commands::command_request_order_book::*;
 
 #[macro_use]
 extern crate log;
@@ -124,14 +125,28 @@ fn main() {
     //     }   
     // });    
  
-    Remote::request_account_tx(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), Some(1), |x| match x {
+    // Remote::request_account_tx(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), Some(1), |x| match x {
+    //     Ok(response) => {
+    //         //println!("ledger : {:?}", response);
+    //         println!("ledger_hash: {}", response.ledger_index_max);
+    //     },
+
+    //     Err(_) => {
+
+    //     }   
+    // });
+
+    let gets = OrderBookItem::with_params("SWT".to_string(), "".to_string());
+    let pays = OrderBookItem::with_params("CNY".to_string(), "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS".to_string());
+    Remote::request_order_book(config.clone(), gets, pays, |x| match x {
         Ok(response) => {
             //println!("ledger : {:?}", response);
-            println!("ledger_hash: {}", response.ledger_index_max);
+            println!("ledger_hash: {}", response.ledger_current_index);
         },
 
         Err(_) => {
 
         }   
     });
+
 }
