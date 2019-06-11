@@ -1,19 +1,19 @@
 
-mod remote;
-mod config;
-use remote::Remote;
-use config::Config;
 use std::rc::Rc;
 
 extern crate ws;
 use ws::{connect, CloseCode, Message};
 
-mod commands;
-use commands::command_request_order_book::*;
-
 #[macro_use]
 extern crate log;
 extern crate env_logger;
+
+
+extern crate mylib;
+use mylib::common::*;
+use mylib::remote::*;
+use mylib::config::*;
+use mylib::transaction::*;
 
 fn main() {
     // Setup logging
@@ -162,15 +162,23 @@ fn main() {
     //     }   
     // });
 
-    Remote::request_tx(config.clone(), "084C7823C318B8921A362E39C67A6FB15ADA5BCCD0C7E9A3B13485B1EF2A4313".to_string(), |x| match x {
-        Ok(response) => {
-            //println!("ledger : {:?}", response);
-            println!("ledger_hash: {}", response.app_type);
-        },
+    // Remote::request_tx(config.clone(), "084C7823C318B8921A362E39C67A6FB15ADA5BCCD0C7E9A3B13485B1EF2A4313".to_string(), |x| match x {
+    //     Ok(response) => {
+    //         //println!("ledger : {:?}", response);
+    //         println!("ledger_hash: {}", response.app_type);
+    //     },
 
-        Err(_) => {
+    //     Err(_) => {
 
-        }   
-    });
+    //     }   
+    // });
+
+
+    let amount: Amount = Amount::new(0.5.to_string(), "SWT".to_string(), "".to_string());
+    let tx: Box<TransactionTx> = Remote::build_payment_tx(config.clone(), 
+                                        "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(),
+                                        "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string(),
+                                         amount);
+    println!("tx: {}", tx.tx_json.fee);
 
 }

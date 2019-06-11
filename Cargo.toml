@@ -13,3 +13,11 @@ serde_json = "1.0"
 ws = { path = "../ws-rs" }
 log = "0.4.0"
 env_logger = "0.6.1"
+
+[lib]
+name = "mylib"
+path = "src/lib.rs"
+
+[[bin]]
+name = "mybin"
+path = "src/main.rs"

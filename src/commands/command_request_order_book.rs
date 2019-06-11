@@ -6,6 +6,7 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::commands::command_trait::CommandConversion;
+use crate::common::*;
 
 /*
 @4.13获得市场挂单列表
@@ -112,17 +113,17 @@ impl CommandConversion for RequestOrderBookCommand {
 /*
 RequestOrderBookResponse 数据返回格式
 */
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Amount {
-    #[serde(rename="value")]
-    value: String,
+// #[derive(Serialize, Deserialize, Debug)]
+// pub struct Amount {
+//     #[serde(rename="value")]
+//     value: String,
 
-    #[serde(rename="currency")]
-    currency: String,
+//     #[serde(rename="currency")]
+//     currency: String,
 
-    #[serde(rename="issuer")]
-    issuer: String,
-}
+//     #[serde(rename="issuer")]
+//     issuer: String,
+// }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Offer {

@@ -10,7 +10,7 @@ use ws::{connect, CloseCode};
 use serde_json::json;
 use serde_json::{Value};
 
-use crate::Config;
+use crate::config::*;
 
 use crate::commands::command_trait::*;
 use crate::commands::command_subscribe::*;
@@ -25,6 +25,9 @@ use crate::commands::command_request_account_tx::*;
 use crate::commands::command_request_order_book::*;
 use crate::commands::command_request_brokerage::*;
 use crate::commands::command_request_tx::*;
+
+use crate::transaction::*;
+use crate::common::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -525,5 +528,34 @@ impl Remote  {
                     op(Ok(v))
                 }
             }         
+    }
+
+    /*
+    4.15支付
+    */
+    pub fn build_payment_tx(config: Box<Rc<Config>>, from: String, to: String, amount: Amount) -> Box<TransactionTx> {
+        //params check
+        // var tx = new Transaction(this);
+        // if (options === null || typeof options !== 'object') {
+        //     tx.tx_json.obj = new Error('invalid options type');
+        //     return tx;
+        // }
+        // var src = options.source || options.from || options.account;
+        // var dst = options.destination || options.to;
+        // var amount = options.amount;
+        // if (!utils.isValidAddress(src)) {
+        //     tx.tx_json.src = new Error('invalid source address');
+        //     return tx;
+        // }
+        // if (!utils.isValidAddress(dst)) {
+        //     tx.tx_json.dst = new Error('invalid destination address');
+        //     return tx;
+        // }
+        // if (!utils.isValidAmount(amount)) {
+        //     tx.tx_json.amount = new Error('invalid amount');
+        //     return tx;
+        // }
+
+        TransactionTx::new(TxJson::new(from, to, amount))
     }
 }
