@@ -384,8 +384,9 @@ impl Remote  {
                     out.send(command).unwrap();
                 }
 
+                //返回一个Handler类型(trait)，等待epoll调用。
                 move |msg: ws::Message| {
-
+                    println!("返回Hanler类型closure。");
                     let c = msg.as_text()?;
                     copy.set(c.to_string());
                     
