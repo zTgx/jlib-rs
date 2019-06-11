@@ -9,6 +9,7 @@ use std::any::Any;
 use crate::commands::command_trait::CommandConversion;
 
 /*
+@4.2创建连接
 SubscribeCommand 请求格式
 id: u64
 command: String

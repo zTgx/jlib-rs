@@ -149,16 +149,28 @@ fn main() {
     //     }   
     // });
 
-    Remote::request_brokerage(config.clone(), "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS".to_string(),
-                                               1,
-                                               "TES".to_string(), |x| match x {
+    // Remote::request_brokerage(config.clone(), "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS".to_string(),
+    //                                            1,
+    //                                            "TES".to_string(), |x| match x {
+    //     Ok(response) => {
+    //         //println!("ledger : {:?}", response);
+    //         println!("ledger_hash: {}", response.ledger_hash);
+    //     },
+
+    //     Err(_) => {
+
+    //     }   
+    // });
+
+    Remote::request_tx(config.clone(), "084C7823C318B8921A362E39C67A6FB15ADA5BCCD0C7E9A3B13485B1EF2A4313".to_string(), |x| match x {
         Ok(response) => {
             //println!("ledger : {:?}", response);
-            println!("ledger_hash: {}", response.ledger_hash);
+            println!("ledger_hash: {}", response.app_type);
         },
 
         Err(_) => {
 
         }   
     });
+
 }

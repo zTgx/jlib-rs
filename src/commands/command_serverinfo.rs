@@ -10,6 +10,7 @@ use crate::commands::command_trait::CommandConversion;
 
 //////////////////////
 /*
+@4.4请求底层服务器信息
 ServerInfoCommand 请求格式
 id: u64
 command: String

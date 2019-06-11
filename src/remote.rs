@@ -24,6 +24,7 @@ use crate::commands::command_request_account_offer::*;
 use crate::commands::command_request_account_tx::*;
 use crate::commands::command_request_order_book::*;
 use crate::commands::command_request_brokerage::*;
+use crate::commands::command_request_tx::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -484,6 +485,43 @@ impl Remote  {
                 let x: String = x["result"].to_string();
                 println!("x : {}", x);
                 if let Ok(v) = serde_json::from_str(&x) as Result<RequestBrokerageResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+            }         
+    }
+
+    pub fn request_tx<F>(config: Box<Rc<Config>>, hash: String,  op: F) 
+        where F: Fn(Result<RequestTxResponse, &'static str>) {
+
+            let info = Rc::new(Cell::new("".to_string()));
+
+            let hash_rc = Rc::new(Cell::new(hash));
+            
+            connect(config.addr, |out| { 
+                let copy = info.clone();
+
+                let hash = hash_rc.clone();
+
+                if let Ok(command) = RequestTxCommand::with_params(hash.take()).to_string() {
+                    out.send(command).unwrap();
+                }
+
+                //返回一个Handler类型(trait)，等待epoll调用。
+                move |msg: ws::Message| {
+                    let c = msg.as_text()?;
+                    copy.set(c.to_string());
+                    
+                    out.close(CloseCode::Normal) 
+                }
+            
+            }).unwrap();
+            
+            let resp = Remote::print_if(info);
+            println!("resp : {}", &resp);
+            if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+                let x: String = x["result"].to_string();
+                println!("x : {}", x);
+                if let Ok(v) = serde_json::from_str(&x) as Result<RequestTxResponse, serde_json::error::Error> {
                     op(Ok(v))
                 }
             }         

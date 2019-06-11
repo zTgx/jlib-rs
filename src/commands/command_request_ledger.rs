@@ -8,7 +8,7 @@ use std::any::Any;
 use crate::commands::command_trait::CommandConversion;
 
 /*
-@获取最新账本信息
+@4.6获取某一账本具体信息
 RequestLedgerCommand 请求格式
 id: u64
 command: String

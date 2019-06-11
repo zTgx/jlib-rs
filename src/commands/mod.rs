@@ -10,3 +10,4 @@ pub mod command_request_account_offer;
 pub mod command_request_account_tx;
 pub mod command_request_order_book;
 pub mod command_request_brokerage;
+pub mod command_request_tx;

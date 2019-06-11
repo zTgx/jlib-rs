@@ -8,7 +8,7 @@ use std::any::Any;
 use crate::commands::command_trait::CommandConversion;
 
 /*
-@4.10 获得账号挂单
+@4.11 获得账号挂单
 RequestAccountOfferCommand 请求格式
 id: u64,         //(固定值): 1
 command: String, //(固定值): account_offers
