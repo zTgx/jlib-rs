@@ -8,12 +8,10 @@ use ws::{connect, CloseCode, Message};
 extern crate log;
 extern crate env_logger;
 
-
 extern crate mylib;
 use mylib::common::*;
 use mylib::remote::*;
 use mylib::config::*;
-use mylib::transaction::*;
 
 fn main() {
     // Setup logging
@@ -174,11 +172,28 @@ fn main() {
     // });
 
 
-    let amount: Amount = Amount::new(0.5.to_string(), "SWT".to_string(), "".to_string());
-    let tx: Box<TransactionTx> = Remote::build_payment_tx(config.clone(), 
-                                        "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(),
-                                        "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string(),
-                                         amount);
-    println!("tx: {}", tx.tx_json.fee);
+    let amount: Amount = Amount::new("SWT1".to_string(), 0.5, "".to_string());
+    let from: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
+    let to  : String = "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string();
+    let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
+    let memo: String = "".to_string();
+    //let memo: String = "给jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c支付0.5swt.".to_string();
+    Remote::build_payment_tx(config.clone(), 
+                                        from,
+                                        to,
+                                        amount,
+                                        Some(memo),
+                                        Some(secret),
+
+                                         |x| match x {
+        Ok(response) => {
+            //println!("ledger : {:?}", response);
+            println!("tx_blob: {}", response.tx_blob);
+        },
+
+        Err(_) => {
+
+        }   
+    });
 
 }

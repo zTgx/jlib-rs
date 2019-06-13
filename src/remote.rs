@@ -533,7 +533,11 @@ impl Remote  {
     /*
     4.15支付
     */
-    pub fn build_payment_tx(config: Box<Rc<Config>>, from: String, to: String, amount: Amount) -> Box<TransactionTx> {
+    pub fn build_payment_tx<F>(config: Box<Rc<Config>>, from: String, to: String, amount: Amount, 
+                                                     memo: Option<String>, 
+                                                     secret: Option<String>, 
+                                                     op: F) 
+        where F: Fn(Result<TransactionTxResponse, &'static str>) {
         //params check
         // var tx = new Transaction(this);
         // if (options === null || typeof options !== 'object') {
@@ -556,6 +560,53 @@ impl Remote  {
         //     return tx;
         // }
 
-        TransactionTx::new(TxJson::new(from, to, amount))
+        let info = Rc::new(Cell::new("".to_string()));
+
+        let from_rc = Rc::new(Cell::new(from));
+        let to_rc = Rc::new(Cell::new(to));
+        let amount_rc = Rc::new(Cell::new(amount));
+        let memo_rc = Rc::new(Cell::new(None));
+        if memo.is_some() {
+            let mut v: Vec<Memo> = Vec::new();
+            v.push(Memo::new(MemoData::new(memo.unwrap())));
+
+            memo_rc.set(Some(v));
+        }
+
+        let secret_rc = Rc::new(Cell::new(secret));
+        
+        connect(config.addr, |out| { 
+            let copy = info.clone();
+
+            let from = from_rc.clone();
+            let to   = to_rc.clone();
+            let amount = amount_rc.clone();
+            let memo   = memo_rc.clone();
+
+            let secret = secret_rc.clone();
+
+            if let Ok(command) = TransactionTx::new(secret.take(), TxJson::new(from.take(), to.take(), amount.take(), memo.take())).to_string() {
+                out.send(command).unwrap()
+            }
+
+            move |msg: ws::Message| {
+                let c = msg.as_text()?;
+                copy.set(c.to_string());
+                
+                out.close(CloseCode::Normal) 
+            }
+        
+        }).unwrap();
+        
+        let resp = Remote::print_if(info);
+        println!("resp : {}", &resp);
+        if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+            let x: String = x["result"].to_string();
+            //println!("x : {}", x);
+            if let Ok(v) = serde_json::from_str(&x) as Result<TransactionTxResponse, serde_json::error::Error> {
+                op(Ok(v))
+            }
+        }         
+
     }
 }

@@ -1,22 +1,21 @@
 
 use std::fmt; //fmt METHOD
-use serde_json::json;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Amount {
     #[serde(rename="currency")]
     pub currency: String,//'USD',
 
+    #[serde(rename="value")]
+    pub value: f64,   //0.5
+
     #[serde(rename="issuer")]
     pub issuer: String,  //'jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS',
-
-    #[serde(rename="value")]
-    pub value: String,   //'0.5'
 }
 
 impl Amount {
-    pub fn new(currency: String, value: String, issuer: String) -> Self {
+    pub fn new(currency: String, value: f64, issuer: String) -> Self {
         Amount {
             currency: currency,
             value: value,
@@ -98,7 +97,7 @@ impl fmt::Display for Flags {
 }
 
 impl Flags {
-    fn get(&self) -> i32 {
+    pub fn get(&self) -> i32 {
         match *self {
             //Universal
             Flags::Universal { ref name } => { match name {
