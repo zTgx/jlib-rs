@@ -85,15 +85,15 @@ pub struct TransactionTx {
     #[serde(rename="id")]
     id: u64, 
 
-    #[serde(rename="tx_json")]
-    pub tx_json: TxJson,
-
     //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
     pub secret: Option<String>,
 
     #[serde(rename="command")]
     pub command: String, //Submit
+
+    #[serde(rename="tx_json")]
+    pub tx_json: TxJson,
 }
 
 impl TransactionTx {
