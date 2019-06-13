@@ -568,7 +568,7 @@ impl Remote  {
         let memo_rc = Rc::new(Cell::new(None));
         if memo.is_some() {
             let mut v: Vec<Memo> = Vec::new();
-            v.push(Memo::new(MemoData::new(memo.unwrap())));
+            v.push(Memo::new(MemoData::new(string_to_hex(&memo.unwrap()))));
 
             memo_rc.set(Some(v));
         }

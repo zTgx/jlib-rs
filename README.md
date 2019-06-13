@@ -23,5 +23,5 @@ Rust.
 - [ ] 4.16设置关系
 
 待实现工具方法：  
-- [ ] 字符串转16进制： fn string_to_hex(s: String) -> String;  
+- [x] 字符串转16进制： fn string_to_hex(s: String) -> String;  
 - [ ] 本地签名：      fn sign(s: String) -> String;  
