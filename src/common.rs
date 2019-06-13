@@ -26,6 +26,31 @@ impl Amount {
     }
 }
 
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct AmountTest {
+
+    #[serde(rename="value")]
+    pub value: String,   //0.5
+
+    #[serde(rename="currency")]
+    pub currency: String,//'USD',
+
+    #[serde(rename="issuer")]
+    pub issuer: String,  //'jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS',
+}
+
+impl AmountTest {
+    pub fn new(currency: String, value: String, issuer: String) -> Self {
+        AmountTest {
+                        value: value,
+
+            currency: currency,
+            issuer: issuer,
+        }
+    }
+}
+
 ////////////////////Flags 相关
 // Universal flags can apply to any transaction type
 #[derive(Serialize, Deserialize, Debug)]

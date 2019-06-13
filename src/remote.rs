@@ -29,6 +29,7 @@ use crate::commands::command_request_tx::*;
 use crate::transaction::*;
 use crate::common::*;
 use crate::relation::*;
+use crate::offer_create::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -655,6 +656,59 @@ impl Remote  {
             let x: String = x["result"].to_string();
             //println!("x : {}", x);
             if let Ok(v) = serde_json::from_str(&x) as Result<RelationTxResponse, serde_json::error::Error> {
+                op(Ok(v))
+            }
+        }         
+
+    }
+
+    /*
+    4.18挂单
+    */
+    pub fn build_offer_create_tx<F>(config: Box<Rc<Config>>, account: String, taker_gets: AmountTest, taker_pays: AmountTest, 
+                                                     secret: Option<String>, 
+                                                     op: F) 
+        where F: Fn(Result<OfferCreateTxResponse, &'static str>) {
+
+        let info = Rc::new(Cell::new("".to_string()));
+
+        // let typ0_rc = Rc::new(Cell::new(typ0));
+        let account_rc = Rc::new(Cell::new(account));
+        // let app_rc = Rc::new(Cell::new(app));
+        let taker_gets_rc = Rc::new(Cell::new(taker_gets));
+        let taker_pays_rc = Rc::new(Cell::new(taker_pays));
+        let secret_rc = Rc::new(Cell::new(secret));
+        
+        connect(config.addr, |out| { 
+            let copy = info.clone();
+
+            // let typ0 = typ0_rc.clone();
+            let account = account_rc.clone();
+            // let app   = app_rc.clone();
+            let taker_gets = taker_gets_rc.clone();
+            let taker_pays = taker_pays_rc.clone();
+            let secret = secret_rc.clone();
+
+            if let Ok(command) = OfferCreateTx::new(secret.take(), OfferCreateTxJson::new(account.take(), 
+                                                                            taker_gets.take(), "1000000".to_string())).to_string() {
+                out.send(command).unwrap()
+            }
+
+            move |msg: ws::Message| {
+                let c = msg.as_text()?;
+                copy.set(c.to_string());
+                
+                out.close(CloseCode::Normal) 
+            }
+        
+        }).unwrap();
+        
+        let resp = Remote::print_if(info);
+        println!("resp : {}", &resp);
+        if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+            let x: String = x["result"].to_string();
+            //println!("x : {}", x);
+            if let Ok(v) = serde_json::from_str(&x) as Result<OfferCreateTxResponse, serde_json::error::Error> {
                 op(Ok(v))
             }
         }         
