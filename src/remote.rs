@@ -30,6 +30,7 @@ use crate::transaction::*;
 use crate::common::*;
 use crate::relation::*;
 use crate::offer_create::*;
+use crate::offer_cancel::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -709,6 +710,52 @@ impl Remote  {
             let x: String = x["result"].to_string();
             //println!("x : {}", x);
             if let Ok(v) = serde_json::from_str(&x) as Result<OfferCreateTxResponse, serde_json::error::Error> {
+                op(Ok(v))
+            }
+        }         
+
+    }
+
+    /*
+    4.19取消挂单
+    */
+    pub fn build_offer_cancel_tx<F>(config: Box<Rc<Config>>, account: String, offer_sequence: u64, 
+                                                     secret: Option<String>, 
+                                                     op: F) 
+        where F: Fn(Result<OfferCancelTxResponse, &'static str>) {
+
+        let info = Rc::new(Cell::new("".to_string()));
+
+        let account_rc = Rc::new(Cell::new(account));
+        let offer_sequence_rc = Rc::new(Cell::new(offer_sequence));
+        let secret_rc = Rc::new(Cell::new(secret));
+        
+        connect(config.addr, |out| { 
+            let copy = info.clone();
+
+            let account = account_rc.clone();
+            let offer_sequence = offer_sequence_rc.clone();
+            let secret = secret_rc.clone();
+
+            if let Ok(command) = OfferCancelTx::new(secret.take(), OfferCancelTxJson::new(account.take(),  offer_sequence.take())).to_string() {
+                out.send(command).unwrap()
+            }
+
+            move |msg: ws::Message| {
+                let c = msg.as_text()?;
+                copy.set(c.to_string());
+                
+                out.close(CloseCode::Normal) 
+            }
+        
+        }).unwrap();
+        
+        let resp = Remote::print_if(info);
+        println!("resp : {}", &resp);
+        if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+            let x: String = x["result"].to_string();
+            //println!("x : {}", x);
+            if let Ok(v) = serde_json::from_str(&x) as Result<OfferCancelTxResponse, serde_json::error::Error> {
                 op(Ok(v))
             }
         }         
