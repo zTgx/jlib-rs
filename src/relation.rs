@@ -22,6 +22,7 @@ pub struct RelationTxJson {
     #[serde(rename="Fee")]
     pub fee: u64,
 
+    //交易类型：TrustSet信任;RelationDel解冻；RelationSet授权/冻结
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
 
@@ -31,6 +32,7 @@ pub struct RelationTxJson {
     #[serde(rename="Target")]
     pub target: String,
 
+    //关系类型：0信任；1授权；3冻结/解冻；
     #[serde(rename="RelationType")]
     pub relation_type: u64,
 
