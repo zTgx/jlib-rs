@@ -13,7 +13,7 @@ serde_json = "1.0"
 ws = { path = "../ws-rs" }
 log = "0.4.0"
 env_logger = "0.6.1"
-bs58 = { github = "https://github.com/mycorrhiza/bs58-rs.git" }
+bs58 = { git = "https://github.com/mycorrhiza/bs58-rs.git" }
 
 [lib]
 name = "mylib"

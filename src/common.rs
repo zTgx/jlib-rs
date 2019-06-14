@@ -2,8 +2,6 @@
 use std::fmt; //fmt METHOD
 use serde::{Deserialize, Serialize};
 
-use crate::transaction::TxJson;
-
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Amount {
     #[serde(rename="currency")]
