@@ -241,22 +241,48 @@ fn main() {
     // });
 
     
-    let offer_sequence: u64 = 688_u64;
-    let account: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
-    let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
-    Remote::build_offer_cancel_tx(config.clone(), 
-                                        account,
-                                        offer_sequence,
-                                        Some(secret),
+    // let offer_sequence: u64 = 688_u64;
+    // let account: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
+    // let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
+    // Remote::build_offer_cancel_tx(config.clone(), 
+    //                                     account,
+    //                                     offer_sequence,
+    //                                     Some(secret),
 
-                                         |x| match x {
-        Ok(response) => {
-            //println!("ledger : {:?}", response);
-            println!("tx_blob: {}", response.tx_blob);
-        },
+    //                                      |x| match x {
+    //     Ok(response) => {
+    //         //println!("ledger : {:?}", response);
+    //         println!("tx_blob: {}", response.tx_blob);
+    //     },
 
-        Err(_) => {
+    //     Err(_) => {
 
-        }   
-    });
+    //     }   
+    // });
+
+    {
+        extern crate rust_base58;
+        use rust_base58::{ToBase58, FromBase58};
+
+        // let x = &[1, 2, 3];
+
+        // // to_base58() returns a String
+        // let x_b58 = x.to_base58();
+        // assert_eq!("Ldp", x_b58);
+
+        // from_base58() returns a Vec<u8>
+        let x_b58: String = "ssndDcNoc4FvwVPveY3KbfWh8fNh3".to_string();
+        let x_again = x_b58.from_base58().unwrap();
+        println!("x_again : {:?}", x_again);
+
+        let x_b58 = x_again.to_base58();
+        println!("x_again : {:?}", x_b58);
+
+
+        // assert_eq!(x, &x_again[..]);
+
+        // from_base58() can fail, for example due to the input string
+        // containing an invalid base58 character like "I":
+        // assert!("I".from_base58().is_err());
+    }
 }
