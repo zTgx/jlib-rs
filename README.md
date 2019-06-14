@@ -47,7 +47,7 @@ Rust.
 - [ ] 1，完善Amount数据结构
 - [ ] 2，TakerGets和TakerPays在不同情况下的数据类型 （Amount or String）
 - [ ] 3，新老服务器接口的更新（涉及到app/brokerage等相关字段）
-- [ ] 4，添加[[example]]
+- [x] 4，添加[[example]]
 - [ ] 5，添加[[test]]
 - [ ] 6，挂单接口中flags字段根据Sell/Buy的设置
 - [ ] 7，代码架构调整
