@@ -6,7 +6,7 @@ extern crate log;
 extern crate env_logger;
 
 extern crate mylib;
-use mylib::common::*;
+// use mylib::common::*;
 use mylib::remote::*;
 use mylib::config::*;
 
