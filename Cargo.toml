@@ -17,6 +17,9 @@ bs58 = { git = "https://github.com/mycorrhiza/bs58-rs.git" }
 rand = "0.6"
 ring = "0.14.6"
 
+[dependencies.x25519-dalek]
+version = "^0.5"
+
 [lib]
 name = "mylib"
 path = "src/lib.rs"
