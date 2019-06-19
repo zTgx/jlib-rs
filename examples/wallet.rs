@@ -181,16 +181,23 @@ keypair :  { privateKey:
             i += 1;
         }
 
+
+
         let mut string = "".to_string();
 
+        //  for (var k = 0; source[k] === 0 && k < source.length - 1; ++k) string += ALPHABET[0]
         // deal with leading zeros
         let mut k = 0;
         while source[k] == 0 && k < source.len() - 1 {
 
-            string += ALPHABET[0].to_string().as_str();
+            // println!("c: {}", ALPHABET[0] as char);
+            // string += ALPHABET[0].to_string().as_str();
+            string.push(ALPHABET[0] as char);
 
             k += 1;
         }        
+        println!("string: {}", string);
+        println!("digits: {:?}", digits.len());
         // convert digits to a string
         let mut q: i32 = (digits.len() - 1) as i32;
         while q >= 0 {
@@ -199,6 +206,7 @@ keypair :  { privateKey:
 
             let uu: u8 = ALPHABET[digits[q as usize] as usize];
             let xx = uu as char;
+            println!("char : {}", xx);
             string.push( xx );
 
             // println!("string : {}", xx);
@@ -235,5 +243,46 @@ impl Wallet {
 fn main() {
     // Wallet::generate();
 
-    Keypairs::deriveKeyPair("to".to_string());
+    // Keypairs::deriveKeyPair("to".to_string());
+
+
+//     let accountid = vec! [ 0,
+//   16,
+//   128,
+//   12,
+//   194,
+//   94,
+//   11,
+//   79,
+//   93,
+//   113,
+//   241,
+//   33,
+//   182,
+//   90,
+//   57,
+//   114,
+//   27,
+//   88,
+//   168,
+//   57,
+//   46,
+//   191,
+//   166,
+//   113,
+//   110 ];
+//     let accountid = Keypairs::encode(&accountid);
+//     println!("accountid = {:?}", accountid);
+
+    //as_bytes() test
+    let string = "02A7503815D9B98ABF8F70C70BDC37D5EF3BB159E720FE990DDFAFCDF05CD20FBD".to_string();
+    let to_byte = string.as_bytes();
+    println!("bytes: {:?}", to_byte);
+
+    //!!!!!!!!!!!USE HEX crate
+    extern crate hex;
+    if let Ok(byte) = hex::decode(string) {
+    println!("byte2 : {:?}", byte);
+
+    }
 }

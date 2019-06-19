@@ -13,9 +13,16 @@ serde_json = "1.0"
 ws = { path = "../ws-rs" }
 log = "0.4.0"
 env_logger = "0.6.1"
+
+# crypto
 bs58 = { git = "https://github.com/mycorrhiza/bs58-rs.git" }
 rand = "0.6"
 ring = "0.14.6"
+secp256k1 = "0.13.0"
+num = "0.2"
+compare = "0.1"
+rust-crypto = "^0.2"
+hex = "0.3.2"
 
 [dependencies.x25519-dalek]
 version = "^0.5"
