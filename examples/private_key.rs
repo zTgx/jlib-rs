@@ -1,10 +1,3 @@
-// extern crate rand_os;
-// extern crate x25519_dalek;
-
-// // use rand_os::OsRng;
-
-// use x25519_dalek::EphemeralSecret;
-// use x25519_dalek::PublicKey;
 
 use ring::{digest};
 extern crate num;
