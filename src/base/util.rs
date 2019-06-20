@@ -32,8 +32,6 @@ pub fn encode_raw(x: &mut Vec<u8>) -> String {
 }
 
 pub fn encode(source: &[u8]) -> String {
-
-    println!("source : {:?} and len : {}", source, source.len());
         
     let BASE = ALPHABET.len() as u16;
 
@@ -75,15 +73,14 @@ pub fn encode(source: &[u8]) -> String {
 
         k += 1;
     }        
-    println!("string: {}", string);
-    println!("digits: {:?}", digits.len());
+
     // convert digits to a string
     let mut q: i32 = (digits.len() - 1) as i32;
     while q >= 0 {
 
         let uu: u8 = ALPHABET[digits[q as usize] as usize];
         let xx = uu as char;
-        println!("char : {}", xx);
+
         string.push( xx );
 
         q -= 1;
