@@ -23,6 +23,7 @@ num = "0.2"
 compare = "0.1"
 rust-crypto = "^0.2"
 hex = "0.3.2"
+ed25519-dalek = "0.9.1"
 
 [dependencies.x25519-dalek]
 version = "^0.5"
