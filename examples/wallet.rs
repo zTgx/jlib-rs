@@ -2,6 +2,9 @@
 extern crate rand;
 use rand::Rng;
 
+extern crate mylib;
+use mylib::base::brorand::*;
+
 static ALPHABET: &[u8] = b"jpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65rkm8oFqi1tuvAxyz";
 const PASSWORD_LEN: usize = 16;
 pub const JTM: &'static [u8; 58] = b"jpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65rkm8oFqi1tuvAxyz";
@@ -52,24 +55,10 @@ keypair :  { privateKey:
     // }
 
 
-    pub fn brorand(len: usize) -> Vec<u8> {
-        let u: Vec<u8> = (0..len).map(|_| {
-            let idx: u8 = rand::thread_rng().gen();
-            
-            //pub fn format(args: Arguments) -> String
-            let hexs = format!("{:x}", idx);
-            println!("hexs : {}", hexs);
-
-            // hexs
-            idx
-        }).collect::<Vec<u8>>();
-
-        u
-    }
 
     pub fn generateSeed() {
         //1. Generete 16 random data
-        let mut u: Vec<u8> = Keypairs::brorand(PASSWORD_LEN);
+        let mut u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
         println!("u: {:?}", u);
 
         //2. add secp256k1
@@ -241,7 +230,7 @@ impl Wallet {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 fn main() {
-    // Wallet::generate();
+    Wallet::generate();
 
     // Keypairs::deriveKeyPair("to".to_string());
 
@@ -275,14 +264,14 @@ fn main() {
 //     println!("accountid = {:?}", accountid);
 
     //as_bytes() test
-    let string = "02A7503815D9B98ABF8F70C70BDC37D5EF3BB159E720FE990DDFAFCDF05CD20FBD".to_string();
-    let to_byte = string.as_bytes();
-    println!("bytes: {:?}", to_byte);
+    // let string = "02A7503815D9B98ABF8F70C70BDC37D5EF3BB159E720FE990DDFAFCDF05CD20FBD".to_string();
+    // let to_byte = string.as_bytes();
+    // println!("bytes: {:?}", to_byte);
 
-    //!!!!!!!!!!!USE HEX crate
-    extern crate hex;
-    if let Ok(byte) = hex::decode(string) {
-    println!("byte2 : {:?}", byte);
+    // //!!!!!!!!!!!USE HEX crate
+    // extern crate hex;
+    // if let Ok(byte) = hex::decode(string) {
+    // println!("byte2 : {:?}", byte);
 
-    }
+    // }
 }
