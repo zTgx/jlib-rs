@@ -7,42 +7,50 @@ use secp256k1::key::{ SecretKey};
 use secp256k1::key::PublicKey;
 use secp256k1::Secp256k1;
 use secp256k1::key::ONE_KEY;
-use secp256k1::constants::*;
+use secp256k1::constants::*;      
 
-// fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> String {
-//     let mut i = 0u32;
-//     while i <= 0xFFFFFFFF {
-//         // We hash the bytes to find a 256 bit number, looping until we are sure it
-//         // is less than the order of the curve.
-//         // var hasher = new Sha512().add(seed);
-//         let mut ctx = digest::Context::new(&digest::SHA512);
-//         ctx.update(&seed);
-//         ctx.update(&[0,0,0,0]);
-//         let multi_part = ctx.finish();
-//         println!("multi_part: {:?}", multi_part.as_ref());
-//         let xx: String = multi_part.as_ref().iter().map(|c| {
-//             let x = format!("{:x}", c);
-//             x 
-//         }).collect();
-//         let key = xx.get(0..32).unwrap().to_string();
+fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
+    let mut i = 0u32;
+    while i <= 0xFFFFFFFF  {
+        // We hash the bytes to find a 256 bit number, looping until we are sure it
+        // is less than the order of the curve.
+        let mut ctx = digest::Context::new(&digest::SHA512);
+        ctx.update(&bytes);
+        if let Some(x) = discrim {
+            //as i32
+            ctx.update(&(x as i32).to_be_bytes());
+        }
+        ctx.update(&i.to_be_bytes());
 
-//         let xx_order: String = order.iter().map(|c| {
-//             let x = format!("{:x}", c);
-//             x 
-//         }).collect();
-//         let order = xx_order.get(0..32).unwrap().to_string();
+        let mut key = [0u8; 64];
+        key.copy_from_slice(ctx.finish().as_ref());
+        for x in key.iter() {
+            println!("{}", x );
+        }
+        let mut key = key.to_vec();
+        key.truncate(32);
+        
+        // let finish = ctx.finish();
+        // let xx: String = finish.as_ref().iter().map(|c| {
+        //     let x = format!("{:x}", c);
+        //     x 
+        // }).collect();
+        // let key = xx.get(0..32).unwrap().to_string();
 
-//         if key < order && key > "0".to_string() {
-//             println!("privateGen : {:?}", key);
+        if key.as_slice() < &CURVE_ORDER && key.as_slice() > &0i32.to_be_bytes() {
 
-//             return String::from(key.as_str());
-//         }  
+            println!("scalar key : {:?}", key);
+            // let mut key = key.to_vec();
+            // key.truncate(32);
+            return key;
+        }
 
-//         i += 1;
-//     }
+        i += 1;
+    } // end while
 
-//     "".to_string()
-// }          
+    //never get this
+    vec![0]
+}
 
 fn main() {
 
@@ -50,6 +58,27 @@ fn main() {
     // println!("secret key : {:?}", secret_key);
 
     let mut seed =  vec![ 27, 160, 140, 35, 48, 34, 206, 80, 166, 40, 137, 17, 158, 180, 155, 221 ];
+
+    let private_gen = scalar_multiple(&seed, None);
+    // println!("private gen : {:?}", private_gen);
+    let secp = Secp256k1::new();
+    let mut secret_key = SecretKey::from_slice(&private_gen).expect("32 bytes, within curve order");
+    let mut public_gen = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
+    // println!("public gen : {:?}", public_gen);
+
+    //derivePrivateKey return
+    //secp256k1.ScalarMultiple(publicGen.encodeCompressed(), 0).add(privateGen).mod(order);
+    let public_gen_output = scalar_multiple(public_gen.as_slice(), Some(0));
+    println!("before add : {:?}", public_gen_output);
+    let mut secret_key2 = SecretKey::from_slice(&public_gen_output).expect("32 bytes, within curve order");
+    let x = secret_key2.add_assign(&secret_key[..]);
+    println!("x : {:?}", secret_key2);
+
+    //var privateKey = prefix + derivePrivateKey(entropy).toString(16, 64).toUpperCase();
+    let private_key = "00".to_owned() + secret_key2.to_string().as_str();
+    println!("private_key : {}", private_key.to_ascii_uppercase());
+    
+    return;
 
 
     //1. order

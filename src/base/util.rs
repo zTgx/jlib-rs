@@ -98,4 +98,3 @@ pub fn entropy(secret: String) -> Vec<u8> {
 
     buf[1..buf.len()-4].to_vec()
 }
-
