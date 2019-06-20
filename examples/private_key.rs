@@ -77,7 +77,15 @@ fn main() {
     //var privateKey = prefix + derivePrivateKey(entropy).toString(16, 64).toUpperCase();
     let private_key = "00".to_owned() + secret_key2.to_string().as_str();
     println!("private_key : {}", private_key.to_ascii_uppercase());
-    
+
+    //////////////public key
+    if let Ok(keyx) = hex::decode(private_key) {
+        let mut secret_key = SecretKey::from_slice(&keyx[1..]).expect("32 bytes, within curve order");
+        let mut public_gen = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
+        let public_key = hex::encode(public_gen);
+        println!("public key : {:?}", public_key);
+    }
+
     return;
 
 
