@@ -378,7 +378,7 @@ let ac = digest::digest(&digest::SHA256, &args);
         //println!("checked : {:?}", xx.get(..4));
 
         let ret = xx.get(..4).unwrap().to_vec();
-        println!("ret : {:?}", ret);
+        println!("ret : {:?}", ret);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
 }
 
 
