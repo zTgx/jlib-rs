@@ -3,23 +3,25 @@ use crate::base::brorand::*;
 use crate::base::*;
 use crate::base::constants::{ALPHABET, PASSWORD_LEN};
 
+use crate::base::config::*;
 
 
 // 钱包生成器
-pub struct WalletBuilder {
-    pub config: WalletConfig,
+#[derive(Debug)]
+pub struct WalletBuilder <'a> {
+    pub config: &'a WalletConfig,
 }
 
-impl WalletBuilder {
-    // pub fn new(config: WalletConfig) -> Self {
-    //     WalletBuilder {
-    //         config: config,
-    //     }
-    // }
+impl <'a> WalletBuilder <'a> {
+    pub fn new(config: &'a WalletConfig) -> Self {
+        WalletBuilder {
+            config: config,
+        }
+    }
 
-    pub fn build(config: WalletConfig) -> Wallet {
+    pub fn build(&self) -> Wallet {
         Wallet {
-            key_type: config.key_type,
+            key_type: self.config.key_type,
             address : "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string(), //test
             secret  : WalletBuilder::generate_seed(),
             keypair : None, //test
@@ -59,28 +61,8 @@ pub struct Keypair {
     pub secret_key: String, //私钥
     pub public_key: String, //公钥
 }
-
 impl Keypair{}
 
-#[derive(Debug)]
-//key的加密算法：ed25519 / secp256k1
-pub enum KeyType {
-    SECP256K1,
-    ED25519,
-}
-
-//钱包属性：地址长度，加密算法等
-#[derive(Debug)]
-pub struct WalletConfig {
-    pub key_type: KeyType,
-}
-impl WalletConfig {
-    pub fn new(key_type: KeyType) -> Self {
-        WalletConfig {
-            key_type: key_type,
-        }
-    }
-}
 
 #[derive(Debug)]
 pub struct Wallet {
@@ -91,7 +73,7 @@ pub struct Wallet {
 }
 
 impl Wallet {
-    pub fn new(config: WalletConfig) -> Self {
-        WalletBuilder::build(config)
+    pub fn new(config: &WalletConfig) -> Self {
+        WalletBuilder::new(config).build()
     }
 }

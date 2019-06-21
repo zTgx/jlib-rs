@@ -4,3 +4,4 @@ pub mod util;
 pub mod constants;
 pub mod base_data;
 pub mod wallet;
+pub mod config;
