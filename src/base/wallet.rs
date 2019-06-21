@@ -1,10 +1,11 @@
 
 use crate::base::brorand::*;
 use crate::base::*;
-use crate::base::constants::{ALPHABET, PASSWORD_LEN};
 
 use crate::base::config::*;
+use crate::base::constants::PASSWORD_LEN;
 
+use crate::base::seed::*;
 
 // 钱包生成器
 #[derive(Debug)]
@@ -20,10 +21,15 @@ impl <'a> WalletBuilder <'a> {
     }
 
     pub fn build(&self) -> Wallet {
+
+        let seed: &'a str = "sn37nYrQ6KPJvTFmaBYokS3FjXUWd";
+        let seed_property = SeedProperty::new(seed, 16);
+        let seed = SeedBuilder::new(seed_property).build();
+
         Wallet {
             key_type: self.config.key_type,
             address : "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string(), //test
-            secret  : WalletBuilder::generate_seed(),
+            secret  : seed,
             keypair : None, //test
         }
     }
@@ -64,11 +70,32 @@ pub struct Keypair {
 impl Keypair{}
 
 
+#[derive(Debug, Copy, Clone)]
+pub struct WalletAddress <'a> {
+    pub address: &'a str,
+}
+impl <'a> WalletAddress <'a> {
+    pub fn new() -> Self {
+        WalletAddress {
+            address: "default",
+        }
+    }
+
+    // pub fn update(&mut self, bytes: &[u8]) {
+    //     self.address = bytes;
+    // }
+
+    pub fn get(&self) -> String {
+        self.address.to_owned()
+    }
+}
+
+
 #[derive(Debug)]
 pub struct Wallet {
     pub key_type: KeyType, 
     pub address : String,  //j开头的钱包地址
-    pub secret  : String,  //secret seed
+    pub secret  : Seed,  //secret seed
     pub keypair : Option<Keypair>, //公钥私钥对
 }
 
