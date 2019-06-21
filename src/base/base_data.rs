@@ -6,6 +6,8 @@ pub const FAMILY_SEED  : usize = 33;
 pub const ED25519_SEED : [u8; 3]   = [0x01, 0xe1, 0x4b];
 pub const SIGN_TYPE    : [&'static str; 2] = ["ed25519", "secp256k1"]; 
 
+//修改为trait对象（待定)!!!!!!!!!!!!!!!!!!!
+
 #[derive(Debug)]
 pub struct EdSeed {
     pub expected_length: usize,

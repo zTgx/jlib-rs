@@ -54,13 +54,24 @@ impl <'a> WalletBuilder <'a> {
         //6. concat args
         util::concat_args(&mut version, &checked);
 
-        // let secret: String = util::encode_raw(&mut version);
-        // println!("secret : {}", secret);
-
         util::encode_raw(&mut version)
     }
 }
 
+pub trait BaseX {
+    fn encode();
+    fn decode();
+}
+
+pub trait CodeC {
+    fn encode();
+    fn decode();
+
+    fn is_valide() -> bool;
+    //fn is_valid_address() -> bool;
+    //fn is_valid_secret() -> bool;
+    //...
+}
 
 #[derive(Debug)]
 pub struct Keypair {
