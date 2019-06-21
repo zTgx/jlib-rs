@@ -98,3 +98,48 @@ pub fn entropy(secret: String) -> Vec<u8> {
 
     buf[1..buf.len()-4].to_vec()
 }
+
+
+pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
+    let mut i = 0u32;
+    while i <= 0xFFFFFFFF  {
+        // We hash the bytes to find a 256 bit number, looping until we are sure it
+        // is less than the order of the curve.
+        let mut ctx = digest::Context::new(&digest::SHA512);
+        ctx.update(&bytes);
+        if let Some(x) = discrim {
+            //as i32
+            ctx.update(&(x as i32).to_be_bytes());
+        }
+        ctx.update(&i.to_be_bytes());
+
+        let mut key = [0u8; 64];
+        key.copy_from_slice(ctx.finish().as_ref());
+        // for x in key.iter() {
+        //     println!("{}", x );
+        // }
+        let mut key = key.to_vec();
+        key.truncate(32);
+        
+        // let finish = ctx.finish();
+        // let xx: String = finish.as_ref().iter().map(|c| {
+        //     let x = format!("{:x}", c);
+        //     x 
+        // }).collect();
+        // let key = xx.get(0..32).unwrap().to_string();
+
+        if key.as_slice() < CURVE_ORDER && key.as_slice() > CURVE_ZERO {
+
+
+            // println!("scalar key : {:?}", key);
+            // let mut key = key.to_vec();
+            // key.truncate(32);
+            return key;
+        }
+
+        i += 1;
+    } // end while
+
+    //never get this
+    vec![0]
+}
