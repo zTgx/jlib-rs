@@ -3,18 +3,7 @@ use crate::base::brorand::*;
 use crate::base::*;
 use crate::base::constants::{ALPHABET, PASSWORD_LEN};
 
-//钱包属性：地址长度，加密算法等
-#[derive(Debug)]
-pub struct WalletConfig {
-    pub key_type: String,  //key的加密算法：ed25519 / secp256k1
-}
-impl WalletConfig {
-    pub fn new(key_type: String) -> Self {
-        WalletConfig {
-            key_type: key_type,
-        }
-    }
-}
+
 
 // 钱包生成器
 pub struct WalletBuilder {
@@ -74,8 +63,28 @@ pub struct Keypair {
 impl Keypair{}
 
 #[derive(Debug)]
+//key的加密算法：ed25519 / secp256k1
+pub enum KeyType {
+    SECP256K1,
+    ED25519,
+}
+
+//钱包属性：地址长度，加密算法等
+#[derive(Debug)]
+pub struct WalletConfig {
+    pub key_type: KeyType,
+}
+impl WalletConfig {
+    pub fn new(key_type: KeyType) -> Self {
+        WalletConfig {
+            key_type: key_type,
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct Wallet {
-    pub key_type: String,  //key的加密算法：ed25519 / secp256k1
+    pub key_type: KeyType, 
     pub address : String,  //j开头的钱包地址
     pub secret  : String,  //secret seed
     pub keypair : Option<Keypair>, //公钥私钥对
@@ -83,7 +92,6 @@ pub struct Wallet {
 
 impl Wallet {
     pub fn new(config: WalletConfig) -> Self {
-        // WalletBuilder::new(config).build()
         WalletBuilder::build(config)
     }
 }
