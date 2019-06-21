@@ -4,12 +4,6 @@ use mylib::base::brorand::*;
 use mylib::base::*;
 use mylib::base::constants::{ALPHABET, PASSWORD_LEN};
 
-
-pub trait hex_interface {}
-
-////////////////////////////////////////////////////////////////////////////////////////
-//Wallet
-
 //钱包属性：地址长度，加密算法等
 #[derive(Debug)]
 pub struct WalletConfig {

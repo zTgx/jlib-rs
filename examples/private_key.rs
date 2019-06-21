@@ -81,9 +81,6 @@ fn main() {
                 //6. concat args
                 util::concat_args(&mut version, &checked);
 
-                // let secret: String = util::encode_raw(&mut version);
-                // println!("secret : {}", secret);
-
                 let address = util::encode_raw(&mut version);
                 println!("address : {}", address);
 
