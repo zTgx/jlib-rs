@@ -6,6 +6,7 @@ use crate::base::config::*;
 use crate::base::constants::PASSWORD_LEN;
 
 use crate::base::seed::*;
+use crate::base::keypair::*;
 
 // 钱包生成器
 #[derive(Debug)]
@@ -22,15 +23,22 @@ impl <'a> WalletBuilder <'a> {
 
     pub fn build(&self) -> Wallet {
 
+        //seed
         let seed: &'a str = "sn37nYrQ6KPJvTFmaBYokS3FjXUWd";
         let seed_property = SeedProperty::new(seed, 16);
         let seed = SeedBuilder::new(seed_property).build();
+
+        //keypair
+        let key_pair = KeypairBuilder::new(&seed).build();
+
+        //address
+
 
         Wallet {
             key_type: self.config.key_type,
             address : "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string(), //test
             secret  : seed,
-            keypair : None, //test
+            keypair : Some(key_pair),
         }
     }
 
@@ -58,27 +66,7 @@ impl <'a> WalletBuilder <'a> {
     }
 }
 
-pub trait BaseX {
-    fn encode();
-    fn decode();
-}
 
-pub trait CodeC {
-    fn encode();
-    fn decode();
-
-    fn is_valide() -> bool;
-    //fn is_valid_address() -> bool;
-    //fn is_valid_secret() -> bool;
-    //...
-}
-
-#[derive(Debug)]
-pub struct Keypair {
-    pub secret_key: String, //私钥
-    pub public_key: String, //公钥
-}
-impl Keypair{}
 
 
 #[derive(Debug, Copy, Clone)]

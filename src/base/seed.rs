@@ -12,6 +12,30 @@ impl Seed {
     }
 }
 
+// impl BaseX for Seed {
+//     fn encodex(&self) {
+
+//     }
+//     fn decodex(&self) {
+
+//     }
+// }
+
+// impl CodeC for Seed {
+//     fn encodec(&self) {
+
+//     }
+//     fn decodec(&self) {
+
+//     }
+
+//     fn is_valide(&self) -> bool {
+
+//     }
+// }
+
+
+
 #[derive(Debug)]
 pub struct SeedProperty {
     pub seed: String, //hex string

@@ -90,12 +90,11 @@ pub fn encode(source: &[u8]) -> String {
 }
 
 //entropy的生成方式: 取值index范围，1 ~ 倒数第5
-pub fn entropy(secret: String) -> Vec<u8> {
+pub fn entropy(secret: &String) -> Vec<u8> {
     // let prefix = "00";
     //ssndDcNoc4FvwVPveY3KbfWh8fNh3
     let buf = bs58::decode(secret).with_alphabet(ALPHABET).into_vec().unwrap();
-    println!("raw data after decode : {:?}", buf);
-
+    
     buf[1..buf.len()-4].to_vec()
 }
 
