@@ -8,3 +8,4 @@ pub mod config;
 pub mod seed;
 pub mod encodex;
 pub mod keypair;
+pub mod address;

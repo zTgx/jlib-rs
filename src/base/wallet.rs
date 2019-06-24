@@ -7,6 +7,7 @@ use crate::base::constants::PASSWORD_LEN;
 
 use crate::base::seed::*;
 use crate::base::keypair::*;
+use crate::base::address::*;
 
 // 钱包生成器
 #[derive(Debug)]
@@ -24,26 +25,26 @@ impl <'a> WalletBuilder <'a> {
     pub fn build(&self) -> Wallet {
 
         //seed
-        let seed: &'a str = "sn37nYrQ6KPJvTFmaBYokS3FjXUWd";
-        let seed_property = SeedProperty::new(seed, 16);
+        let seed = self.generate();//"sn37nYrQ6KPJvTFmaBYokS3FjXUWd";
+        let seed_property = SeedProperty::new(&seed, 16);
         let seed = SeedBuilder::new(seed_property).build();
 
         //keypair
         let key_pair = KeypairBuilder::new(&seed).build();
 
         //address
-
+        let address = WalletAddressBuilder::new(&key_pair).build();
 
         Wallet {
             key_type: self.config.key_type,
-            address : "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string(), //test
+            address : address,//"jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string(), //test
             secret  : seed,
             keypair : Some(key_pair),
         }
     }
 
     //private method
-    fn generate_seed() -> String {
+    fn generate(&self) -> String {
         //1. Generete 16 random data
         let mut u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
 
@@ -67,33 +68,10 @@ impl <'a> WalletBuilder <'a> {
 }
 
 
-
-
-#[derive(Debug, Copy, Clone)]
-pub struct WalletAddress <'a> {
-    pub address: &'a str,
-}
-impl <'a> WalletAddress <'a> {
-    pub fn new() -> Self {
-        WalletAddress {
-            address: "default",
-        }
-    }
-
-    // pub fn update(&mut self, bytes: &[u8]) {
-    //     self.address = bytes;
-    // }
-
-    pub fn get(&self) -> String {
-        self.address.to_owned()
-    }
-}
-
-
 #[derive(Debug)]
 pub struct Wallet {
     pub key_type: KeyType, 
-    pub address : String,  //j开头的钱包地址
+    pub address : WalletAddress,  //j开头的钱包地址
     pub secret  : Seed,  //secret seed
     pub keypair : Option<Keypair>, //公钥私钥对
 }
