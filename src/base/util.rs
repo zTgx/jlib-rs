@@ -3,6 +3,13 @@ extern crate bs58;
 use super::constants::*;
 use ring::{digest, test};
 
+extern crate secp256k1;
+use secp256k1::key::{ SecretKey};
+use secp256k1::key::PublicKey;
+use secp256k1::Secp256k1;
+use secp256k1::key::ONE_KEY;
+// use secp256k1::constants::*;    
+
 pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
     // println!("before concat args: {:?}", left);
 
@@ -141,4 +148,22 @@ pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
 
     //never get this
     vec![0]
+}
+
+//通过secret计算出publickey
+pub fn get_public_key_from_secret(secret: String) -> String {
+
+    use crate::base::seed::*;
+    use crate::base::keypair::*;
+
+    //seed
+    let seed = secret;
+    let seed_property = SeedProperty::new(&seed, 16);
+    let seed = SeedBuilder::new(seed_property).build();
+
+    //keypair
+    let key_pair = KeypairBuilder::new(&seed).build();
+    println!("key pair : {:?}", key_pair);  
+
+    key_pair.property.public_key
 }

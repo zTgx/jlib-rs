@@ -538,6 +538,7 @@ impl Remote  {
     */
     pub fn build_payment_tx<F>(config: Box<Rc<Config>>, from: String, to: String, amount: Amount, 
                                                      memo: Option<String>, 
+                                                     sequence: Option<String>,
                                                      secret: Option<String>, 
                                                      op: F) 
         where F: Fn(Result<TransactionTxResponse, &'static str>) {
@@ -576,6 +577,11 @@ impl Remote  {
             memo_rc.set(Some(v));
         }
 
+        let sequence_rc = Rc::new(Cell::new(None));
+        if sequence.is_some() {
+            sequence_rc.set(sequence);
+        }
+
         let secret_rc = Rc::new(Cell::new(secret));
         
         connect(config.addr, |out| { 
@@ -585,10 +591,11 @@ impl Remote  {
             let to   = to_rc.clone();
             let amount = amount_rc.clone();
             let memo   = memo_rc.clone();
+            let sequence = sequence_rc.clone();
 
             let secret = secret_rc.clone();
 
-            if let Ok(command) = TransactionTx::new(secret.take(), TxJson::new(from.take(), to.take(), amount.take(), memo.take())).to_string() {
+            if let Ok(command) = TransactionTx::new(secret.take(), TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take())).to_string() {
                 out.send(command).unwrap()
             }
 

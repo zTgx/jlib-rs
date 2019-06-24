@@ -63,10 +63,13 @@ pub struct TxJson {
 
     #[serde(rename="Memos")]
     pub memo: Option<Vec<Memo>>,
+
+    #[serde(rename="Sequence")]
+    pub sequence: Option<String>,
 }
 
 impl TxJson {
-    pub fn new(from: String, to: String, amount: Amount, memo: Option<Vec<Memo>>) -> Self {
+    pub fn new(from: String, to: String, amount: Amount, memo: Option<Vec<Memo>>, sequence: Option<String>) -> Self {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),
@@ -75,7 +78,8 @@ impl TxJson {
             account: from,
             destination: to,
             amount: "500000".to_string(), //amount ?????
-            memo: memo
+            memo: memo,
+            sequence: sequence,
         }
     }
 }
