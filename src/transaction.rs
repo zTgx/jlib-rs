@@ -66,6 +66,12 @@ pub struct TxJson {
 
     #[serde(rename="Sequence")]
     pub sequence: Option<String>,
+
+    #[serde(rename="SigningPubKey")]
+    pub signing_pubKey: Option<String>,
+
+    #[serde(rename="TxnSignature")]
+    pub txn_signature: Option<String>,
 }
 
 impl TxJson {
@@ -80,6 +86,8 @@ impl TxJson {
             amount: "500000".to_string(), //amount ?????
             memo: memo,
             sequence: sequence,
+            signing_pubKey: None,
+            txn_signature: None,
         }
     }
 }

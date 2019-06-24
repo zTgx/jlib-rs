@@ -1,3 +1,4 @@
+
 pub mod sign;
 pub mod brorand;
 pub mod util;
@@ -9,3 +10,5 @@ pub mod seed;
 pub mod encodex;
 pub mod keypair;
 pub mod address;
+pub mod inverse_fields_map;
+
