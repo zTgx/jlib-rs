@@ -1,8 +1,19 @@
-// extern crate mylib;
+#[macro_use] 
+extern crate typename;
+
+extern crate mylib;
+
 use serde_json::json;
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
+
+use mylib::base::inverse_fields_map::INVERSE_FIELDS_MAP;
+use mylib::base::types_map::TYPES_MAP;
+use mylib::base::serialized_type::*;
+
+use typename::TypeName;
+
 
 // use mylib::transaction::TxJson;
 #[derive(Serialize, Deserialize, Debug)]
@@ -64,7 +75,7 @@ fn main() {
 
     use serde_json::Value;
     if let Ok(x) = serde_json::from_str(&from_json) as Result<TxJson> {
-        println!("tx_json : {:?}", x);
+        println!("tx_json : {:?}", &x);
 
         //step 2 keys = sort_fields(keys);
         let mut keys = vec![
@@ -101,23 +112,201 @@ fn main() {
             
         });
         println!("sorted : {:?}", keys);
+
+
+        //serialize
+        serialize(x, &keys);
+
+        let stint8 = STInt8::new(18u8);
+        let type_name = stint8.type_name_of();
+        println!("typename : {}", type_name);
+        let x = stint8.serialize();
+        println!("x : {:?}", x);
+        println!("x.typename : {}", x.type_name_of());
+
+      {
+        use global::Global;
+        use std::collections::HashMap;
+
+
+        #[derive(Debug, Default)]
+        struct X {
+          pub m: HashMap<&'static str, i32>,
+        }
+        impl X {
+          pub fn new() -> Self {
+            let timber_resources: HashMap<&'static str, i32> =
+                                                [("Norway", 100),
+                                                ("Denmark", 50),
+                                                ("Iceland", 10)]
+                                                .iter().cloned().collect();
+            X {
+              m: timber_resources,
+            }
+          }
+          pub fn get_value_from_key(&self, key: &str) -> Option<&i32> {
+            self.m.get(key)
+          }
+
+          pub fn get_key_from_value(&self, value: i32) -> Option<&'static str> {
+            let mut k = None;
+            for (key, val) in self.m.iter() {
+                println!("key: {} val: {}", key, val);
+
+                if *val == value {
+                  k = Some(*key);
+
+                  return k;
+                }
+            }
+
+            k
+          }
+        }
+        // The global value.
+        static VALUE: Global<X> = Global::new();
+
+        *VALUE.lock_mut().unwrap() = X::new();
+        let raw = VALUE.lock_mut().unwrap();
+        println!("Value : {:?} ", *raw);
+        let key_from_value = raw.get_key_from_value(100);
+        println!("key : {:?}", key_from_value);
+      }
+        
     }
+}
+
+fn serialize(tx_json: TxJson, keys: &Vec<String>) {
+  let mut so = vec![0u8];
+  for key in keys {
+    let key = key.as_str();
+
+    let field_coordinates = INVERSE_FIELDS_MAP.get(key).unwrap();
+    let type_bits = field_coordinates[0];
+    let field_bits = field_coordinates[1];
+    // let tag_byte = (type_bits < 16 ? type_bits << 4 : 0) | (field_bits < 16 ? field_bits : 0);
+    let tag_byte: u8 = if type_bits < 16 { type_bits << 4 } else { 0 } | if field_bits < 16 { field_bits } else { 0 };
+    println!("tag_byte: {}", tag_byte);
+
+    // if ('string' === typeof value) {
+    //   if (field_name === 'LedgerEntryType') {
+    //       value = get_ledger_entry_type(value);
+    //   } else if (field_name === 'TransactionResult') {
+    //       value = get_transaction_type(value);//binformat.ter[value];
+    //   }
+    // }
+    // let stint8 = STInt8::new(tag_byte);
+    // let s = stint8.serialize(tag_byte);
+    // so.push(s);
+
+    // if (type_bits >= 16) {
+    //     let s = stint8.serialize(type_bits);
+    //     so.push(s);
+    // }
+
+    // if (field_bits >= 16) {
+    //     let x = stint8.serialize(field_bits);
+    //     so.push(s);
+    // }
+
+    //Trait object~~~~~~~~
+    // let mut serialized_object_type = "".to_string();
+    // if key == "Memos" {
+    //     // for Memo we override the default behavior with our STMemo serializer
+    //     serialized_object_type = exports.STMemo;
+    // } else {
+    //     // for a field based on the type bits.
+    //     serialized_object_type = exports[TYPES_MAP[type_bits]];
+    // }
+
+  //   match x {
+  //     "Flags" => {
+
+  //     },
+  //     "Fee" => {
+
+  //     },
+
+  //     "TransactionType" => {
+
+  //     },
+
+  //     "Account" => {
+
+  //     },
+
+  //     "Amount" => {
+
+  //     },
+
+  //     "Destination" => {
+
+  //     },
+
+  //     "Sequence" => {
+
+
+  //     },
+      
+  //     "SigningPubKey" => {
+
+  //     },
+        
+  //     "TxnSignature" => {
+
+  //     },
+      
+  //     "Memos" => {
+
+  //     },
+
+  //     _ => {}
+  // }
+}
 
 
 
 
+  
+
+  // if ('string' === typeof value) {
+  //       if (field_name === 'LedgerEntryType') {
+  //           value = get_ledger_entry_type(value);
+  //       } else if (field_name === 'TransactionResult') {
+  //           value = get_transaction_type(value);//binformat.ter[value];
+  //       }
+  //   }
 
 
+  //1.
+  // STInt8.serialize(so, tag_byte);
 
+  // //2.
+  // if (type_bits >= 16) {
+  //     STInt8.serialize(so, type_bits);
+  // }
 
+  // //3.
+  // if (field_bits >= 16) {
+  //     STInt8.serialize(so, field_bits);
+  // }
 
+  //4
+  // Get the serializer class (ST...)
+    // var serialized_object_type;
+    // if (field_name === 'Memo' && typeof value === 'object') {
+    //     // for Memo we override the default behavior with our STMemo serializer
+    //     serialized_object_type = exports.STMemo;
+    // } else {
+    //     // for a field based on the type bits.
+    //     serialized_object_type = exports[TYPES_MAP[type_bits]];
+    // }
 
-
-
-
-
-
-
-
+    // try {
+    //     serialized_object_type.serialize(so, value);
+    // } catch (e) {
+    //     e.message += ' (' + field_name + ')';
+    //     throw e;
+    // }
 
 }

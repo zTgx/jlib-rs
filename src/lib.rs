@@ -1,6 +1,9 @@
 #[macro_use]
 extern crate lazy_static;
 
+#[macro_use] 
+extern crate typename;
+
 pub mod commands;
 pub mod config;
 pub mod remote;
