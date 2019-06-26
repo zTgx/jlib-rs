@@ -75,7 +75,7 @@ fn main() {
 
     use serde_json::Value;
     if let Ok(x) = serde_json::from_str(&from_json) as Result<TxJson> {
-        println!("tx_json : {:?}", &x);
+        // println!("tx_json : {:?}", &x);
 
         //step 2 keys = sort_fields(keys);
         let mut keys = vec![
@@ -111,7 +111,7 @@ fn main() {
 
             
         });
-        println!("sorted : {:?}", keys);
+        // println!("sorted : {:?}", keys);
 
 
         //serialize
@@ -124,55 +124,10 @@ fn main() {
         println!("x : {:?}", x);
         println!("x.typename : {}", x.type_name_of());
 
-      {
-        use global::Global;
-        use std::collections::HashMap;
-
-
-        #[derive(Debug, Default)]
-        struct X {
-          pub m: HashMap<&'static str, i32>,
-        }
-        impl X {
-          pub fn new() -> Self {
-            let timber_resources: HashMap<&'static str, i32> =
-                                                [("Norway", 100),
-                                                ("Denmark", 50),
-                                                ("Iceland", 10)]
-                                                .iter().cloned().collect();
-            X {
-              m: timber_resources,
-            }
-          }
-          pub fn get_value_from_key(&self, key: &str) -> Option<&i32> {
-            self.m.get(key)
-          }
-
-          pub fn get_key_from_value(&self, value: i32) -> Option<&'static str> {
-            let mut k = None;
-            for (key, val) in self.m.iter() {
-                println!("key: {} val: {}", key, val);
-
-                if *val == value {
-                  k = Some(*key);
-
-                  return k;
-                }
-            }
-
-            k
-          }
-        }
-        // The global value.
-        static VALUE: Global<X> = Global::new();
-
-        *VALUE.lock_mut().unwrap() = X::new();
-        let raw = VALUE.lock_mut().unwrap();
-        println!("Value : {:?} ", *raw);
-        let key_from_value = raw.get_key_from_value(100);
-        println!("key : {:?}", key_from_value);
-      }
-        
+      
+        use mylib::base::GLOBAL_MAP;
+        let key_from_value = GLOBAL_MAP.get_key_from_value(100);
+        println!("key from global map : {:?}", key_from_value);
     }
 }
 
