@@ -125,8 +125,9 @@ fn main() {
         println!("x.typename : {}", x.type_name_of());
 
       
-        use mylib::base::GLOBAL_MAP;
-        let key_from_value = GLOBAL_MAP.get_key_from_value(100);
+        use mylib::base::gTransactionTypeMap;
+        use mylib::base::TWHashMap;
+        let key_from_value = gTransactionTypeMap.get_key_from_value(100);
         println!("key from global map : {:?}", key_from_value);
     }
 }
