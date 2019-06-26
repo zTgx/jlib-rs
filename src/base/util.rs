@@ -167,3 +167,11 @@ pub fn get_public_key_from_secret(secret: String) -> String {
 
     key_pair.property.public_key
 }
+
+//decode j开头的hex string地址到Vec<u8>
+pub fn decode_j_address(address: String) -> Option<Vec<u8>> {
+    
+
+
+    None
+}

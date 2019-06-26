@@ -87,11 +87,11 @@ fn main() {
             "Destination".to_string(),
             "Sequence".to_string(),
             "SigningPubKey".to_string(),
-            "TxnSignature".to_string(),
-        ];
+            ];
 
         use mylib::base::inverse_fields_map::INVERSE_FIELDS_MAP;
         keys.sort_by( |a, b| {
+                                
             let a_field_coordinates = INVERSE_FIELDS_MAP.get(a.as_str()).unwrap();
             let a_type_bits = a_field_coordinates[0];
             let a_field_bits = a_field_coordinates[1];
@@ -131,8 +131,11 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
       let type_bits  = field_coordinates[0];
       let field_bits = field_coordinates[1];
       // let tag_byte = (type_bits < 16 ? type_bits << 4 : 0) | (field_bits < 16 ? field_bits : 0);
-      let tag_byte: u8 = if type_bits < 16 { type_bits << 4 } else { 0 } | if field_bits < 16 { field_bits } else { 0 };
-      println!("tag_byte: {}", tag_byte);
+      let left = if type_bits < 16 { type_bits << 4 } else { 0 };
+      let right = if field_bits < 16 { field_bits } else { 0 };
+      let tag_byte: u8 = left | right;
+      
+      println!("type_name: {} / type_bits : {} / tag_byte: {}", key, type_bits, tag_byte);
 
       // if ('string' === typeof value) {
       //   if (field_name === 'LedgerEntryType') {
@@ -237,18 +240,46 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
             }
         },
 
-        // "Account" => {
-        //     let value = "".to_owned() + tx_json.signing_pubKey.as_str();
-        //     serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-        //     if serialized_object_type.as_str() == "Account" {
-            
-        //         let mut s = STVL::serialize(value);
-        //         so.append(&mut s);
-        //         println!("so : {:?}", &so);
+        "Account" => {
+            let value = "".to_owned() + tx_json.account.as_str();
+            println!("value : {}", value);
 
-        //         return;
-        //     }
-        // },
+            serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
+            if serialized_object_type.as_str() == "Account" {
+            
+                let mut s = STAccount::serialize(value);
+                so.append(&mut s);
+                println!("Account : {:?}", &so);
+            }
+        },
+
+        "Destination" => {
+            let value = "".to_owned() + tx_json.destination.as_str();
+            println!("value : {}", value);
+
+            serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
+            if serialized_object_type.as_str() == "Account" {
+            
+                let mut s = STAccount::serialize(value);
+                so.append(&mut s);
+                println!("Account : {:?}", &so);
+            }
+        },
+
+        "TxnSignature" => {
+            let value = "".to_owned() + tx_json.txn_signature.as_str();
+            println!("value : {}", value);
+
+            serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
+            if serialized_object_type.as_str() == "VL" {
+            
+                let mut s = STVL::serialize(value);
+                so.append(&mut s);
+                println!("TxnSignature : {:?}", &so);
+
+                return;
+            }
+        },
 
         _ => {}
       }      
