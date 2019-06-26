@@ -264,6 +264,10 @@ impl SerializedSTAmount for STAmount {
     fn parse() {}
 }
 
+pub trait SerializedSTVL {
+  fn serialize(value: String) -> Vec<u8>;
+  fn parse();
+}
 //STVL
 pub struct STVL {
     pub id: i32,
@@ -273,6 +277,40 @@ impl STVL {
         STVL {
             id: 7,
         }
+    }
+
+    pub fn serialize_varint(byte_data: &mut Vec<u8>) -> Vec<u8> {
+        let mut val = byte_data.len();
+        let mut v: Vec<u8> = vec![];
+        if (val <= 192) {
+            let mut t = vec![val as u8];
+            v.append(&mut t);
+        } else if (val <= 12480) {
+            val -= 193;
+            let mut t = [(193 + (val >> 8)) as u8, (val & 0xff) as u8].to_vec();
+            v.append(&mut t);
+        } else if (val <= 918744) {
+            val -= 12481;
+
+            let mut t = [(241 + (val >> 16)) as u8, (val >> 8 & 0xff) as u8, (val & 0xff) as u8].to_vec();
+            v.append(&mut t);
+        } 
+
+        v.append(byte_data);
+
+        v
+    }
+}
+impl SerializedSTVL for STVL {
+    fn serialize(value: String) -> Vec<u8> {
+        let mut byte_data = hex::decode(value).unwrap();
+        println!("byte_data: {:?}", byte_data);
+
+        STVL::serialize_varint(&mut byte_data)
+    }
+
+    fn parse() {
+
     }
 }
 

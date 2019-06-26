@@ -210,9 +210,45 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
                 let mut s = STAmount::serialize(amount);
                 so.append(&mut s);
                 println!("so : {:?}", &so);
-                return;
             }
         },
+
+        "Fee" => {
+            let value = tx_json.fee;
+            serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
+            if serialized_object_type.as_str() == "Amount" {
+            
+                println!("raw value : {}", value);
+                let amount = Amount::from_json(value.to_string());
+                let mut s = STAmount::serialize(amount);
+                so.append(&mut s);
+                println!("so : {:?}", &so);
+            }
+        },
+
+        "SigningPubKey" => {
+            let value = "".to_owned() + tx_json.signing_pubKey.as_str();
+            serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
+            if serialized_object_type.as_str() == "VL" {
+            
+                let mut s = STVL::serialize(value);
+                so.append(&mut s);
+                println!("so : {:?}", &so);
+            }
+        },
+
+        // "Account" => {
+        //     let value = "".to_owned() + tx_json.signing_pubKey.as_str();
+        //     serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
+        //     if serialized_object_type.as_str() == "Account" {
+            
+        //         let mut s = STVL::serialize(value);
+        //         so.append(&mut s);
+        //         println!("so : {:?}", &so);
+
+        //         return;
+        //     }
+        // },
 
         _ => {}
       }      
