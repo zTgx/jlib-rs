@@ -1,8 +1,15 @@
+use crate::base::amount::*;
+
 use typename::TypeName;
 
 pub trait SerializedType {
   fn serialize(&self) -> Vec<u8>;
   fn parse(&self);
+}
+
+pub trait SerializedSTInt8 {
+  fn serialize(value: u8) -> Vec<u8>;
+  fn parse();
 }
 
 //STInt8
@@ -20,12 +27,18 @@ impl STInt8 {
   }
 }
 
-impl SerializedType for STInt8 {
-  fn serialize(&self) -> Vec<u8> {
-    self.value.to_be_bytes().to_vec()
+impl SerializedSTInt8 for STInt8 {
+  fn serialize(value: u8) -> Vec<u8> {
+     value.to_be_bytes().to_vec()
   }
 
-  fn parse(&self) {}
+  fn parse() {}
+}
+
+//----------------------------------------------------
+pub trait SerializedSTInt16 {
+  fn serialize(value: u16) -> Vec<u8>;
+  fn parse();
 }
 
 //STInt16
@@ -43,14 +56,19 @@ impl STInt16 {
   }
 }
 
-impl SerializedType for STInt16 {
-  fn serialize(&self) -> Vec<u8> {
-    self.value.to_be_bytes().to_vec()
+impl SerializedSTInt16 for STInt16 {
+  fn serialize(value: u16) -> Vec<u8> {
+     value.to_be_bytes().to_vec()
   }
 
-  fn parse(&self) {}
+  fn parse() {}
 }
 
+//----------------------------------------------------
+pub trait SerializedSTInt32 {
+  fn serialize(value: u32) -> Vec<u8>;
+  fn parse();
+}
 //STInt32
 #[derive(TypeName, Debug)]
 pub struct STInt32 {
@@ -66,12 +84,12 @@ impl STInt32 {
   }
 }
 
-impl SerializedType for STInt32 {
-  fn serialize(&self) -> Vec<u8> {
-    self.value.to_be_bytes().to_vec()
+impl SerializedSTInt32 for STInt32 {
+  fn serialize(value: u32) -> Vec<u8> {
+    value.to_be_bytes().to_vec()
   }
 
-  fn parse(&self) {}
+  fn parse() {}
 }
 
 //STInt64
@@ -179,6 +197,13 @@ impl SerializedType for STHash160 {
 //     }
 // }
 
+
+
+pub trait SerializedSTAmount {
+  fn serialize(value: Amount) -> Vec<u8>;
+  fn parse();
+}
+
 //STAmount
 pub struct STAmount {
     pub id: i32,
@@ -189,6 +214,54 @@ impl STAmount {
             id: 6,
         }
     }
+}
+impl SerializedSTAmount for STAmount {
+    fn serialize(amount: Amount) -> Vec<u8> {
+
+        // var valueBytes = arraySet(8, 0);
+
+        //SWTC
+        if amount.is_native {
+            // var bn = new BN(amount._value, 10);
+            // var valueHex = bn.toString(16);
+            let mut value_hex = amount.value.unwrap().to_str_radix(16);
+            println!("value_hex : {}", value_hex);
+
+            // Enforce correct length (64 bits)
+            if value_hex.len() > 16 {
+                // throw new Error('Amount Value out of bounds');
+            }
+
+            while value_hex.len() < 16 {
+                // valueHex = '0' + valueHex;
+                value_hex.insert(0, '0');
+            }
+
+            //Convert the HEX value to bytes array
+            // valueBytes = convertHexToByteArray(valueHex);//bytes.fromBits(hex.toBits(valueHex));
+            unsafe {
+
+                let mut value_bytes = hex::decode(value_hex).unwrap();
+
+
+                // Clear most significant two bits - these bits should already be 0 if
+                // Amount enforces the range correctly, but we'll clear them anyway just
+                // so this code can make certain guarantees about the encoded value.
+                value_bytes[0] &= 0x3f;
+
+                if !amount.is_negative {
+                    value_bytes[0] |= 0x40;
+                }
+
+                return value_bytes.to_vec();
+
+            }
+        }
+
+        vec![]
+    }
+
+    fn parse() {}
 }
 
 //STVL

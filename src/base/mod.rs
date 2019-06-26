@@ -15,6 +15,8 @@ pub mod inverse_fields_map;
 pub mod types_map;
 pub mod serialized_type;
 
+pub mod amount;
+
 
 //Serialize
 use std::collections::HashMap;
