@@ -1,4 +1,7 @@
 
+// #[macro_use] 
+// extern crate typename;
+
 pub mod sign;
 pub mod brorand;
 pub mod util;
@@ -16,7 +19,7 @@ pub mod types_map;
 pub mod serialized_type;
 
 pub mod amount;
-
+pub mod sign_tx;
 
 //Serialize
 use std::collections::HashMap;

@@ -91,6 +91,24 @@ impl TxJson {
         }
     }
 }
+impl CommandConversion for TxJson {
+    type T = TxJson;
+    fn to_string(&self) -> Result<String> {
+        //https://crates.io/crates/serde_json
+        // Serialize it to a JSON string.
+        let j = serde_json::to_string(&self)?;
+
+        // Print, write to a file, or send to an HTTP server.
+        println!("{}", j);
+
+        Ok(j)
+    }
+    
+    fn box_to_raw(&self) -> &dyn Any {
+        self
+    }
+}
+
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TransactionTx {

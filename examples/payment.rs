@@ -14,13 +14,13 @@ fn main() {
     let to  : String = "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string();
     let secret:String= "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
     // let memo: String = "".to_string();
-    let memo: String = "给jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c支付0.5swt.".to_string();
+    // let memo: String = "给jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c支付0.5swt.".to_string();
     let sequence: String= "1".to_string();
     Remote::build_payment_tx(config.clone(), 
                                         from,
                                         to,
                                         amount,
-                                        Some(memo),
+                                        None,
                                         Some(sequence),
                                         Some(secret),
 

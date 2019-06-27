@@ -595,7 +595,11 @@ impl Remote  {
 
             let secret = secret_rc.clone();
 
-            if let Ok(command) = TransactionTx::new(secret.take(), TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take())).to_string() {
+            //local sign
+            let mut tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take());
+            println!("tx_json : {}", tx_json.to_string().unwrap());
+
+            if let Ok(command) = TransactionTx::new(secret.take(), tx_json).to_string() {
                 out.send(command).unwrap()
             }
 
