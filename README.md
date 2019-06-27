@@ -40,7 +40,7 @@ Rust.
 
 待实现工具方法：  
 - [x] 字符串转16进制： fn string_to_hex(s: String) -> String;  
-- [ ] 本地签名：      fn sign(s: String) -> String;  
+- [x] 本地签名
 
 
 遗留问题:
