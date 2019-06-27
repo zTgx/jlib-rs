@@ -332,6 +332,7 @@ impl STAccount {
 impl SerializedSTAccount for STAccount {
   fn serialize(value: String) -> Vec<u8> {
       let mut byte_data = util::decode_j_address(value).unwrap();
+      println!("STAccount : {:?}", byte_data);
       serialize_varint(&mut byte_data)
   }
 

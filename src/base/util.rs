@@ -8,7 +8,9 @@ use secp256k1::key::{ SecretKey};
 use secp256k1::key::PublicKey;
 use secp256k1::Secp256k1;
 use secp256k1::key::ONE_KEY;
-// use secp256k1::constants::*;    
+
+use crate::base::constants::ALPHABET;
+use std::collections::HashMap;
 
 pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
     // println!("before concat args: {:?}", left);
@@ -168,10 +170,111 @@ pub fn get_public_key_from_secret(secret: String) -> String {
     key_pair.property.public_key
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//decode
 //decode j开头的hex string地址到Vec<u8>
 pub fn decode_j_address(address: String) -> Option<Vec<u8>> {
-    
+    decode_address(address)
+}
 
+pub fn decode_address(address: String) -> Option<Vec<u8>> {
+    if true { //is_set
+        return decode_versioned(address);
+    }
 
     None
+}
+
+pub fn decode_versioned(address: String) -> Option<Vec<u8>> {
+    decode_multi_versioned(address)
+}
+
+pub fn decode_multi_versioned(address: String) -> Option<Vec<u8>> {
+    let x = decode_checked(address);
+
+    //calc payload
+    x
+}
+
+pub fn decode_checked(encoded: String) -> Option<Vec<u8>> {
+        println!("decode_versioned.");
+
+    let buf = decode_raw(encoded).unwrap();
+
+    println!("decode_versioned.buf : {:?}", buf);
+
+    Some(buf[1..21].to_vec())
+}
+
+pub fn decode_raw(encoded: String) -> Option<Vec<u8>> {
+    decode(encoded)
+}
+
+pub fn decode(string: String) -> Option<Vec<u8>> {
+    if string.len() == 0 { return None; }
+
+    let ALPHABET_MAP = generate_alpha_map();
+    let BASE = ALPHABET.len() as u16;
+    let LEADER = ALPHABET[0] as char;
+
+    let mut bytes: Vec<u8> = vec![];
+    let mut i = 0;
+    while i < string.len() {
+        let c = string.as_str().chars().nth(i).unwrap();
+        let val = ALPHABET_MAP.get(&c);
+        if val.is_none() {
+            return None;
+        }
+        
+        let mut j = 0;
+        let mut carry: u16 = *val.unwrap() as u16;
+        while j < bytes.len() {
+            carry += bytes[j] as u16 * BASE;
+            bytes[j] = (carry as u8) & 0xff;
+            carry >>= 8;
+
+            j += 1;
+        }
+
+        while carry > 0 {
+            bytes.push((carry as u8) & 0xff );
+            carry >>= 8;
+        } 
+
+        i += 1;
+    }
+
+    // deal with leading zeros
+    let mut k = 0;
+    while string.as_str().chars().nth(k).unwrap() == LEADER && k < string.len() - 1 {
+      bytes.push(0);
+
+      k += 1;
+    }
+
+    bytes.as_mut_slice().reverse();
+
+    Some(bytes)
+}
+
+pub fn calc(payload: Option<Vec<u8>>) -> Option<Vec<u8>> {
+    None
+}
+
+//default source ALPHABET. 
+pub fn generate_alpha_map() -> HashMap<char, usize> {
+    let mut map: HashMap<char, usize> = HashMap::new();
+    let lens = ALPHABET.len();
+    let leader = ALPHABET[0];
+
+    // pre-compute lookup table
+    let mut i = 0; 
+    while i < lens {
+        let x = ALPHABET[i] as char;
+        map.insert(x, i);
+        
+        i += 1;
+    }
+
+    map
 }

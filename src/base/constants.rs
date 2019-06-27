@@ -11,3 +11,4 @@ pub const CURVE_ORDER: &[u8] = &[
 ];
 
 pub const CURVE_ZERO: &[u8] = &[ 0x0, 0x0, 0x0, 0x0 ];
+

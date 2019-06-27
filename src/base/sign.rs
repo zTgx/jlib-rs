@@ -19,8 +19,8 @@ impl SignatureX {
     */
     pub fn sign(message: &[u8], key: &[u8]) -> String {
         let sign = Secp256k1::signing_only();
-        let message = Message::from_slice(&message).unwrap();
-        let secret_key = SecretKey::from_slice(&key).expect("32 bytes, within curve order");
+        let message = Message::from_slice(message).unwrap();
+        let secret_key = SecretKey::from_slice(key).expect("32 bytes, within curve order");
         let signature = sign.sign(&message, &secret_key);
         // println!("tx_json signed : {:?}", signature.to_string().to_ascii_uppercase());   
 
