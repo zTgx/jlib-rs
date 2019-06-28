@@ -20,6 +20,8 @@ pub mod serialized_type;
 
 pub mod amount;
 pub mod sign_tx;
+pub mod type_obj;
+pub mod signed_obj;
 
 //Serialize
 use std::collections::HashMap;

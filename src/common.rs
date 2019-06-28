@@ -122,58 +122,58 @@ impl fmt::Display for Flags {
 }
 
 impl Flags {
-    pub fn get(&self) -> i32 {
+    pub fn get(&self) -> u32 {
         match *self {
             //Universal
             Flags::Universal { ref name } => { match name {
-                FullyCanonicalSig => { Universal::FullyCanonicalSig as i32 }
+                FullyCanonicalSig => { Universal::FullyCanonicalSig as u32 }
             }}
 
             //AccountSet
             Flags::AccountSet { ref name } => { match name {
-                RequireDestTag  => { AccountSet::RequireDestTag   as i32 },
-                OptionalDestTag => { AccountSet::OptionalDestTag  as i32 },
-                RequireAuth     => { AccountSet::RequireAuth      as i32 },
-                OptionalAuth    => { AccountSet::OptionalAuth     as i32 },
-                DisallowSWT     => { AccountSet::DisallowSWT      as i32 },
-                AllowSWT        => { AccountSet::AllowSWT         as i32 },
+                RequireDestTag  => { AccountSet::RequireDestTag   as u32 },
+                OptionalDestTag => { AccountSet::OptionalDestTag  as u32 },
+                RequireAuth     => { AccountSet::RequireAuth      as u32 },
+                OptionalAuth    => { AccountSet::OptionalAuth     as u32 },
+                DisallowSWT     => { AccountSet::DisallowSWT      as u32 },
+                AllowSWT        => { AccountSet::AllowSWT         as u32 },
             }}
 
             //TrustSet
             Flags::TrustSet { ref name } => { match name {
-                SetAuth         =>  { TrustSet::SetAuth         as i32 },
-                ClearNoSkywell  =>  { TrustSet::ClearNoSkywell  as i32 },
-                SetFreeze       =>  { TrustSet::SetFreeze       as i32 },
-                ClearFreeze     =>  { TrustSet::ClearFreeze     as i32 },
+                SetAuth         =>  { TrustSet::SetAuth         as u32 },
+                ClearNoSkywell  =>  { TrustSet::ClearNoSkywell  as u32 },
+                SetFreeze       =>  { TrustSet::SetFreeze       as u32 },
+                ClearFreeze     =>  { TrustSet::ClearFreeze     as u32 },
 
                 // NoSkywell       =>  { TrustSet::NoSkywell       as i32 },
                 // SetNoSkywell    =>  { TrustSet::SetNoSkywell    as i32 },
-                NoSkywell       =>  { 0x00020000    as i32 },
-                SetNoSkywell    =>  { 0x00020000    as i32 },
+                NoSkywell       =>  { 0x00020000    as u32 },
+                SetNoSkywell    =>  { 0x00020000    as u32 },
             }}
 
             //OfferCreate
             Flags::OfferCreate { ref name } => { match name {
-                Passive             =>  { OfferCreate::Passive              as i32 },
-                ImmediateOrCancel   =>  { OfferCreate::ImmediateOrCancel    as i32 },
-                FillOrKill          =>  { OfferCreate::FillOrKill           as i32 },
-                Sell                =>  { OfferCreate::Sell                 as i32 },
+                Passive             =>  { OfferCreate::Passive              as u32 },
+                ImmediateOrCancel   =>  { OfferCreate::ImmediateOrCancel    as u32 },
+                FillOrKill          =>  { OfferCreate::FillOrKill           as u32 },
+                Sell                =>  { OfferCreate::Sell                 as u32 },
             }}
 
             //Payment
             Flags::Payment { ref name } => { match name {
-                NoSkywellDirect  =>  { Payment::NoSkywellDirect      as i32 },
-                PartialPayment   =>  { Payment::PartialPayment       as i32 },
-                LimitQuality     =>  { Payment::LimitQuality         as i32 },
+                NoSkywellDirect  =>  { Payment::NoSkywellDirect      as u32 },
+                PartialPayment   =>  { Payment::PartialPayment       as u32 },
+                LimitQuality     =>  { Payment::LimitQuality         as u32 },
             }}
 
             //RelationSet
             Flags::RelationSet { ref name } => { match name {
-                Authorize   =>  { RelationSet::Authorize      as i32 },
-                Freeze      =>  { RelationSet::Freeze         as i32 },
+                Authorize   =>  { RelationSet::Authorize      as u32 },
+                Freeze      =>  { RelationSet::Freeze         as u32 },
             }}
 
-            Flags::Other => { 0 },
+            Flags::Other => { 0 as u32 },
         }
     }
 }

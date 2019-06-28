@@ -17,7 +17,7 @@ use crate::common::*;
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct RelationTxJson {
     #[serde(rename="Flags")]
-    pub flags: i32,
+    pub flags: u32,
 
     #[serde(rename="Fee")]
     pub fee: u64,

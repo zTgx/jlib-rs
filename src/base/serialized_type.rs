@@ -265,7 +265,7 @@ impl SerializedSTAmount for STAmount {
 }
 
 pub trait SerializedSTVL {
-  fn serialize(value: String) -> Vec<u8>;
+  fn serialize(value: &String) -> Vec<u8>;
   fn parse();
 }
 pub fn serialize_varint(byte_data: &mut Vec<u8>) -> Vec<u8> {
@@ -303,7 +303,7 @@ impl STVL {
 
 }
 impl SerializedSTVL for STVL {
-    fn serialize(value: String) -> Vec<u8> {
+    fn serialize(value: &String) -> Vec<u8> {
         let mut byte_data = hex::decode(value).unwrap();
         serialize_varint(&mut byte_data)
     }

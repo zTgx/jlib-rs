@@ -16,12 +16,22 @@ use crate::base::sign::*;
 use ring::{digest};
 
 use crate::transaction::{TxJson};
+use crate::base::type_obj::*;
+use crate::base::signed_obj::*;
+
+use crate::base::constants::{
+    TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
+    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS
+};
+use std::rc::Rc;
 
 const PRE_FIELDS: [&str; 7] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence"];
+
 
 pub struct SignTx {
 }
 impl SignTx {
+
     pub fn prepare(tx_json: TxJson) {
         //Step 1: Get Non-None field. [SigningPubKey] / [TxnSignature] / [Memos]
         let mut fields: Vec<&str> = vec![];
@@ -38,9 +48,17 @@ impl SignTx {
 
         //Step 2: sorted
         SignTx::sort_fields(&mut fields);
+        // println!("sorted fields: {:?}", fields);
 
         //Step 3: serialize tx fields
-        let mut so = SignTx::serialize_tx_fields(&tx_json, &fields);
+        let mut tx: SignedTxJson = SignedTxJson::new();
+        // let tx_json = tx_json.copy();
+        SignTx::format_tx_obj(tx_json, &mut tx, &fields);
+
+        //Step 4 : serialize
+        let output: Vec<u8> = tx.serialize();
+        let txn_signature= SignTx::update_txn_signature(&output);
+        println!("txn_signature: {}", txn_signature);
     }
 
     //Hex String sign(tx_json) => blob
@@ -51,165 +69,93 @@ impl SignTx {
     //Output Hex String
     pub fn update_txn_signature(so: &Vec<u8>) -> String {
         let mut ctx = digest::Context::new(&digest::SHA512);
-        // let prefix = hex::decode("53545800").unwrap();
         ctx.update(&[83,84,88, 0]);
         ctx.update(&so);
 
         let mut hash = hex::encode(&ctx.finish().as_ref());
         let mut message = hash.get(0..64).unwrap().to_ascii_uppercase();
+        message
         
-        let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
+        // let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
 
-        let msg = hex::decode(message).unwrap();
-        let mut signed_hex_string = SignatureX::sign(&msg, &key);
-        return signed_hex_string;
+        // let msg = hex::decode(message).unwrap();
+        // let mut signed_hex_string = SignatureX::sign(&msg, &key);
+        // return signed_hex_string;
     }
 
-    pub fn serialize_tx_fields(tx_json: &TxJson, fields: &Vec<&str>) -> Vec<u8> {
-        let mut so: Vec<u8> = vec![];
+    pub fn format_tx_obj(tx_json: TxJson, output: &mut SignedTxJson, fields: &Vec<&str>) {
+        let tx_json_rc = Rc::new ( tx_json );
         for &key in fields {
-            // let key = key.as_str();
-
-            let field_coordinates = INVERSE_FIELDS_MAP.get(key).unwrap();
-            let type_bits  = field_coordinates[0];
-            let field_bits = field_coordinates[1];
-            let left = if type_bits < 16 { type_bits << 4 } else { 0 };
-            let right = if field_bits < 16 { field_bits } else { 0 };
-            let tag_byte: u8 = left | right;
-
-            let mut s8 = STInt8::serialize(tag_byte);
-            so.append(&mut s8);
-
-            if (type_bits >= 16) {
-                let mut s = STInt8::serialize(type_bits);
-                so.append(&mut s);
-            }
-
-            if (field_bits >= 16) {
-                let mut x = STInt8::serialize(field_bits);
-                so.append(&mut x);
-            }
-
-            let mut serialized_object_type = "".to_string();
+            let tx_json = tx_json_rc.clone();
+            println!("key : {}", key);
             match key {
-                "TransactionType" => {
+                TX_FLAGS => {
+                    println!("flags");
                     let value = tx_json.flags;
-                    serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                    if serialized_object_type.as_str() == "Int16" {
-                        let mut s = STInt16::serialize(value as u16);
-                        so.append(&mut s);
-
-                        println!("so : {:?}", &so);
-                    }
+                    let flags = TxJsonFlagsBuilder::new(value).build();
+                    output.insert(flags);
                 },
-
-                "Flags" => {
-                let value = tx_json.flags;
-                serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                if serialized_object_type.as_str() == "Int32" {
-                    let mut s = STInt32::serialize(value as u32);
-                    so.append(&mut s);
-
-                    println!("so : {:?}", &so);
-                    }
-                },
-
-                "Sequence" => {
-                    let value = tx_json.sequence.unwrap();
-                    serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                    if serialized_object_type.as_str() == "Int32" {
-                        let mut s = STInt32::serialize(value as u32);
-                        so.append(&mut s);
-
-                        println!("so : {:?}", &so);
-                    }
-                },
-
-                "Amount" => {
-
-                    let value = tx_json.amount;
-                    serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                    if serialized_object_type.as_str() == "Amount" {
-                        println!("raw value : {}", value);
-                        let amount = Amount::from_json(value.to_string());
-                        let mut s = STAmount::serialize(amount);
-                        so.append(&mut s);
-                        println!("so : {:?}", &so);
-                    }
-                },
-
-                "Fee" => {
+                TX_FEE => {
+                    println!("fee");
                     let value = tx_json.fee;
-                    serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                    if serialized_object_type.as_str() == "Amount" {
-                    
-                        println!("raw value : {}", value);
-                        let amount = Amount::from_json(value.to_string());
-                        let mut s = STAmount::serialize(amount);
-                        so.append(&mut s);
-                        println!("so : {:?}", &so);
-                    }
+                    let fee = TxJsonFeeBuilder::new(value.to_string()).build();
+                    output.insert(fee);
+                },
+                TX_TRANSACTION_TYPE => {
+                    println!("transaction type");
+                    //TRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPES
+                    let value = 0u16;//tx_json.transaction_type;
+                    let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
+                    output.insert(transaction_type);
+                },
+                TX_ACCOUNT => {
+                    println!("account");
+                    let value = String::from(tx_json.account.as_str());
+                    let account = TxJsonAccountBuilder::new(value).build();
+                    output.insert(account);
+                },
+                TX_AMOUNT => {
+                    println!("amount");
+                    let value = String::from(tx_json.amount.as_str());
+                    let amount = TxJsonAmountBuilder::new(value).build();
+                    output.insert(amount);
+                },
+                TX_DESTINATION => {
+                    println!("destination");
+                    let value = String::from(tx_json.destination.as_str());
+                    let destination = TxJsonDestinationBuilder::new(value).build();
+                    output.insert(destination);
+                },
+                TX_SEQUENCE => {
+                    println!("sequence");
+                    let value = tx_json.sequence.unwrap();
+                    let sequence = TxJsonSequenceBuilder::new(value).build();
+                    output.insert(sequence);
                 },
 
-                "SigningPubKey" => {
-                    let value = "".to_owned() + tx_json.signing_pubKey.unwrap().as_str();
-                    println!("signing pub key : {}", value);
-
-                    serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                    if serialized_object_type.as_str() == "VL" {
-                    
-                        let mut s = STVL::serialize(value);
-                        so.append(&mut s);
-                        println!("so : {:?}", &so);
-                    }
+                TX_SIGNING_PUB_KEY => {
+                    println!("public key");
+                    let value = Rc::try_unwrap(tx_json).unwrap_err();
+                    println!("--- {:#?}", value);
+                    let value = String::from("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020");
+                    let signing_pubKey = TxJsonSigningPubKeyBuilder::new(value).build();
+                    output.insert(signing_pubKey);
+                    println!("inserrrrrrrrrrt public key");
+                },
+                TX_SIGNATURE => {
+                    println!("siguration");
+                    let value: TxJson = Rc::try_unwrap(tx_json).unwrap();
+                    // let value = tx_json.txn_signature.unwrap();
+                    let value = String::from("value.as_str()");
+                    let txn_signature = TxJsonTxnSignatureBuilder::new(value).build();
+                    output.insert(txn_signature);
                 },
 
-                "Account" => {
-                    let value = "".to_owned() + tx_json.account.as_str();
-                    println!("value : {}", value);
-
-                    serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                    if serialized_object_type.as_str() == "Account" {
-                    
-                        let mut s = STAccount::serialize(value);
-                        so.append(&mut s);
-                        println!("Account : {:?}", &so);
-                    }
-                },
-
-                "Destination" => {
-                    let value = "".to_owned() + tx_json.destination.as_str();
-                    println!("value : {}", value);
-
-                    serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                    if serialized_object_type.as_str() == "Account" {
-                    
-                        let mut s = STAccount::serialize(value);
-                        so.append(&mut s);
-                        println!("Account : {:?}", &so);
-
-                    }
-                },
-
-                "TxnSignature" => {
-                    let value = "".to_owned() + tx_json.txn_signature.unwrap().as_str();
-                    println!("TxnSignature value : {}", value);
-
-                    serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
-                    if serialized_object_type.as_str() == "VL" {
-                    
-                        let mut s = STVL::serialize(value);
-                        so.append(&mut s);
-                        println!("TxnSignature : {:?}", &so);
-
-                    }
-                },
-
-                _ => {}
-            }      
+                _ => {
+                    panic!("pppppppppppppppppppppppnic.................");
+                }
+            }
         }
-
-        so
     }
 
     pub fn sort_fields(fields: &mut Vec<&str>) {

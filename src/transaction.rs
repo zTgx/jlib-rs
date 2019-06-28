@@ -41,13 +41,13 @@ impl Memo {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 pub struct TxJson {
     #[serde(rename="Flags")]
-    pub flags: i32,
+    pub flags: u32,
 
     #[serde(rename="Fee")]
-    pub fee: u64,
+    pub fee: f64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -65,7 +65,7 @@ pub struct TxJson {
     pub memo: Option<Vec<Memo>>,
 
     #[serde(rename="Sequence")]
-    pub sequence: Option<String>,
+    pub sequence: Option<u32>,
 
     #[serde(rename="SigningPubKey")]
     pub signing_pubKey: Option<String>,
@@ -75,18 +75,18 @@ pub struct TxJson {
 }
 
 impl TxJson {
-    pub fn new(from: String, to: String, amount: Amount, memo: Option<Vec<Memo>>, sequence: Option<String>) -> Self {
+    pub fn new(from: String, to: String, amount: Amount, memo: Option<Vec<Memo>>, sequence: Option<u32>) -> Self {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),
-            fee: 10000,
+            fee: 0.01,
             transaction_type: "Payment".to_string(),
             account: from,
             destination: to,
-            amount: "500000".to_string(), //amount ?????
+            amount: "0.5".to_string(), //amount ?????
             memo: memo,
             sequence: sequence,
-            signing_pubKey: None,
+            signing_pubKey: Some("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020".to_string()),
             txn_signature: None,
         }
     }

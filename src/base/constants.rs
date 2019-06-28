@@ -12,3 +12,14 @@ pub const CURVE_ORDER: &[u8] = &[
 
 pub const CURVE_ZERO: &[u8] = &[ 0x0, 0x0, 0x0, 0x0 ];
 
+//Obj type
+pub const  TX_SIGNATURE: &'static str = "TxnSignature";
+pub const  TX_DESTINATION: &'static str = "Destination";
+pub const  TX_ACCOUNT: &'static str = "Account";
+pub const  TX_SIGNING_PUB_KEY: &'static str = "SigningPubKey";
+pub const  TX_FEE: &'static str = "Fee";
+pub const  TX_AMOUNT: &'static str = "Amount";
+pub const  TX_SEQUENCE: &'static str = "Sequence";
+pub const  TX_TRANSACTION_TYPE: &'static str = "TransactionType";
+pub const  TX_FLAGS: &'static str = "Flags";
+

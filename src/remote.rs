@@ -31,6 +31,7 @@ use crate::common::*;
 use crate::relation::*;
 use crate::offer_create::*;
 use crate::offer_cancel::*;
+use crate::base::sign_tx::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -538,7 +539,7 @@ impl Remote  {
     */
     pub fn build_payment_tx<F>(config: Box<Rc<Config>>, from: String, to: String, amount: Amount, 
                                                      memo: Option<String>, 
-                                                     sequence: Option<String>,
+                                                     sequence: Option<u32>,
                                                      secret: Option<String>, 
                                                      op: F) 
         where F: Fn(Result<TransactionTxResponse, &'static str>) {
@@ -599,9 +600,11 @@ impl Remote  {
             let mut tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take());
             println!("tx_json : {}", tx_json.to_string().unwrap());
 
-            if let Ok(command) = TransactionTx::new(secret.take(), tx_json).to_string() {
-                out.send(command).unwrap()
-            }
+            SignTx::prepare(tx_json);
+
+            // if let Ok(command) = TransactionTx::new(secret.take(), tx_json).to_string() {
+            //     out.send(command).unwrap()
+            // }
 
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
