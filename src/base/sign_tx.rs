@@ -25,10 +25,12 @@ use crate::base::constants::{
 };
 use std::rc::Rc;
 
-const PRE_FIELDS: [&str; 7] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence"];
+const PRE_FIELDS: [&'static str; 7] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence"];
 
 //等待数据去填充
 pub struct SignTx {
+    pub fields: Vec<&'static str>,
+
     pub so_flags           : SignStreamType,
     pub so_fee             : SignStreamType,
     pub so_transaction_type: SignStreamType,
@@ -44,6 +46,8 @@ pub struct SignTx {
 impl Default for SignTx {
     fn default() -> Self {
         SignTx {
+            fields: vec![],
+
             so_flags: None,
             so_fee: None,
             so_transaction_type: None,
@@ -59,44 +63,62 @@ impl Default for SignTx {
     }
 }
 impl SignTx {
-    pub fn prepare(&self, tx_json: TxJson) {
+    pub fn prepare(&mut self, tx_json: TxJson) -> Option<String> {
         //Step 1: Get Non-None field. [SigningPubKey] / [TxnSignature] / [Memos]
-        let mut fields: Vec<&str> = vec![];
-        fields.extend_from_slice(&PRE_FIELDS);
+        // let mut fields: Vec<&str> = vec![];
+        self.fields.extend_from_slice(&PRE_FIELDS);
         if tx_json.memo.is_some() {
-            fields.push("Memos");
+            self.fields.push("Memos");
         }
         if tx_json.signing_pubKey.is_some() {
-            fields.push("SigningPubKey");
+            self.fields.push("SigningPubKey");
         }
         if tx_json.txn_signature.is_some() {
-            fields.push("TxnSignature");
+            self.fields.push("TxnSignature");
         }
 
         //Step 2: sorted
-        SignTx::sort_fields(&mut fields);
-        // println!("sorted fields: {:?}", fields);
+        SignTx::sort_fields(&mut self.fields);
 
         //Step 3: serialize tx fields
         let mut tx: SignedTxJson = SignedTxJson::new();
-        // let tx_json = tx_json.copy();
-        self.format_tx_obj(tx_json, &mut tx, &fields);
+        self.format_tx_obj(tx_json, &mut tx, &self.fields);
 
+        self.calc_txn_sig(&mut tx);
+        
+        //Step 5 : blob
+        let outp = self.calc_blob(&mut tx);
+        println!("output blob: {:?}", outp);
+
+        outp
+    }
+
+
+    pub fn calc_txn_sig(&mut self, signed_tx_json: &mut SignedTxJson) {
         //Step 4 : serialize
-        let output: Vec<u8> = tx.serialize();
+        let output: Vec<u8> = signed_tx_json.serialize();
         let txn_signature= self.update_txn_signature(&output);
         println!("txn_signature: {}", txn_signature);
 
-        //Step 5 : blob
-        let outp = self.update_blob(&mut tx);
-        println!("output blob: {:?}", outp);
+        self.fields.push("TxnSignature");
+        SignTx::sort_fields(&mut self.fields);
+        let mut index = 0;
+        for x in &self.fields {
+            if *x == "TxnSignature" {
+                break;
+            }
+
+            index += 1;
+        }
+        let txn_signature = TxJsonTxnSignatureBuilder::new(txn_signature).build();
+        signed_tx_json.insert(index, txn_signature);
     }
 
-    //Hex String sign(tx_json) => blob
-    pub fn update_blob(&self, tx: &mut SignedTxJson) -> Option<String> {
-        let output: Vec<u8> = tx.serialize();
+
+    pub fn calc_blob(&self, signed_tx_json: &mut SignedTxJson) -> Option<String> {
+        let output: Vec<u8> = signed_tx_json.serialize();
         Some(hex::encode(&output).to_ascii_uppercase())
-    }
+    }  
 
     //Output Hex String
     pub fn update_txn_signature(&self, so: &Vec<u8>) -> String {
@@ -116,76 +138,69 @@ impl SignTx {
 
     pub fn format_tx_obj(&self, tx_json: TxJson, output: &mut SignedTxJson, fields: &Vec<&str>) {
         let tx_json_rc = Rc::new ( tx_json );
+
+        let mut index = 0;
         for &key in fields {
             let tx_json = tx_json_rc.clone();
-            println!("key : {}", key);
+            println!("key : {} ", key);
             match key {
                 TX_FLAGS => {
-                    println!("flags");
                     let value = tx_json.flags;
                     let flags = TxJsonFlagsBuilder::new(value).build();
-                    output.insert(flags);
+                    output.insert(index, flags);
                 },
                 TX_FEE => {
-                    println!("fee");
                     let value = tx_json.fee;
                     let fee = TxJsonFeeBuilder::new(value.to_string()).build();
-                    output.insert(fee);
+                    output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
-                    println!("transaction type");
                     //TRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPES
                     let value = 0u16;//tx_json.transaction_type;
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
-                    output.insert(transaction_type);
+                    output.insert(index, transaction_type);
                 },
                 TX_ACCOUNT => {
-                    println!("account");
                     let value = String::from(tx_json.account.as_str());
                     let account = TxJsonAccountBuilder::new(value).build();
-                    output.insert(account);
+                    output.insert(index, account);
                 },
                 TX_AMOUNT => {
-                    println!("amount");
                     let value = String::from(tx_json.amount.as_str());
                     let amount = TxJsonAmountBuilder::new(value).build();
-                    output.insert(amount);
+                    output.insert(index, amount);
                 },
                 TX_DESTINATION => {
-                    println!("destination");
                     let value = String::from(tx_json.destination.as_str());
                     let destination = TxJsonDestinationBuilder::new(value).build();
-                    output.insert(destination);
+                    output.insert(index, destination);
                 },
                 TX_SEQUENCE => {
-                    println!("sequence");
                     let value = tx_json.sequence.unwrap();
                     let sequence = TxJsonSequenceBuilder::new(value).build();
-                    output.insert(sequence);
+                    output.insert(index, sequence);
                 },
 
                 TX_SIGNING_PUB_KEY => {
-                    println!("public key");
                     let value = Rc::try_unwrap(tx_json).unwrap_err();
-                    println!("--- {:#?}", value);
                     let value = String::from("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020");
                     let signing_pubKey = TxJsonSigningPubKeyBuilder::new(value).build();
-                    output.insert(signing_pubKey);
-                    println!("inserrrrrrrrrrt public key");
+                    output.insert(index, signing_pubKey);
                 },
-                TX_SIGNATURE => {
-                    println!("siguration");
-                    let value: TxJson = Rc::try_unwrap(tx_json).unwrap();
-                    // let value = tx_json.txn_signature.unwrap();
-                    let value = String::from("3045022100A1625CA0BCB7EA68E1FCEF86209E2278AD334FFEB4E58A31739D028D868D2E93022011D90FC264BD8128C383A1F2596AFDBBB5104DBCD15BE8CB678A83447C97E6C1");
-                    let txn_signature = TxJsonTxnSignatureBuilder::new(value).build();
-                    output.insert(txn_signature);
-                },
+                // TX_SIGNATURE => {
+                //     let value: TxJson = Rc::try_unwrap(tx_json).unwrap();
+                //     // let value = tx_json.txn_signature.unwrap();
+                //     let value = String::from("3045022100A1625CA0BCB7EA68E1FCEF86209E2278AD334FFEB4E58A31739D028D868D2E93022011D90FC264BD8128C383A1F2596AFDBBB5104DBCD15BE8CB678A83447C97E6C1");
+                //     let txn_signature = TxJsonTxnSignatureBuilder::new(value).build();
+                //     output.insert(index, txn_signature);
+                // },
 
                 _ => {
                     panic!("pppppppppppppppppppppppnic.................");
                 }
             }
+
+            index += 1;
         }
     }
 

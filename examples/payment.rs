@@ -15,7 +15,7 @@ fn main() {
     let secret:String= "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
     // let memo: String = "".to_string();
     // let memo: String = "给jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c支付0.5swt.".to_string();
-    let sequence: u32= 1u32;
+    let sequence: u32= 9u32;
     Remote::build_payment_tx(config.clone(), 
                                         from,
                                         to,

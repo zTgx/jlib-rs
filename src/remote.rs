@@ -600,12 +600,21 @@ impl Remote  {
             let mut tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take());
             println!("tx_json : {}", tx_json.to_string().unwrap());
 
-            let local_sign = SignTx::default();
-            local_sign.prepare(tx_json);
+            if config.local_sign {
+                use crate::local_sign_tx::*;
+                let mut local_sign = SignTx::default();
+                let submit = local_sign.prepare(tx_json);
 
-            // if let Ok(command) = TransactionTx::new(secret.take(), tx_json).to_string() {
-            //     out.send(command).unwrap()
-            // }
+                // println!("sumbimt : {:?}", submit.to_string());
+                if let Ok(command) = LocalSignTx::new(secret.take(), submit.unwrap()).to_string() {
+                    out.send(command).unwrap()
+                }
+            } else {
+                if let Ok(command) = TransactionTx::new(secret.take(), tx_json).to_string() {
+                    out.send(command).unwrap()
+                }
+            }
+            
 
             move |msg: ws::Message| {
                 let c = msg.as_text()?;

@@ -193,7 +193,7 @@ pub struct TxJsonResponse {
     pub flags: i32,
 
     #[serde(rename="Memos")]
-    pub memos: Vec<Memo>,
+    pub memos: Option<Vec<Memo>>,
 
     #[serde(rename="Sequence")]
     pub sequence: u64,
@@ -202,7 +202,7 @@ pub struct TxJsonResponse {
     pub signing_pub_key: String,
 
     #[serde(rename="Timestamp")]
-    pub time_stamp: u64,
+    pub time_stamp: Option<u64>,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,

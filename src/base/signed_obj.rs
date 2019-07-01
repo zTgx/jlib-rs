@@ -621,6 +621,7 @@ impl TxJsonBuilder for TxJsonTxnSignatureBuilder {
 pub struct SignedTxJson {
     pub components: Vec<Box<dyn TxJsonSerializer>>,
 }
+
 impl SignedTxJson {
     pub fn new() -> Self {
         SignedTxJson {
@@ -638,7 +639,7 @@ impl SignedTxJson {
         so
     }
 
-    pub fn insert(&mut self, item: Box<dyn TxJsonSerializer>) {
-        self.components.push(item);
+    pub fn insert(&mut self, index: usize, item: Box<dyn TxJsonSerializer>) {
+        self.components.insert(index, item);
     }
 }
