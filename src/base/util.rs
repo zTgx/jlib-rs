@@ -153,7 +153,8 @@ pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
 }
 
 //通过secret计算出publickey
-pub fn get_public_key_from_secret(secret: String) -> String {
+use crate::base::keypair::*;
+pub fn get_public_key_from_secret(secret: &String) -> Keypair {
 
     use crate::base::seed::*;
     use crate::base::keypair::*;
@@ -167,7 +168,7 @@ pub fn get_public_key_from_secret(secret: String) -> String {
     let key_pair = KeypairBuilder::new(&seed).build();
     println!("key pair : {:?}", key_pair);  
 
-    key_pair.property.public_key
+    key_pair
 }
 
 /////////////////////////////////////////////////////////////////////////////

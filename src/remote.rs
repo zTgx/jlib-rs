@@ -596,21 +596,28 @@ impl Remote  {
 
             let secret = secret_rc.clone();
 
-            //local sign
-            let mut tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take());
-            println!("tx_json : {}", tx_json.to_string().unwrap());
+            //txjson
+            use crate::base::*;
+            let mut signing_pub_key: Option<String> = None;
+
+            let mut d_secret = "".to_string();
+            if let Some(x) = secret.take() {
+                signing_pub_key = Some(util::get_public_key_from_secret(&x).property.public_key);
+                d_secret = String::from(x.as_str());
+            }
+            let mut tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take(), signing_pub_key);
 
             if config.local_sign {
                 use crate::local_sign_tx::*;
                 let mut local_sign = SignTx::default();
-                let submit = local_sign.prepare(tx_json);
 
-                // println!("sumbimt : {:?}", submit.to_string());
+                let submit = local_sign.prepare(tx_json, d_secret);
+
                 if let Ok(command) = LocalSignTx::new(secret.take(), submit.unwrap()).to_string() {
                     out.send(command).unwrap()
                 }
             } else {
-                if let Ok(command) = TransactionTx::new(secret.take(), tx_json).to_string() {
+                if let Ok(command) = TransactionTx::new(Some(d_secret), tx_json).to_string() {
                     out.send(command).unwrap()
                 }
             }

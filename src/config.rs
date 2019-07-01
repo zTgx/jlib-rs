@@ -3,8 +3,8 @@
 use std::fmt;
 use std::rc::Rc;
 
-static TEST1: &'static str = "ws://ts5.jingtum.com:5020";
-static TEST2: &'static str = "ws://192.168.208.130:5060";
+pub const TEST1: &'static str = "ws://ts5.jingtum.com:5020";
+pub const TEST2: &'static str = "ws://192.168.208.130:5060";
 
 pub struct Config {
     pub addr: &'static str, //服务器地址

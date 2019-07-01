@@ -24,12 +24,14 @@ use crate::base::constants::{
     TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS,SignStreamType
 };
 use std::rc::Rc;
+use crate::base::*;
 
 const PRE_FIELDS: [&'static str; 7] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence"];
 
 //等待数据去填充
 pub struct SignTx {
     pub fields: Vec<&'static str>,
+    pub secret: String,
 
     pub so_flags           : SignStreamType,
     pub so_fee             : SignStreamType,
@@ -47,6 +49,7 @@ impl Default for SignTx {
     fn default() -> Self {
         SignTx {
             fields: vec![],
+            secret: "".to_string(),
 
             so_flags: None,
             so_fee: None,
@@ -63,7 +66,9 @@ impl Default for SignTx {
     }
 }
 impl SignTx {
-    pub fn prepare(&mut self, tx_json: TxJson) -> Option<String> {
+    pub fn prepare(&mut self, tx_json: TxJson, secret: String) -> Option<String> {
+        self.secret = secret;
+
         //Step 1: Get Non-None field. [SigningPubKey] / [TxnSignature] / [Memos]
         // let mut fields: Vec<&str> = vec![];
         self.fields.extend_from_slice(&PRE_FIELDS);
@@ -129,8 +134,10 @@ impl SignTx {
         let mut hash = hex::encode(&ctx.finish().as_ref());
         let mut message = hash.get(0..64).unwrap().to_ascii_uppercase();
         
-         let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
-
+        //  let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
+        let private_key = util::get_public_key_from_secret(&self.secret).property.secret_key;
+        let key = &hex::decode(private_key).unwrap()[1..];
+        // println!("key : {:?}", key);
         let msg = hex::decode(message).unwrap();
         let mut signed_hex_string = SignatureX::sign(&msg, &key);
         return signed_hex_string;
@@ -183,7 +190,8 @@ impl SignTx {
 
                 TX_SIGNING_PUB_KEY => {
                     let value = Rc::try_unwrap(tx_json).unwrap_err();
-                    let value = String::from("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020");
+                    let value = util::get_public_key_from_secret(&self.secret).property.public_key;
+                    // let value = String::from("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020");
                     let signing_pubKey = TxJsonSigningPubKeyBuilder::new(value).build();
                     output.insert(index, signing_pubKey);
                 },

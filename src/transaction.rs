@@ -78,7 +78,7 @@ pub struct TxJson {
 }
 
 impl TxJson {
-    pub fn new(from: String, to: String, amount: Amount, memo: Option<Vec<Memo>>, sequence: Option<u32>) -> Self {
+    pub fn new(from: String, to: String, amount: Amount, memo: Option<Vec<Memo>>, sequence: Option<u32>, signing_pubKey: Option<String>) -> Self {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),
@@ -89,7 +89,7 @@ impl TxJson {
             amount: "0.5".to_string(), //amount ?????
             memo: memo,
             sequence: sequence,
-            signing_pubKey: Some("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020".to_string()),
+            signing_pubKey: signing_pubKey,
             txn_signature: None,
             blob: None,
         }
