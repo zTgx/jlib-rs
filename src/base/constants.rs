@@ -23,3 +23,5 @@ pub const  TX_SEQUENCE: &'static str = "Sequence";
 pub const  TX_TRANSACTION_TYPE: &'static str = "TransactionType";
 pub const  TX_FLAGS: &'static str = "Flags";
 
+pub type SignStreamType = Option<Vec<u8>>;
+

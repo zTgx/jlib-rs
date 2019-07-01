@@ -21,18 +21,45 @@ use crate::base::signed_obj::*;
 
 use crate::base::constants::{
     TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
-    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS
+    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS,SignStreamType
 };
 use std::rc::Rc;
 
 const PRE_FIELDS: [&str; 7] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence"];
 
-
+//等待数据去填充
 pub struct SignTx {
+    pub so_flags           : SignStreamType,
+    pub so_fee             : SignStreamType,
+    pub so_transaction_type: SignStreamType,
+    pub so_account         : SignStreamType,
+    pub so_amount          : SignStreamType,
+    pub so_destination     : SignStreamType,
+    pub so_sequence        : SignStreamType,
+    pub so_public_key      : SignStreamType,
+    pub so_txn             : SignStreamType,
+    pub so_memo            : SignStreamType,
+    pub so_blob            : SignStreamType,
+}
+impl Default for SignTx {
+    fn default() -> Self {
+        SignTx {
+            so_flags: None,
+            so_fee: None,
+            so_transaction_type: None,
+            so_account: None,
+            so_amount: None,
+            so_destination: None,
+            so_sequence: None,
+            so_public_key: None,
+            so_txn: None,
+            so_memo: None,
+            so_blob: None,
+        }
+    }
 }
 impl SignTx {
-
-    pub fn prepare(tx_json: TxJson) {
+    pub fn prepare(&self, tx_json: TxJson) {
         //Step 1: Get Non-None field. [SigningPubKey] / [TxnSignature] / [Memos]
         let mut fields: Vec<&str> = vec![];
         fields.extend_from_slice(&PRE_FIELDS);
@@ -53,37 +80,41 @@ impl SignTx {
         //Step 3: serialize tx fields
         let mut tx: SignedTxJson = SignedTxJson::new();
         // let tx_json = tx_json.copy();
-        SignTx::format_tx_obj(tx_json, &mut tx, &fields);
+        self.format_tx_obj(tx_json, &mut tx, &fields);
 
         //Step 4 : serialize
         let output: Vec<u8> = tx.serialize();
-        let txn_signature= SignTx::update_txn_signature(&output);
+        let txn_signature= self.update_txn_signature(&output);
         println!("txn_signature: {}", txn_signature);
+
+        //Step 5 : blob
+        let outp = self.update_blob(&mut tx);
+        println!("output blob: {:?}", outp);
     }
 
     //Hex String sign(tx_json) => blob
-    pub fn serialize_all_fields(so: &Vec<u8>) -> String {
-        hex::encode(&so).to_ascii_uppercase()
+    pub fn update_blob(&self, tx: &mut SignedTxJson) -> Option<String> {
+        let output: Vec<u8> = tx.serialize();
+        Some(hex::encode(&output).to_ascii_uppercase())
     }
 
     //Output Hex String
-    pub fn update_txn_signature(so: &Vec<u8>) -> String {
+    pub fn update_txn_signature(&self, so: &Vec<u8>) -> String {
         let mut ctx = digest::Context::new(&digest::SHA512);
         ctx.update(&[83,84,88, 0]);
         ctx.update(&so);
 
         let mut hash = hex::encode(&ctx.finish().as_ref());
         let mut message = hash.get(0..64).unwrap().to_ascii_uppercase();
-        message
         
-        // let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
+         let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
 
-        // let msg = hex::decode(message).unwrap();
-        // let mut signed_hex_string = SignatureX::sign(&msg, &key);
-        // return signed_hex_string;
+        let msg = hex::decode(message).unwrap();
+        let mut signed_hex_string = SignatureX::sign(&msg, &key);
+        return signed_hex_string;
     }
 
-    pub fn format_tx_obj(tx_json: TxJson, output: &mut SignedTxJson, fields: &Vec<&str>) {
+    pub fn format_tx_obj(&self, tx_json: TxJson, output: &mut SignedTxJson, fields: &Vec<&str>) {
         let tx_json_rc = Rc::new ( tx_json );
         for &key in fields {
             let tx_json = tx_json_rc.clone();
@@ -146,7 +177,7 @@ impl SignTx {
                     println!("siguration");
                     let value: TxJson = Rc::try_unwrap(tx_json).unwrap();
                     // let value = tx_json.txn_signature.unwrap();
-                    let value = String::from("value.as_str()");
+                    let value = String::from("3045022100A1625CA0BCB7EA68E1FCEF86209E2278AD334FFEB4E58A31739D028D868D2E93022011D90FC264BD8128C383A1F2596AFDBBB5104DBCD15BE8CB678A83447C97E6C1");
                     let txn_signature = TxJsonTxnSignatureBuilder::new(value).build();
                     output.insert(txn_signature);
                 },
@@ -158,6 +189,7 @@ impl SignTx {
         }
     }
 
+    //Refactor..........compare...!!!!!!!!
     pub fn sort_fields(fields: &mut Vec<&str>) {
         fields.sort_by( |a, b| {
                                 

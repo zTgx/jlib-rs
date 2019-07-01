@@ -72,6 +72,9 @@ pub struct TxJson {
 
     #[serde(rename="TxnSignature")]
     pub txn_signature: Option<String>,
+
+    #[serde(rename="Blob")]
+    pub blob: Option<String>,    
 }
 
 impl TxJson {
@@ -88,6 +91,7 @@ impl TxJson {
             sequence: sequence,
             signing_pubKey: Some("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020".to_string()),
             txn_signature: None,
+            blob: None,
         }
     }
 }

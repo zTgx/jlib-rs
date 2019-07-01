@@ -9,14 +9,14 @@
 use crate::base::type_obj::*;
 use crate::base::constants::{
     TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
-    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS
+    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS,SignStreamType
 };
 use crate::base::serialized_type::*;
 use crate::base::amount::*;
 
 //序列化接口
 pub trait TxJsonSerializer {
-    fn serialize_obj(&self, so: &mut Vec<u8>);
+    fn serialize_obj(&mut self, so: &mut Vec<u8>);
 }
 
 //builder接口
@@ -31,6 +31,9 @@ pub struct TxJsonFlags {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : u32,
+
+    //output
+    pub output : SignStreamType,
 }
 impl TxJsonFlags {
     pub fn new(value: u32) -> Self {
@@ -38,20 +41,37 @@ impl TxJsonFlags {
             name    : TX_FLAGS.to_string(),
             typeObj : TypeObjBuilder::new(TX_FLAGS).build(),
             value   : value,
+
+            output  : None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonFlags {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
         //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
+            println!("header: {:?}", tmp);
         }
 
         let mut s = STInt32::serialize(self.value);
-        so.append(&mut s);
+        tmp.append(&mut s);
 
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+        
         println!("TxJsonFlags so : {:?}", &so);
     }
 }
@@ -76,6 +96,9 @@ pub struct TxJsonTransactionType {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : u16,
+
+    //output
+    pub output: SignStreamType,
 }
 
 impl TxJsonTransactionType {
@@ -84,19 +107,36 @@ impl TxJsonTransactionType {
             name    : TX_TRANSACTION_TYPE.to_string(),
             typeObj : TypeObjBuilder::new(TX_TRANSACTION_TYPE).build(),
             value   : value,
+
+            output: None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonTransactionType {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
         //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
         }
 
         let mut s = STInt16::serialize(self.value);
-        so.append(&mut s);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
 
         println!("TxJsonTransactionType so : {:?}", &so);
     }
@@ -124,6 +164,9 @@ pub struct TxJsonSequence {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : u32,
+
+    //output
+    pub output: SignStreamType,
 }
 
 impl TxJsonSequence {
@@ -132,19 +175,36 @@ impl TxJsonSequence {
             name    : TX_SEQUENCE.to_string(),
             typeObj : TypeObjBuilder::new(TX_SEQUENCE).build(),
             value   : value,
+
+            output: None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonSequence {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
-                //serialize header
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
         }
 
         let mut s = STInt32::serialize(self.value);
-        so.append(&mut s);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
 
         println!("TxJsonSequence so : {:?}", &so);
     }
@@ -170,6 +230,8 @@ pub struct TxJsonAmount {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : String,
+
+    pub output: SignStreamType,
 }
 
 impl TxJsonAmount {
@@ -178,20 +240,37 @@ impl TxJsonAmount {
             name    : TX_AMOUNT.to_string(),
             typeObj : TypeObjBuilder::new(TX_AMOUNT).build(),
             value   : value,
+
+            output: None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonAmount {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
-                //serialize header
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8>= vec![];
+        //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
         }
 
         let amount = Amount::from_json(String::from(self.value.as_str()));
         let mut s = STAmount::serialize(amount);
-        so.append(&mut s);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
 
         println!("TxJsonAmount so : {:?}", &so);
     }
@@ -217,6 +296,8 @@ pub struct TxJsonFee {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : String,
+
+    pub output: SignStreamType,
 }
 
 impl TxJsonFee {
@@ -225,20 +306,37 @@ impl TxJsonFee {
             name    : TX_FEE.to_string(),
             typeObj : TypeObjBuilder::new(TX_FEE).build(),
             value   : value,
+
+            output : None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonFee {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
-                //serialize header
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
         }
 
         let amount = Amount::from_json(String::from(self.value.as_str()));
         let mut s = STAmount::serialize(amount);
-        so.append(&mut s);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+
 
         println!("TxJsonFee so : {:?}", &so);
     }
@@ -264,6 +362,8 @@ pub struct TxJsonSigningPubKey {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : String,
+
+    pub output: SignStreamType,
 }
 
 impl TxJsonSigningPubKey {
@@ -272,19 +372,36 @@ impl TxJsonSigningPubKey {
             name    : TX_SIGNING_PUB_KEY.to_string(),
             typeObj : TypeObjBuilder::new(TX_SIGNING_PUB_KEY).build(),
             value   : value,
+
+            output: None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonSigningPubKey {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
-                //serialize header
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
         }
 
         let mut s = STVL::serialize(&self.value);
-        so.append(&mut s);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
 
         println!("TxJsonSigningPubKey so : {:?}", &so);
     }
@@ -310,6 +427,9 @@ pub struct TxJsonAccount {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : String,
+
+    //
+    pub output: SignStreamType,
 }
 
 impl TxJsonAccount {
@@ -318,19 +438,35 @@ impl TxJsonAccount {
             name    : TX_ACCOUNT.to_string(),
             typeObj : TypeObjBuilder::new(TX_ACCOUNT).build(),
             value   : value,
+
+            output: None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonAccount {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
-                //serialize header
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
         }
 
         let mut s = STAccount::serialize(String::from(self.value.as_str()));
-        so.append(&mut s);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
 
         println!("TxJsonAccount so : {:?}", &so);
     }
@@ -356,6 +492,8 @@ pub struct TxJsonDestination {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : String,
+
+    pub output: SignStreamType,
 }
 
 impl TxJsonDestination {
@@ -364,19 +502,35 @@ impl TxJsonDestination {
             name    : TX_DESTINATION.to_string(),
             typeObj : TypeObjBuilder::new(TX_DESTINATION).build(),
             value   : value,
+
+            output: None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonDestination {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
-                //serialize header
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
         }
 
         let mut s = STAccount::serialize(String::from(self.value.as_str()));
-        so.append(&mut s);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
 
         println!("TxJsonDestination so : {:?}", &so);
     }
@@ -402,6 +556,8 @@ pub struct TxJsonTxnSignature {
     pub name    : String,
     pub typeObj : Option<TypeObj>,
     pub value   : String,
+
+    pub output: SignStreamType,
 }
 
 impl TxJsonTxnSignature {
@@ -410,19 +566,36 @@ impl TxJsonTxnSignature {
             name    : TX_SIGNATURE.to_string(),
             typeObj : TypeObjBuilder::new(TX_SIGNATURE).build(),
             value   : value,
+
+            output: None,
         }
     }
 }
 impl TxJsonSerializer for TxJsonTxnSignature {
-    fn serialize_obj(&self, so: &mut Vec<u8>) {
-                //serialize header
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
         if let Some(raw) = &self.typeObj {
-            raw.serialize_header(so);
-            println!("header: {:?}", so);
+            raw.serialize_header(&mut tmp);
         }
 
         let mut s = STVL::serialize(&self.value);
-        so.append(&mut s);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
 
         println!("TxJsonTxnSignature so : {:?}", &so);
     }
@@ -455,9 +628,10 @@ impl SignedTxJson {
         }
     }
 
-    pub fn serialize(&self) -> Vec<u8> {
+    pub fn serialize(&mut self) -> Vec<u8> {
         let mut so: Vec<u8> = vec![];
-        for component in self.components.iter() {
+        for component in self.components.as_mut_slice() {
+            println!("serialize...");
             component.serialize_obj(&mut so);
         }
 
