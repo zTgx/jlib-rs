@@ -8,6 +8,7 @@ use std::any::Any;
 
 use crate::commands::command_trait::CommandConversion;
 use crate::commands::command_request_account_tx::Meta;
+use crate::common::Amount;
 
 //////////////////////
 /*
@@ -25,7 +26,7 @@ pub struct RequestTxCommand {
     #[serde(rename="command")]
     command: String,
 
-    #[serde(rename="hash")]
+    #[serde(rename="transaction")]
     hash: String,
 }
 
@@ -95,23 +96,11 @@ pub struct RequestTxResponse {
     #[serde(rename="Account")]
     pub account: String,
 
-    #[serde(rename="AppType")]
-    pub app_type: u64,
-
-    #[serde(rename="Amount")]
-    pub amount: String,
-
-    #[serde(rename="Destination")]
-    pub destination: String,
-
     #[serde(rename="Fee")]
     pub fee: String,
 
     #[serde(rename="Flags")]
     pub flags: i32,
-
-    #[serde(rename="Memos")]
-    pub memos: Vec<String>,
 
     #[serde(rename="Sequence")]
     pub sequence: u64,
@@ -141,9 +130,17 @@ pub struct RequestTxResponse {
     pub ledger_index: u64,
 
     #[serde(rename="meta")]
-    pub meta: Meta,
+    pub meta: Option<Meta>,
 
     #[serde(rename="validated")]
     pub validated: bool,
 
+    #[serde(rename="TakerGets")]
+    pub taker_gets: Amount  ,
+
+    #[serde(rename="TakerPays")]
+    pub taker_pays: String,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+
+    #[serde(rename="Memos")]
+    pub memos: Option<Vec<String>>,
 }

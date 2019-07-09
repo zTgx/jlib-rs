@@ -510,6 +510,7 @@ impl Remote  {
                 let hash = hash_rc.clone();
 
                 if let Ok(command) = RequestTxCommand::with_params(hash.take()).to_string() {
+                    println!("tx command: {}", command);
                     out.send(command).unwrap();
                 }
 

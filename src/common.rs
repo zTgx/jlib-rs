@@ -8,14 +8,14 @@ pub struct Amount {
     pub currency: String,//'USD',
 
     #[serde(rename="value")]
-    pub value: f64,   //0.5
+    pub value: String,   //0.5
 
     #[serde(rename="issuer")]
     pub issuer: String,  //'jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS',
 }
 
 impl Amount {
-    pub fn new(currency: String, value: f64, issuer: String) -> Self {
+    pub fn new(currency: String, value: String, issuer: String) -> Self {
         Amount {
             currency: currency,
             value: value,
