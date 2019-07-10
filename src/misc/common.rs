@@ -1,4 +1,6 @@
 
+#![allow(non_snake_case)]
+
 use std::fmt; //fmt METHOD
 use serde::{Deserialize, Serialize, Deserializer};
 use serde::de::{self, Visitor, MapAccess};

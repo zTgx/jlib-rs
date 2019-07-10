@@ -85,7 +85,7 @@ impl Default for ServerInfoCommand {
 /*
 ServerInfoResponse 数据返回格式
 */
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct LastClose {
     #[serde(rename="converge_time_s")]
     pub converge_time_s: f64,
@@ -94,7 +94,7 @@ pub struct LastClose {
     pub proposers: u64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct ValidatedLedger {
     #[serde(rename="age")]
     pub age: u64,
@@ -124,7 +124,7 @@ pub struct ValidatedLedger {
     pub seq: u64,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default, Clone)]
 pub struct ServerInfoResponse {
     #[serde(rename="build_version")]
     pub build_version: String,
