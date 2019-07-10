@@ -27,11 +27,12 @@ use crate::commands::command_request_brokerage::*;
 use crate::commands::command_request_tx::*;
 
 use crate::transaction::*;
-use crate::common::*;
+use crate::message::Amount;
 use crate::relation::*;
 use crate::offer_create::*;
 use crate::offer_cancel::*;
 use crate::base::sign_tx::*;
+use crate::common::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -510,7 +511,6 @@ impl Remote  {
                 let hash = hash_rc.clone();
 
                 if let Ok(command) = RequestTxCommand::with_params(hash.take()).to_string() {
-                    println!("tx command: {}", command);
                     out.send(command).unwrap();
                 }
 
@@ -528,7 +528,6 @@ impl Remote  {
             println!("resp : {}", &resp);
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
                 let x: String = x["result"].to_string();
-                println!("x : {}", x);
                 if let Ok(v) = serde_json::from_str(&x) as Result<RequestTxResponse, serde_json::error::Error> {
                     op(Ok(v))
                 }
@@ -698,16 +697,14 @@ impl Remote  {
     /*
     4.18挂单
     */
-    pub fn build_offer_create_tx<F>(config: Box<Rc<Config>>, account: String, taker_gets: AmountTest, taker_pays: AmountTest, 
+    pub fn build_offer_create_tx<F>(config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
                                                      secret: Option<String>, 
                                                      op: F) 
         where F: Fn(Result<OfferCreateTxResponse, &'static str>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
-        // let typ0_rc = Rc::new(Cell::new(typ0));
         let account_rc = Rc::new(Cell::new(account));
-        // let app_rc = Rc::new(Cell::new(app));
         let taker_gets_rc = Rc::new(Cell::new(taker_gets));
         let taker_pays_rc = Rc::new(Cell::new(taker_pays));
         let secret_rc = Rc::new(Cell::new(secret));
@@ -715,15 +712,17 @@ impl Remote  {
         connect(config.addr, |out| { 
             let copy = info.clone();
 
-            // let typ0 = typ0_rc.clone();
             let account = account_rc.clone();
-            // let app   = app_rc.clone();
             let taker_gets = taker_gets_rc.clone();
             let taker_pays = taker_pays_rc.clone();
             let secret = secret_rc.clone();
 
+
+            // let xy = OfferCreateTx::new(secret.take(), OfferCreateTxJson::new(account.take(), 
+            //                                                                 taker_gets.take(), taker_pays.take()));
+            // println!("js : {:?}", serde_json::to_string(&xy));
             if let Ok(command) = OfferCreateTx::new(secret.take(), OfferCreateTxJson::new(account.take(), 
-                                                                            taker_gets.take(), "1000000".to_string())).to_string() {
+                                                                            taker_gets.take(), taker_pays.take())).to_string() {
                 out.send(command).unwrap()
             }
 

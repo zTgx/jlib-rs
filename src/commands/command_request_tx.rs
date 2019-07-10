@@ -17,7 +17,9 @@ use void::Void;
 
 use crate::commands::command_trait::CommandConversion;
 use crate::commands::command_request_account_tx::Meta;
-use crate::common::{Amount, string_or_struct};
+use crate::message::{Amount, string_or_struct};
+use crate::common::*;
+
 
 //////////////////////
 /*

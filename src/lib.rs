@@ -13,6 +13,7 @@ pub mod relation;
 pub mod offer_create;
 pub mod offer_cancel;
 pub mod local_sign_tx;
+pub mod message;
 
 
 

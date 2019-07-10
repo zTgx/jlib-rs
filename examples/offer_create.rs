@@ -1,7 +1,8 @@
 extern crate mylib;
 use mylib::remote::*;
 use mylib::config::*;
-use mylib::common::*;
+// use mylib::common::*;
+use mylib::message::Amount;
 
 use std::rc::Rc;
 
@@ -10,11 +11,15 @@ fn main() {
     let config: Box<Rc<Config>> = Config::default_with_box();
     println!("config : {:?}", config);
 
-    let taker_gets: AmountTest = AmountTest::new("CNY".to_string(), "0.01".to_string(), "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string());
-    let taker_pays: AmountTest = AmountTest::new("SWT".to_string(), "1".to_string(), "".to_string());
-    // let typ0 = "Sell".to_string();
+    //Sell
+    let taker_gets: Amount = Amount::new("CNY".to_string(), "0.01".to_string(), "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string());
+    let taker_pays: Amount = Amount::new("SWT".to_string(), "1".to_string(), "".to_string());
+
+    //Buy
+    // let taker_gets: Amount = Amount::new("SWT".to_string(), "1".to_string(), "".to_string());
+    // let taker_pays: Amount = Amount::new("CNY".to_string(), "0.01".to_string(), "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string());
+
     let account: String = "jn9XgdNptm9DhjZN2qLtxjTfVuDt6rQwLh".to_string();
-    // let app  : Option<u64> = None;
     let secret:String= "sh6Wgh5XchPNVCcRkLyE291ecT5Gi".to_string();
     Remote::build_offer_create_tx(config.clone(), 
                                         account,
@@ -24,8 +29,8 @@ fn main() {
 
                                          |x| match x {
         Ok(response) => {
-            //println!("ledger : {:?}", response);
-            println!("tx_blob: {}", response.tx_blob);
+            let fee = response.tx_json.fee.parse::<f32>().unwrap() / 1000000f32;
+            println!("[交易费: {}]", fee);
         },
 
         Err(_) => {

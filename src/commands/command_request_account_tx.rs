@@ -6,7 +6,7 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::commands::command_trait::CommandConversion;
-use crate::common::Amount;
+use crate::message::Amount;
 
 /*
 @4.12获得账号交易列表 

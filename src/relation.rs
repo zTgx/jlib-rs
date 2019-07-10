@@ -9,6 +9,7 @@ use std::any::Any;
 use std::cell::Cell;
 
 use crate::commands::command_trait::CommandConversion;
+use crate::message::Amount;
 use crate::common::*;
 
 /*

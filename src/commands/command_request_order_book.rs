@@ -7,6 +7,7 @@ use std::any::Any;
 
 use crate::commands::command_trait::CommandConversion;
 use crate::common::*;
+use crate::message::*;
 
 /*
 @4.13获得市场挂单列表

@@ -1,29 +1,36 @@
 #![allow(unused)]
 
-use serde_json::json;
-use serde_json::{Value};
-use serde::{Deserialize, Serialize};
-use serde_json::Result;
+extern crate void;
+
+use serde::ser::{Serializer, SerializeStruct};
+use std::fmt; //fmt METHOD
+use std::marker::PhantomData;
+use std::str::FromStr;
+
+use serde::{Deserialize, Serialize, Deserializer};
+use serde::de::{self, Visitor, MapAccess};
+
+use void::Void;
+
+// use serde_json::Result;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 
 use crate::commands::command_trait::CommandConversion;
+use crate::message::*;
 use crate::common::*;
 
 /*
 挂单对象
 */
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Deserialize, Debug)]
 pub struct OfferCreateTxJson {
     #[serde(rename="Flags")]
-    pub flags: i32, ///How ???????????
+    pub flags: i32, 
 
     #[serde(rename="Fee")]
     pub fee: u64,
-
-    // #[serde(rename="OfferType")]
-    // pub offer_type: String,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -31,34 +38,63 @@ pub struct OfferCreateTxJson {
     #[serde(rename="Account")]
     pub account: String,
 
-    // //应用来源序号（正整数），可选
-    // #[serde(rename="App")]
-    // pub app: Option<u64>,
-
     #[serde(rename="TakerPays")]
-    taker_pays: String, //WHAT>>>>>>>>>>>>>>>>>>>>>>>
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_pays: Amount, 
 
     #[serde(rename="TakerGets")]
-    taker_gets: AmountTest,
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_gets: Amount,
 }
 
 impl OfferCreateTxJson {
-        pub fn new(account: String, taker_gets: AmountTest,  taker_pays: String) -> Self {
-            let flag = Flags::Other;
-            OfferCreateTxJson {
-                flags: 524288, ///////////////Hard code
-                fee: 10000, /////////////////////Hard code
-                transaction_type: "OfferCreate".to_string(),
-                account: account,
-                taker_pays: taker_pays,//amount, ?????
-                taker_gets: taker_gets,
-            }
+    pub fn new(account: String, taker_gets: Amount,  taker_pays: Amount) -> Self {
+        let flag = Flags::Other;
+
+        OfferCreateTxJson {
+
+            flags: 524288, ///////////////Hard code
+            fee: 10000, 
+            transaction_type: "OfferCreate".to_string(),
+            account: account,
+            taker_pays: taker_pays,
+            taker_gets: taker_gets,
         }
+    }
 }
+
+impl Serialize for OfferCreateTxJson {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // 3 is the number of fields in the struct.
+        let mut state = serializer.serialize_struct("OfferCreateTxJson", 6)?;
+        
+        state.serialize_field("Flags", &self.flags)?;
+        state.serialize_field("Fee", &self.fee)?;
+        state.serialize_field("TransactionType", &self.transaction_type)?;
+        state.serialize_field("Account", &self.account)?;
+        if self.taker_gets.is_string () {
+            state.serialize_field("TakerGets", &self.taker_gets.value)?;
+        } else {
+            state.serialize_field("TakerGets", &self.taker_gets)?;
+        }
+
+        if self.taker_pays.is_string () {
+            state.serialize_field("TakerPays", &self.taker_pays.value)?;
+        } else {
+            state.serialize_field("TakerPays", &self.taker_pays)?;
+        }
+
+        state.end()
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OfferCreateTx {
     #[serde(rename="id")]
-    id: u64, 
+    pub id: u64, 
 
     #[serde(rename="command")]
     pub command: String, //Submit
@@ -84,7 +120,7 @@ impl OfferCreateTx {
 
 impl CommandConversion for OfferCreateTx {
     type T = OfferCreateTx;
-    fn to_string(&self) -> Result<String> {
+    fn to_string(&self) -> Result<String, serde_json::error::Error> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
 
@@ -134,10 +170,12 @@ pub struct OfferCreateTxJsonResponse {
     pub signing_pub_key: String,
 
     #[serde(rename="TakerGets")]
-    pub taker_gets: AmountTest,
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_gets: Amount,
 
     #[serde(rename="TakerPays")]
-    pub taker_pays: String,
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_pays: Amount,
 
     #[serde(rename="Timestamp")]
     pub time_stamp: u64,
