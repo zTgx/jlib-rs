@@ -56,9 +56,9 @@ Rust.
 - [ ] 10，添加ed25519模块
 - [ ] 11, 支持签名算法[ed25519/secp256k1]可配置
 - [ ] 12, 交易类型【TX_TRANSACTION_TYPE】参数，根据上边代码赋值。
-- [ ] 13, tx_json对Amount，Account等String类型的序列化问题。
+- [x] 13, tx_json对Amount，Account等String类型的序列化问题。
 - [ ] 14, 交易blob的签名。
 - [ ] 15, 修改pub fn prepare(tx_json: TxJson)，===》 pub fn prepare(tx_json: &mut TxJson)，在原有基础上修改txjson。
 - [ ] 16, 重构TypeObject compare方法。
-- [ ] 17, base/Amount 和 common/Amount映射！！！
+- [x] 17, base/Amount 和 common/Amount映射！！！
 - [ ] 18, LocalSignX / TransactionX 
