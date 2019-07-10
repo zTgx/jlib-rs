@@ -10,29 +10,30 @@ use ws::{connect, CloseCode};
 use serde_json::json;
 use serde_json::{Value};
 
-use crate::config::*;
+use crate::base::config::*;
 
 use crate::commands::command_trait::*;
-use crate::commands::command_subscribe::*;
-use crate::commands::command_serverinfo::*;
-use crate::commands::command_ledger_closed::*;
-use crate::commands::command_request_ledger::*;
-use crate::commands::command_request_accountinfo::*;
-use crate::commands::command_request_accounttums::*;
-use crate::commands::command_request_account_relations::*;
-use crate::commands::command_request_account_offer::*;
-use crate::commands::command_request_account_tx::*;
-use crate::commands::command_request_order_book::*;
-use crate::commands::command_request_brokerage::*;
-use crate::commands::command_request_tx::*;
+use crate::commands::subscribe::*;
+use crate::commands::request_server_info::*;
+use crate::commands::ledger_closed::*;
+use crate::commands::request_ledger::*;
+use crate::commands::request_account_info::*;
+use crate::commands::request_account_tums::*;
+use crate::commands::request_account_relations::*;
+use crate::commands::request_account_offer::*;
+use crate::commands::request_account_tx::*;
+use crate::commands::request_order_book::*;
+use crate::commands::request_brokerage::*;
+use crate::commands::request_tx::*;
 
-use crate::transaction::*;
-use crate::message::Amount;
-use crate::relation::*;
-use crate::offer_create::*;
-use crate::offer_cancel::*;
+use crate::transactions::transaction::*;
+use crate::misc::message::Amount;
+use crate::transactions::relation::*;
+use crate::transactions::offer_create::*;
+use crate::transactions::offer_cancel::*;
 use crate::base::sign_tx::*;
-use crate::common::*;
+use crate::misc::common::*;
+use crate::misc::config::*;
 
 pub struct Conn {
     conn: Option<Rc<ws::Sender>>,
@@ -608,7 +609,7 @@ impl Remote  {
             let mut tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take(), signing_pub_key);
 
             if config.local_sign {
-                use crate::local_sign_tx::*;
+                use crate::transactions::local_sign_tx::*;
                 let mut local_sign = SignTx::default();
 
                 let submit = local_sign.prepare(tx_json, d_secret);

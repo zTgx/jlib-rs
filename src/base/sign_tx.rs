@@ -15,7 +15,7 @@ use crate::base::amount::*;
 use crate::base::sign::*;
 use ring::{digest};
 
-use crate::transaction::{TxJson};
+use crate::transactions::transaction::{TxJson};
 use crate::base::type_obj::*;
 use crate::base::signed_obj::*;
 

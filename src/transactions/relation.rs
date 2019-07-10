@@ -9,131 +9,72 @@ use std::any::Any;
 use std::cell::Cell;
 
 use crate::commands::command_trait::CommandConversion;
-use crate::message::Amount;
-use crate::common::*;
+use crate::misc::message::Amount;
+use crate::misc::common::*;
 
 /*
-支付对象:
+关系对象
 */
 #[derive(Serialize, Deserialize, Debug, Default)]
-pub struct MemoData {
-    #[serde(rename="MemoData")]
-    pub memo_data: String,
-}
-impl MemoData {
-    pub fn new(memo_data: String) -> Self {
-        MemoData {
-            memo_data: memo_data,
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct Memo {
-    #[serde(rename="Memo")]
-    pub memo_data: MemoData,
-}
-
-impl Memo {
-    pub fn new(memo_data: MemoData) -> Self {
-        Memo {
-            memo_data: memo_data,
-        }
-    }
-}
-
-#[derive(Serialize, Deserialize, Debug, Default)]
-pub struct TxJson {
+pub struct RelationTxJson {
     #[serde(rename="Flags")]
     pub flags: u32,
 
     #[serde(rename="Fee")]
-    pub fee: f64,
+    pub fee: u64,
 
+    //交易类型：TrustSet信任;RelationDel解冻；RelationSet授权/冻结
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
 
     #[serde(rename="Account")]
     pub account: String,
 
-    #[serde(rename="Amount")]
-    pub amount: String,
+    #[serde(rename="Target")]
+    pub target: String,
 
-    #[serde(rename="Destination")]
-    pub destination: String,
+    //关系类型：0信任；1授权；3冻结/解冻；
+    #[serde(rename="RelationType")]
+    pub relation_type: u64,
 
-    #[serde(rename="Memos")]
-    pub memo: Option<Vec<Memo>>,
-
-    #[serde(rename="Sequence")]
-    pub sequence: Option<u32>,
-
-    #[serde(rename="SigningPubKey")]
-    pub signing_pubKey: Option<String>,
-
-    #[serde(rename="TxnSignature")]
-    pub txn_signature: Option<String>,
-
-    #[serde(rename="Blob")]
-    pub blob: Option<String>,    
+    #[serde(rename="LimitAmount")]
+    pub limit_amount: String,//Amount,
 }
 
-impl TxJson {
-    pub fn new(from: String, to: String, amount: Amount, memo: Option<Vec<Memo>>, sequence: Option<u32>, signing_pubKey: Option<String>) -> Self {
+impl RelationTxJson {
+    pub fn new(account: String, target: String, relation_type: u64, amount: Amount) -> Self {
         let flag = Flags::Other;
-        TxJson {
+        RelationTxJson {
             flags: flag.get(),
-            fee: 0.01,
-            transaction_type: "Payment".to_string(),
-            account: from,
-            destination: to,
-            amount: "0.5".to_string(), //amount ?????
-            memo: memo,
-            sequence: sequence,
-            signing_pubKey: signing_pubKey,
-            txn_signature: None,
-            blob: None,
+            fee: 10000,
+            transaction_type: "RelationSet".to_string(),
+            account: account,
+            target: target,
+            relation_type: relation_type,
+            limit_amount: "500000".to_string(),//amount, ?????
         }
     }
 }
-impl CommandConversion for TxJson {
-    type T = TxJson;
-    fn to_string(&self) -> Result<String> {
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
-        let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
-        Ok(j)
-    }
-    
-    fn box_to_raw(&self) -> &dyn Any {
-        self
-    }
-}
-
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct TransactionTx {
+pub struct RelationTx {
     #[serde(rename="id")]
     id: u64, 
+
+    #[serde(rename="command")]
+    pub command: String, //Submit
 
     //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
     pub secret: Option<String>,
 
-    #[serde(rename="command")]
-    pub command: String, //Submit
-
     #[serde(rename="tx_json")]
-    pub tx_json: TxJson,
+    pub tx_json: RelationTxJson,
 }
 
-impl TransactionTx {
-    pub fn new(secret: Option<String>, tx_json: TxJson) -> Box<TransactionTx> {
-        Box::new( TransactionTx {
+impl RelationTx {
+    pub fn new(secret: Option<String>, tx_json: RelationTxJson) -> Box<RelationTx> {
+        Box::new( RelationTx {
             id: 1,
             command: "submit".to_string(),
             secret: secret,
@@ -142,8 +83,8 @@ impl TransactionTx {
     }
 }
 
-impl CommandConversion for TransactionTx {
-    type T = TransactionTx;
+impl CommandConversion for RelationTx {
+    type T = RelationTx;
     fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
@@ -174,27 +115,24 @@ impl CommandConversion for TransactionTx {
 }
 
 /*
-TransactionResponse
+RelationTxJsonResponse
 */
 #[derive(Serialize, Deserialize, Debug)]
-pub struct TxJsonResponse {
+pub struct RelationTxJsonResponse {
     #[serde(rename="Account")]
     pub account: String,
 
-    #[serde(rename="Amount")]
-    pub amount: String,
-
-    #[serde(rename="Destination")]
-    pub destination: String,
-    
     #[serde(rename="Fee")]
     pub fee: String,
 
     #[serde(rename="Flags")]
     pub flags: i32,
 
-    #[serde(rename="Memos")]
-    pub memos: Option<Vec<Memo>>,
+    #[serde(rename="LimitAmount")]
+    pub limit_amount: String,
+    
+    #[serde(rename="RelationType")]
+    pub relation_type: u64,
 
     #[serde(rename="Sequence")]
     pub sequence: u64,
@@ -202,8 +140,11 @@ pub struct TxJsonResponse {
     #[serde(rename="SigningPubKey")]
     pub signing_pub_key: String,
 
+    #[serde(rename="Target")]
+    pub target: String,
+
     #[serde(rename="Timestamp")]
-    pub time_stamp: Option<u64>,
+    pub time_stamp: u64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -216,7 +157,7 @@ pub struct TxJsonResponse {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct TransactionTxResponse {
+pub struct RelationTxResponse {
     #[serde(rename="engine_result")]
     pub engine_result: String,
 
@@ -230,5 +171,5 @@ pub struct TransactionTxResponse {
     pub tx_blob: String,
 
     #[serde(rename="tx_json")]
-    pub tx_json: TxJsonResponse,
+    pub tx_json: RelationTxJsonResponse,
 }

@@ -1,6 +1,6 @@
 extern crate mylib;
-use mylib::remote::*;
-use mylib::config::*;
+use mylib::transactions::remote::*;
+use mylib::misc::config::*;
 
 use std::rc::Rc;
 

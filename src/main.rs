@@ -1,19 +1,18 @@
 
-use std::rc::Rc;
+// use std::rc::Rc;
 
-#[macro_use]
-extern crate log;
-extern crate env_logger;
+// #[macro_use]
+// extern crate log;
+// extern crate env_logger;
 
-extern crate mylib;
-// use mylib::common::*;
-use mylib::remote::*;
-use mylib::config::*;
+// extern crate mylib;
+// use mylib::config::*;
 
 fn main() {
+    println!("Hello world. ruster.");
     // Setup logging
-    env_logger::init();
-    info!("starting up");
+    // env_logger::init();
+    // info!("starting up");
 
     // let def: Box<dyn CommandConversion> = SubscribeCommand::with_params(0, "subscribe".to_string(), vec!["ledger".to_string(),"server".to_string(),"transactions".to_string()]);
     // let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
@@ -25,8 +24,8 @@ fn main() {
     // let config: Box<Rc<Config>> = Config::new("ws://ts5.jingtum.com:5020", false);
     // println!("config: {:?}", config);
 
-    let config: Box<Rc<Config>> = Config::default_with_box();
-    println!("config : {:?}", config);
+    // let config: Box<Rc<Config>> = Config::default_with_box();
+    // println!("config : {:?}", config);
 
     // let ret = Remote::with_config(config.clone(), |x| { match x {
     //     Ok(response) => { 

@@ -16,9 +16,9 @@ extern crate void;
 use void::Void;
 
 use crate::commands::command_trait::CommandConversion;
-use crate::commands::command_request_account_tx::Meta;
-use crate::message::{Amount, string_or_struct};
-use crate::common::*;
+use crate::commands::request_account_tx::Meta;
+use crate::misc::message::{Amount, string_or_struct};
+use crate::misc::common::*;
 
 
 //////////////////////

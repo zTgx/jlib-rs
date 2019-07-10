@@ -8,7 +8,7 @@ use std::any::Any;
 // use std::cell::Cell;
 
 use crate::commands::command_trait::CommandConversion;
-// use crate::common::*;
+// use crate::misc::common::*;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct LocalSignTx {
