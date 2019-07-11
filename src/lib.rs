@@ -8,7 +8,7 @@ pub mod commands;
 pub mod misc;
 pub mod transactions;
 pub mod api;
-
+pub mod contracts;
 
 
 
