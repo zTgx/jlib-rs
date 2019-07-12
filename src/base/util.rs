@@ -1,13 +1,13 @@
 extern crate bs58;
 
 use super::constants::*;
-use ring::{digest, test};
+use ring::{digest};
 
 extern crate secp256k1;
-use secp256k1::key::{ SecretKey};
-use secp256k1::key::PublicKey;
-use secp256k1::Secp256k1;
-use secp256k1::key::ONE_KEY;
+// use secp256k1::key::{ SecretKey};
+// use secp256k1::key::PublicKey;
+// use secp256k1::Secp256k1;
+// use secp256k1::key::ONE_KEY;
 
 use crate::base::constants::ALPHABET;
 use std::collections::HashMap;
@@ -15,7 +15,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
-use std::cell::RefCell;
+// use std::cell::RefCell;
 
 pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
     // println!("before concat args: {:?}", left);
@@ -47,7 +47,7 @@ pub fn encode_raw(x: &mut Vec<u8>) -> String {
 
 pub fn encode(source: &[u8]) -> String {
         
-    let BASE = ALPHABET.len() as u16;
+    let base = ALPHABET.len() as u16;
 
     let mut digits: Vec<u16> = vec![0u16; 1];
     
@@ -61,16 +61,16 @@ pub fn encode(source: &[u8]) -> String {
         while j < digits_len {
             carry += digits.as_slice()[j] << 8;
 
-            digits.as_mut_slice()[j] = carry % (BASE as u16);
+            digits.as_mut_slice()[j] = carry % (base as u16);
 
-            carry = (carry / (BASE as u16)) | 0;
+            carry = (carry / (base as u16)) | 0;
 
             j += 1;
         }
 
         while carry > 0 {
-            digits.push(carry % (BASE as u16));
-            carry = (carry / BASE) | 0;
+            digits.push(carry % (base as u16));
+            carry = (carry / base) | 0;
         }
 
         i += 1;
@@ -114,7 +114,7 @@ pub fn entropy(secret: &String) -> Vec<u8> {
 
 
 pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
-    let mut i = 0u32;
+    let mut i = 0u64;
     while i <= 0xFFFFFFFF  {
         // We hash the bytes to find a 256 bit number, looping until we are sure it
         // is less than the order of the curve.
@@ -219,15 +219,15 @@ pub fn decode_raw(encoded: String) -> Option<Vec<u8>> {
 pub fn decode(string: String) -> Option<Vec<u8>> {
     if string.len() == 0 { return None; }
 
-    let ALPHABET_MAP = generate_alpha_map();
-    let BASE = ALPHABET.len() as u16;
-    let LEADER = ALPHABET[0] as char;
+    let alphabet_map = generate_alpha_map();
+    let base = ALPHABET.len() as u16;
+    let ledger = ALPHABET[0] as char;
 
     let mut bytes: Vec<u8> = vec![];
     let mut i = 0;
     while i < string.len() {
         let c = string.as_str().chars().nth(i).unwrap();
-        let val = ALPHABET_MAP.get(&c);
+        let val = alphabet_map.get(&c);
         if val.is_none() {
             return None;
         }
@@ -235,7 +235,7 @@ pub fn decode(string: String) -> Option<Vec<u8>> {
         let mut j = 0;
         let mut carry: u16 = *val.unwrap() as u16;
         while j < bytes.len() {
-            carry += bytes[j] as u16 * BASE;
+            carry += bytes[j] as u16 * base;
             bytes[j] = (carry as u8) & 0xff;
             carry >>= 8;
 
@@ -252,7 +252,7 @@ pub fn decode(string: String) -> Option<Vec<u8>> {
 
     // deal with leading zeros
     let mut k = 0;
-    while string.as_str().chars().nth(k).unwrap() == LEADER && k < string.len() - 1 {
+    while string.as_str().chars().nth(k).unwrap() == ledger && k < string.len() - 1 {
       bytes.push(0);
 
       k += 1;
@@ -263,15 +263,11 @@ pub fn decode(string: String) -> Option<Vec<u8>> {
     Some(bytes)
 }
 
-pub fn calc(payload: Option<Vec<u8>>) -> Option<Vec<u8>> {
-    None
-}
-
 //default source ALPHABET. 
 pub fn generate_alpha_map() -> HashMap<char, usize> {
     let mut map: HashMap<char, usize> = HashMap::new();
     let lens = ALPHABET.len();
-    let leader = ALPHABET[0];
+    // let leader = ALPHABET[0];
 
     // pre-compute lookup table
     let mut i = 0; 
@@ -325,7 +321,7 @@ pub fn check_string(p: String) -> String {
 }
 
 pub fn check(p: String) -> String {
-    let mut hex_string: String = p;
+    let hex_string: String = p;
     if let Ok(x) = hex_string.parse::<i32>() {
         return check_value(x);
     } 

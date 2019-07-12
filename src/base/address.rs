@@ -2,12 +2,12 @@
 
 use ring::{digest};
 
-extern crate secp256k1;
-use secp256k1::key::{ SecretKey};
-use secp256k1::key::PublicKey;
-use secp256k1::Secp256k1;
-use secp256k1::key::ONE_KEY;
-use secp256k1::constants::*;    
+// extern crate secp256k1;
+// use secp256k1::key::{ SecretKey};
+// use secp256k1::key::PublicKey;
+// use secp256k1::Secp256k1;
+// use secp256k1::key::ONE_KEY;
+// use secp256k1::constants::*;    
 
 extern crate crypto;
 use crypto::ripemd160::Ripemd160 ;
@@ -75,13 +75,13 @@ impl <'a> WalletAddressBuilder <'a> {
         let mut ripemd160x = Ripemd160::new();
         ripemd160x.input(&input);
 
-        let mut ret: &mut [u8] = &mut [0u8;20];
+        let ret: &mut [u8] = &mut [0u8;20];
         ripemd160x.result(ret);
         
         let ripemd160x= ripemd160x.result_str();
 
         let mut xy = "".to_string();
-        if let Ok(args) = hex::decode(ripemd160x) {
+        if let Ok(_args) = hex::decode(ripemd160x) {
 
             let mut version: Vec<u8> = [0].to_vec();
 
@@ -89,7 +89,7 @@ impl <'a> WalletAddressBuilder <'a> {
             util::concat_args(&mut version, &ret.to_vec());
 
             //5. encodechecked.
-            let mut checked: Vec<u8> = util::encode_checked(&mut version);
+            let checked: Vec<u8> = util::encode_checked(&mut version);
 
             //6. concat args
             util::concat_args(&mut version, &checked);

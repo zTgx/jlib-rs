@@ -117,13 +117,13 @@ pub struct RequestTxResponse {
     pub sequence: u64,
 
     #[serde(rename="SigningPubKey")]
-    pub signing_pubKey: String,
+    pub signing_pub_key: String,
 
     #[serde(rename="Timestamp")]
     pub timestamp: u64,
 
     #[serde(rename="TransactionType")]
-    pub transactionType: String,
+    pub transaction_type: String,
 
     #[serde(rename="TxnSignature")]
     pub txn_signature: String,

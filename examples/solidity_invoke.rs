@@ -10,8 +10,6 @@ fn main() {
     let config: Box<Rc<Config>> = Config::new(TEST2, true);
     println!("config : {:?}", config.clone());
 
-    let mut solidity = Solidity::with_config(config.clone());
-
     //invoke
     //address: 
     let secret  = "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();

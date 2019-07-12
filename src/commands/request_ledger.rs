@@ -127,13 +127,13 @@ pub struct RequestLedgerResponse {
     pub parent_hash: String,
 
     #[serde(rename="seqNum")]
-    pub seqNum: String,
+    pub seq_num: String,
 
     #[serde(rename="totalCoins")]
-    pub totalCoins: String,
+    pub total_coins: String,
 
     #[serde(rename="total_coins")]
-    pub total_coins: String,
+    pub total_coins_x: String,
 
     #[serde(rename="transaction_hash")]
     pub transaction_hash: String,

@@ -46,10 +46,10 @@ impl <'a> WalletBuilder <'a> {
     //private method
     fn generate(&self) -> String {
         //1. Generete 16 random data
-        let mut u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
+        let u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
 
         //2. add secp256k1
-        let opt = "secp256k1";
+        let _opt = "secp256k1";
 
         //3. encodeSeed function
         let mut version: Vec<u8> = [33].to_vec();
@@ -58,7 +58,7 @@ impl <'a> WalletBuilder <'a> {
         util::concat_args(&mut version, &u);
 
         //5. encodechecked.
-        let mut checked: Vec<u8> = util::encode_checked(&mut version);
+        let checked: Vec<u8> = util::encode_checked(&mut version);
 
         //6. concat args
         util::concat_args(&mut version, &checked);

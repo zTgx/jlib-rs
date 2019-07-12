@@ -239,7 +239,7 @@ impl SerializedSTAmount for STAmount {
 
             //Convert the HEX value to bytes array
             // valueBytes = convertHexToByteArray(valueHex);//bytes.fromBits(hex.toBits(valueHex));
-            unsafe {
+            // unsafe {
 
                 let mut value_bytes = hex::decode(value_hex).unwrap();
 
@@ -255,7 +255,7 @@ impl SerializedSTAmount for STAmount {
 
                 return value_bytes.to_vec();
 
-            }
+            // }
         }
 
         vec![]
@@ -271,14 +271,14 @@ pub trait SerializedSTVL {
 pub fn serialize_varint(byte_data: &mut Vec<u8>) -> Vec<u8> {
     let mut val = byte_data.len();
     let mut v: Vec<u8> = vec![];
-    if (val <= 192) {
+    if val <= 192 {
         let mut t = vec![val as u8];
         v.append(&mut t);
-    } else if (val <= 12480) {
+    } else if val <= 12480 {
         val -= 193;
         let mut t = [(193 + (val >> 8)) as u8, (val & 0xff) as u8].to_vec();
         v.append(&mut t);
-    } else if (val <= 918744) {
+    } else if val <= 918744 {
         val -= 12481;
 
         let mut t = [(241 + (val >> 16)) as u8, (val >> 8 & 0xff) as u8, (val & 0xff) as u8].to_vec();

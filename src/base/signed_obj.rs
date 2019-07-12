@@ -29,7 +29,7 @@ pub trait TxJsonBuilder {
 ///Flags
 pub struct TxJsonFlags {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : u32,
 
     //output
@@ -39,7 +39,7 @@ impl TxJsonFlags {
     pub fn new(value: u32) -> Self {
         TxJsonFlags {
             name    : TX_FLAGS.to_string(),
-            typeObj : TypeObjBuilder::new(TX_FLAGS).build(),
+            type_obj : TypeObjBuilder::new(TX_FLAGS).build(),
             value   : value,
 
             output  : None,
@@ -58,7 +58,7 @@ impl TxJsonSerializer for TxJsonFlags {
 
         let mut tmp: Vec<u8> = vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
             println!("header: {:?}", tmp);
         }
@@ -94,7 +94,7 @@ impl TxJsonBuilder for TxJsonFlagsBuilder {
 //TransactionType
 pub struct TxJsonTransactionType {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : u16,
 
     //output
@@ -105,7 +105,7 @@ impl TxJsonTransactionType {
     pub fn new(value: u16) -> Self {
         TxJsonTransactionType {
             name    : TX_TRANSACTION_TYPE.to_string(),
-            typeObj : TypeObjBuilder::new(TX_TRANSACTION_TYPE).build(),
+            type_obj : TypeObjBuilder::new(TX_TRANSACTION_TYPE).build(),
             value   : value,
 
             output: None,
@@ -125,7 +125,7 @@ impl TxJsonSerializer for TxJsonTransactionType {
 
         let mut tmp: Vec<u8> = vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
         }
 
@@ -162,7 +162,7 @@ impl TxJsonBuilder for TxJsonTransactionTypeBuilder {
 //Sequence
 pub struct TxJsonSequence {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : u32,
 
     //output
@@ -173,7 +173,7 @@ impl TxJsonSequence {
     pub fn new(value: u32) -> Self {
         TxJsonSequence {
             name    : TX_SEQUENCE.to_string(),
-            typeObj : TypeObjBuilder::new(TX_SEQUENCE).build(),
+            type_obj : TypeObjBuilder::new(TX_SEQUENCE).build(),
             value   : value,
 
             output: None,
@@ -193,7 +193,7 @@ impl TxJsonSerializer for TxJsonSequence {
 
         let mut tmp: Vec<u8> = vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
         }
 
@@ -228,7 +228,7 @@ impl TxJsonBuilder for TxJsonSequenceBuilder {
 //Amount
 pub struct TxJsonAmount {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : String,
 
     pub output: SignStreamType,
@@ -238,7 +238,7 @@ impl TxJsonAmount {
     pub fn new(value: String) -> Self {
         TxJsonAmount {
             name    : TX_AMOUNT.to_string(),
-            typeObj : TypeObjBuilder::new(TX_AMOUNT).build(),
+            type_obj : TypeObjBuilder::new(TX_AMOUNT).build(),
             value   : value,
 
             output: None,
@@ -258,7 +258,7 @@ impl TxJsonSerializer for TxJsonAmount {
 
         let mut tmp: Vec<u8>= vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
         }
 
@@ -294,7 +294,7 @@ impl TxJsonBuilder for TxJsonAmountBuilder {
 //Fee
 pub struct TxJsonFee {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : String,
 
     pub output: SignStreamType,
@@ -304,7 +304,7 @@ impl TxJsonFee {
     pub fn new(value: String) -> Self {
         TxJsonFee {
             name    : TX_FEE.to_string(),
-            typeObj : TypeObjBuilder::new(TX_FEE).build(),
+            type_obj : TypeObjBuilder::new(TX_FEE).build(),
             value   : value,
 
             output : None,
@@ -323,7 +323,7 @@ impl TxJsonSerializer for TxJsonFee {
 
         let mut tmp: Vec<u8> = vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
         }
 
@@ -360,7 +360,7 @@ impl TxJsonBuilder for TxJsonFeeBuilder {
 //SigningPubKey
 pub struct TxJsonSigningPubKey {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : String,
 
     pub output: SignStreamType,
@@ -370,7 +370,7 @@ impl TxJsonSigningPubKey {
     pub fn new(value: String) -> Self {
         TxJsonSigningPubKey {
             name    : TX_SIGNING_PUB_KEY.to_string(),
-            typeObj : TypeObjBuilder::new(TX_SIGNING_PUB_KEY).build(),
+            type_obj : TypeObjBuilder::new(TX_SIGNING_PUB_KEY).build(),
             value   : value,
 
             output: None,
@@ -390,7 +390,7 @@ impl TxJsonSerializer for TxJsonSigningPubKey {
 
         let mut tmp: Vec<u8> = vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
         }
 
@@ -425,7 +425,7 @@ impl TxJsonBuilder for TxJsonSigningPubKeyBuilder {
 //Account
 pub struct TxJsonAccount {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : String,
 
     //
@@ -436,7 +436,7 @@ impl TxJsonAccount {
     pub fn new(value: String) -> Self {
         TxJsonAccount {
             name    : TX_ACCOUNT.to_string(),
-            typeObj : TypeObjBuilder::new(TX_ACCOUNT).build(),
+            type_obj : TypeObjBuilder::new(TX_ACCOUNT).build(),
             value   : value,
 
             output: None,
@@ -455,7 +455,7 @@ impl TxJsonSerializer for TxJsonAccount {
 
         let mut tmp: Vec<u8> = vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
         }
 
@@ -490,7 +490,7 @@ impl TxJsonBuilder for TxJsonAccountBuilder {
 //Destination
 pub struct TxJsonDestination {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : String,
 
     pub output: SignStreamType,
@@ -500,7 +500,7 @@ impl TxJsonDestination {
     pub fn new(value: String) -> Self {
         TxJsonDestination {
             name    : TX_DESTINATION.to_string(),
-            typeObj : TypeObjBuilder::new(TX_DESTINATION).build(),
+            type_obj : TypeObjBuilder::new(TX_DESTINATION).build(),
             value   : value,
 
             output: None,
@@ -519,7 +519,7 @@ impl TxJsonSerializer for TxJsonDestination {
 
         let mut tmp: Vec<u8> = vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
         }
 
@@ -554,7 +554,7 @@ impl TxJsonBuilder for TxJsonDestinationBuilder {
 //TxnSignature
 pub struct TxJsonTxnSignature {
     pub name    : String,
-    pub typeObj : Option<TypeObj>,
+    pub type_obj : Option<TypeObj>,
     pub value   : String,
 
     pub output: SignStreamType,
@@ -564,7 +564,7 @@ impl TxJsonTxnSignature {
     pub fn new(value: String) -> Self {
         TxJsonTxnSignature {
             name    : TX_SIGNATURE.to_string(),
-            typeObj : TypeObjBuilder::new(TX_SIGNATURE).build(),
+            type_obj : TypeObjBuilder::new(TX_SIGNATURE).build(),
             value   : value,
 
             output: None,
@@ -584,7 +584,7 @@ impl TxJsonSerializer for TxJsonTxnSignature {
 
         let mut tmp: Vec<u8> = vec![];
         //serialize header
-        if let Some(raw) = &self.typeObj {
+        if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
         }
 

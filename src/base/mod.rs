@@ -222,17 +222,17 @@ impl TWHashMap for LedgerEntryTypeMap {
 }
 
 lazy_static! {
-    pub static ref gTransactionTypeMap: TransactionTypeMap = {
+    pub static ref G_TRANSACTION_TYPE_MAP: TransactionTypeMap = {
         let map = TransactionTypeMap::new();
         map
     };
 
-    pub static ref gTransactionResultMap: TransactionResultMap = {
+    pub static ref G_TRANSACTION_RESULT_MAP: TransactionResultMap = {
         let map = TransactionResultMap::new();
         map
     };
 
-    pub static ref gLedgerEntryTypeMap: LedgerEntryTypeMap = {
+    pub static ref G_LEDGER_ENTRY_TYPE_MAP: LedgerEntryTypeMap = {
         let map = LedgerEntryTypeMap::new();
         map
     };

@@ -1,26 +1,26 @@
 // #[macro_use] 
 // extern crate typename;
 
-use serde_json::json;
-use serde_json::{Value};
-use serde::{Deserialize, Serialize};
-use serde_json::Result;
+// use serde_json::json;
+// use serde_json::{Value};
+// use serde::{Serialize};
+// use serde_json::Result;
 
 use crate::base::inverse_fields_map::INVERSE_FIELDS_MAP;
-use crate::base::types_map::TYPES_MAP;
-use crate::base::serialized_type::*;
+// use crate::base::types_map::TYPES_MAP;
+// use crate::base::serialized_type::*;
 
-use typename::TypeName;
-use crate::base::amount::*;
+// use typename::TypeName;
+// use crate::base::amount::*;
 use crate::base::sign::*;
 use ring::{digest};
 
 use crate::transactions::transaction::{TxJson};
-use crate::base::type_obj::*;
+// use crate::base::type_obj::*;
 use crate::base::signed_obj::*;
 
 use crate::base::constants::{
-    TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
+    TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
     TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS,SignStreamType
 };
 use std::rc::Rc;
@@ -75,7 +75,7 @@ impl SignTx {
         if tx_json.memo.is_some() {
             self.fields.push("Memos");
         }
-        if tx_json.signing_pubKey.is_some() {
+        if tx_json.signing_pub_key.is_some() {
             self.fields.push("SigningPubKey");
         }
         if tx_json.txn_signature.is_some() {
@@ -131,15 +131,15 @@ impl SignTx {
         ctx.update(&[83,84,88, 0]);
         ctx.update(&so);
 
-        let mut hash = hex::encode(&ctx.finish().as_ref());
-        let mut message = hash.get(0..64).unwrap().to_ascii_uppercase();
+        let hash = hex::encode(&ctx.finish().as_ref());
+        let message = hash.get(0..64).unwrap().to_ascii_uppercase();
         
         //  let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
         let private_key = util::get_public_key_from_secret(&self.secret).property.secret_key;
         let key = &hex::decode(private_key).unwrap()[1..];
         // println!("key : {:?}", key);
         let msg = hex::decode(message).unwrap();
-        let mut signed_hex_string = SignatureX::sign(&msg, &key);
+        let signed_hex_string = SignatureX::sign(&msg, &key);
         return signed_hex_string;
     }
 
@@ -189,11 +189,11 @@ impl SignTx {
                 },
 
                 TX_SIGNING_PUB_KEY => {
-                    let value = Rc::try_unwrap(tx_json).unwrap_err();
+                    let _value = Rc::try_unwrap(tx_json).unwrap_err();
                     let value = util::get_public_key_from_secret(&self.secret).property.public_key;
                     // let value = String::from("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020");
-                    let signing_pubKey = TxJsonSigningPubKeyBuilder::new(value).build();
-                    output.insert(index, signing_pubKey);
+                    let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
+                    output.insert(index, signing_pub_key);
                 },
                 // TX_SIGNATURE => {
                 //     let value: TxJson = Rc::try_unwrap(tx_json).unwrap();

@@ -1,6 +1,7 @@
+#![allow(unused)]
 
 extern crate num;
-use num::bigint::{BigInt, Sign};
+use num::bigint::{BigInt};
 use std::str::FromStr;
 
 
@@ -39,7 +40,7 @@ impl Amount {
 
     pub fn from_json(j: String) -> Self {
         let x = (j.parse::<f64>().unwrap() * 1000000.0) as u64;
-        let mut value: BigInt = BigInt::from_str(x.to_string().as_str()).unwrap();
+        let value: BigInt = BigInt::from_str(x.to_string().as_str()).unwrap();
         // let b = BigInt::from_bytes_be(Sign::Plus, b"1000000");
         // println!("b : {:?}", &b);
         // value = value.checked_mul(&b).unwrap();

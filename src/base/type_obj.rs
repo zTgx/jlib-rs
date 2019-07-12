@@ -32,12 +32,12 @@ impl SerializeHeader for TypeObj {
         let mut s8 = STInt8::serialize(self.type_tag);
         so.append(&mut s8);
 
-        if (self.type_bits >= 16) {
+        if self.type_bits >= 16 {
             let mut s = STInt8::serialize(self.type_bits);
             so.append(&mut s);
         }
 
-        if (self.field_bits >= 16) {
+        if self.field_bits >= 16 {
             let mut x = STInt8::serialize(self.field_bits);
             so.append(&mut x);
         }

@@ -7,11 +7,8 @@ use std::cell::Cell;
 
 extern crate ws;
 use ws::{connect, CloseCode};
-use serde_json::json;
+// use serde_json::json;
 use serde_json::{Value};
-
-use crate::base::config::*;
-
 use crate::commands::command_trait::*;
 use crate::commands::subscribe::*;
 use crate::commands::request_server_info::*;
@@ -33,42 +30,42 @@ use crate::transactions::offer_create::*;
 use crate::transactions::offer_cancel::*;
 use crate::base::sign_tx::*;
 use crate::misc::common::*;
-use crate::misc::config::*;
+use crate::misc::config::Config;
 
-pub struct Conn {
-    conn: Option<Rc<ws::Sender>>,
-}
+// pub struct Conn {
+//     conn: Option<Rc<ws::Sender>>,
+// }
 
-impl Conn {
-    pub fn new(out: Option<Rc<ws::Sender>>) -> Self {
-        Conn {
-            conn: out,
-        }
-    }
-    pub fn request_server_info(&self) {
-        use serde_json::json;
-        let json = json!({ "id": "1", "command": "server_info" });
-        let compact = format!("{}", json);
-        println!("compact : {}", compact);
+// impl Conn {
+//     pub fn new(out: Option<Rc<ws::Sender>>) -> Self {
+//         Conn {
+//             conn: out,
+//         }
+//     }
+//     pub fn request_server_info(&self) {
+//         use serde_json::json;
+//         let json = json!({ "id": "1", "command": "server_info" });
+//         let compact = format!("{}", json);
+//         println!("compact : {}", compact);
    
-    }
-}
+//     }
+// }
 
 pub struct Remote {
-    addr: &'static str,
-    local_sign: bool,
-    conn: Option<Conn>,
+    // addr: &'static str,
+    // local_sign: bool,
+    // conn: Option<Conn>,
 }
 
 //TODO::Remote 中的请求接口，要单独处理封装～～～（待实现）
 impl Remote  {
-    pub fn new(addr: &'static str, local_sign: bool) -> Self {
-        Remote {
-            addr: addr,
-            local_sign: local_sign,
-            conn: None,
-        }
-    }
+    // pub fn new(addr: &'static str, local_sign: bool) -> Self {
+    //     Remote {
+    //         // addr: addr,
+    //         // local_sign: local_sign,
+    //         // conn: None,
+    //     }
+    // }
 
     pub fn with_config<F>(config: Box<Rc<Config>>, op: F) 
         where F: Fn(Result<SubscribeResponse, &'static str>) {
@@ -606,7 +603,7 @@ impl Remote  {
                 signing_pub_key = Some(util::get_public_key_from_secret(&x).property.public_key);
                 d_secret = String::from(x.as_str());
             }
-            let mut tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take(), signing_pub_key);
+            let tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take(), signing_pub_key);
 
             if config.local_sign {
                 use crate::transactions::local_sign_tx::*;

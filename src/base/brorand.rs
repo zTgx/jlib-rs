@@ -10,7 +10,7 @@ impl Brorand {
         let u: Vec<u8> = (0..len).map(|_| {
             let idx: u8 = rand::thread_rng().gen();
             
-            let hexs = format!("{:x}", idx);
+            let _hexs = format!("{:x}", idx);
             // println!("hexs : {}", hexs);
 
             idx

@@ -96,28 +96,28 @@ RequestAccountInfoResponse 数据返回格式
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestAccountInfoResponse {
     #[serde(rename="Account")]
-    pub Account: String,
+    pub account: String,
 
     #[serde(rename="Balance")]
-    pub Balance: String,
+    pub balance: String,
 
     #[serde(rename="Flags")]
-    pub Flags: u64,
+    pub flags: u64,
 
     #[serde(rename="LedgerEntryType")]
-    pub LedgerEntryType: String,
+    pub ledger_entry_type: String,
 
     #[serde(rename="OwnerCount")]
-    pub OwnerCount: u64,
+    pub owner_count: u64,
 
     #[serde(rename="PreviousTxnID")]
-    pub PreviousTxnID: String,
+    pub previous_txn_id: String,
 
     #[serde(rename="PreviousTxnLgrSeq")]
-    pub PreviousTxnLgrSeq: u64,
+    pub previous_txn_lgr_seq: u64,
 
     #[serde(rename="Sequence")]
-    pub Sequence: u64,
+    pub sequence: u64,
 
     #[serde(rename="index")]
     pub index: String,

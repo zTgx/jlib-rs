@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
-#[macro_use] 
+// #[macro_use] 
 extern crate typename;
 
 pub mod base;
