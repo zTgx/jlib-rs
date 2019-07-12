@@ -51,7 +51,7 @@ use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use serde_json::{Value};
-use crate::base::util::downcast_to_string;
+use crate::base::util::{downcast_to_string, check};
 
 //////////////////////
 /*
@@ -98,7 +98,7 @@ impl SolidityInitTxJson {
             account: account,
             amount: 100000000,
             method: 0,
-            payload: payload,
+            payload: hex::encode(payload),
         }
     }
 }
@@ -202,7 +202,7 @@ pub struct Arg {
 impl Arg {
     pub fn new(parameter: String, contract_params_type: u8) -> Self {
         Arg {
-            parameter: parameter,
+            parameter: check(parameter),
             contract_params_type: contract_params_type,
         }
     }
@@ -250,6 +250,9 @@ impl SolidityInvokeMessage {
     }
 
     pub fn with_params(account: String, secret: String, address: String, contract_method: String, args: Vec<Arg>) -> Self {
+        if account.len() != 34 || secret.len() != 29 || address.len() != 34 || contract_method.len() < 8 {
+            panic!("Input params Error!");
+        }
 
         //prepare
         let mut v: Vec<Args> = vec![];
@@ -258,11 +261,19 @@ impl SolidityInvokeMessage {
             v.push(t);
         }
 
+        //convert [contract_method] to hex.
+        let mut hex_method = contract_method;
+        if hex_method.starts_with("0x") {
+            hex_method = hex_method.get(2..10).unwrap().to_string();
+        } else {
+            hex_method = hex_method.get(0..8).unwrap().to_string();
+        }
+
         SolidityInvokeMessage {
             id: 1,
             command: "submit".to_string(),
             secret: secret,
-            tx_json: SolidityInvokeTxJson::new(account, address, contract_method, v)
+            tx_json: SolidityInvokeTxJson::new(account, address, hex::encode(hex_method), v)
         }
     }
 }

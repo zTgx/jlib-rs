@@ -54,4 +54,9 @@ fn main() {
     //0x6461766500000000000000000000000000000000000000000000000000000000
     let y = check("dave".to_string());
     println!("y : {}", y);
+
+    println!("-----------------------");
+    let z = "84e9ec3f";
+    println!("z len: {}", z.len());
+    println!("hex : {}", hex::encode(z));
 }
