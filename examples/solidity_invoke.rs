@@ -29,7 +29,7 @@ fn main() {
     // let message = SolidityInvokeMessage::with_params(account, secret, address, "6236653435366262".to_string(), v);
     
     // 带参数的调用
-    let p = Arg::new("30303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303466".to_string(), 0);
+    let p = Arg::new("79".to_string(), 0);
     v.push(p);
     let message = SolidityInvokeMessage::with_params(account, secret, address, "3834653965633366".to_string(), v);
 

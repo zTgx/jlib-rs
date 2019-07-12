@@ -206,7 +206,7 @@ impl Arg {
             contract_params_type: contract_params_type,
         }
     }
-}
+}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
 impl SolidityInvokeTxJson {
     pub fn new(account: String, destination: String, contract_method: String, args: Vec<Args>) -> Self {

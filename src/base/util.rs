@@ -293,3 +293,42 @@ pub fn downcast_to_string(value: Rc<dyn Any>) -> String {
         Err(_) => { "None".to_string() }
     }
 }
+
+//https://solidity.readthedocs.io/en/v0.5.4/abi-spec.html
+//solidity abi spec
+//处理格式说明：
+/*
+输入参数：79， “dave” 等格式的原始数据。
+处理过程:
+1，所有的输入的数据，转换成十六进制字符串格式。如：79 =》 "4f"
+2，补零。（数字前0到32字节长度，字符串则后补零到32字节）。如："4f" => "000000000000000000000000000000000000000000000000000000000000004f"
+3，最后，整体转换一次十六进制, 为最终结果。如：
+"000000000000000000000000000000000000000000000000000000000000004f" =>
+"30303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303466"
+*/
+pub fn check_value(p: i32) -> String {
+    let mut hex_string = format!("{:x}", p);
+    while hex_string.len() < 64 {
+        hex_string.insert(0, '0');
+    }
+
+    return hex::encode(hex_string);
+}
+
+pub fn check_string(p: String) -> String {
+    let mut hex_string = hex::encode(p);
+    while hex_string.len() < 64 {
+        hex_string.push('0');
+    }
+    
+    return hex::encode(hex_string); 
+}
+
+pub fn check(p: String) -> String {
+    let mut hex_string: String = p;
+    if let Ok(x) = hex_string.parse::<i32>() {
+        return check_value(x);
+    } 
+
+    return check_string(hex_string);
+}
