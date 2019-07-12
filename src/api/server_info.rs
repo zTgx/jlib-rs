@@ -10,6 +10,7 @@ use serde_json::{Value};
 use crate::misc::config::*;
 use crate::commands::request_server_info::*;
 use crate::commands::command_trait::CommandConversion;
+use crate::base::util::downcast_to_string;
 
 pub trait ServerInfoI {
     fn request_server_info<F>(&self, config: Box<Rc<Config>>, op: F) 
@@ -59,14 +60,5 @@ impl ServerInfoI for ServerInfo {
                 }
             }
         }
-    }
-}
-
-pub fn downcast_to_string(value: Rc<dyn Any>) -> String {
-    match value.downcast::<Cell<String>>() {
-        Ok(string) => {
-            return string.take();
-        },
-        Err(_) => { "None".to_string() }
     }
 }

@@ -12,6 +12,11 @@ use secp256k1::key::ONE_KEY;
 use crate::base::constants::ALPHABET;
 use std::collections::HashMap;
 
+use std::rc::Rc;
+use std::any::Any;
+use std::cell::Cell;
+use std::cell::RefCell;
+
 pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
     // println!("before concat args: {:?}", left);
 
@@ -278,4 +283,13 @@ pub fn generate_alpha_map() -> HashMap<char, usize> {
     }
 
     map
+}
+
+pub fn downcast_to_string(value: Rc<dyn Any>) -> String {
+    match value.downcast::<Cell<String>>() {
+        Ok(string) => {
+            return string.take();
+        },
+        Err(_) => { "None".to_string() }
+    }
 }
