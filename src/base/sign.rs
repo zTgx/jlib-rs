@@ -3,9 +3,7 @@
 extern crate secp256k1;
 
 use secp256k1::key::{SecretKey, PublicKey};
-// use secp256k1::constants;
 use secp256k1::{Secp256k1, Message};
-// use secp256k1::Error::{InvalidMessage, IncorrectSignature, InvalidSignature};
 
 pub struct SignatureX {
 }

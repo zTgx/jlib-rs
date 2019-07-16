@@ -1,7 +1,7 @@
-extern crate mylib;
+extern crate jlib;
 
-use mylib::misc::config::*;
-use mylib::api::server_info::*;
+use jlib::misc::config::*;
+use jlib::api::server_info::*;
 
 use std::rc::Rc;
 
