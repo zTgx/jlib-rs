@@ -6,7 +6,7 @@ use mylib::api::server_info::*;
 use std::rc::Rc;
 
 fn main() {
-    let config: Box<Rc<Config>> = Config::new(TEST2, true);
+    let config: Box<Rc<Config>> = Config::new(TEST1, true);
     println!("config : {:?}", config);
 
     let _c = ServerInfo::new().request_server_info(config.clone(), |x| match x {
