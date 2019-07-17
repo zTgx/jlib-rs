@@ -1,6 +1,6 @@
 #[macro_use]
 extern crate lazy_static;
-// #[macro_use] 
+
 extern crate typename;
 extern crate secp256k1;
 extern crate rand;
@@ -16,7 +16,6 @@ extern crate ws;
 pub mod base;
 pub mod message;
 pub mod misc;
-pub mod transactions;
 pub mod api;
 pub mod contracts;
 
