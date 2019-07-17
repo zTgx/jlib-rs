@@ -17,7 +17,7 @@ use crate::commands::subscribe::*;
 // use crate::commands::request_account_info::*;
 // use crate::commands::request_account_tums::*;
 // use crate::commands::request_account_relations::*;
-use crate::commands::request_account_offer::*;
+// use crate::commands::request_account_offer::*;
 use crate::commands::request_account_tx::*;
 use crate::commands::request_order_book::*;
 use crate::commands::request_brokerage::*;
@@ -125,38 +125,7 @@ impl Remote  {
     //[[[接口@4.8~4.11 参数一直，考虑后期合并。]]]!!!
 
 
-    pub fn request_account_offer<F>(config: Box<Rc<Config>>, account: String, op: F) 
-        where F: Fn(Result<RequestAccountOfferResponse, &'static str>) {
 
-            let info = Rc::new(Cell::new("".to_string()));
-
-            let account_rc = Rc::new(Cell::new(account));
-            connect(config.addr, |out| { 
-                let copy = info.clone();
-                let account = account_rc.clone();
-                if let Ok(command) = RequestAccountOfferCommand::with_params(account.take()).to_string() {
-                    out.send(command).unwrap();
-                }
-
-                move |msg: ws::Message| {
-
-                    let c = msg.as_text()?;
-                    copy.set(c.to_string());
-                    
-                    out.close(CloseCode::Normal) 
-                }
-            
-            }).unwrap();
-            
-            let resp = Remote::print_if(info);
-            println!("resp : {}", &resp);
-            if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-                let x: String = x["result"].to_string();
-                if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountOfferResponse, serde_json::error::Error> {
-                    op(Ok(v))
-                }
-            }         
-    }
 
     pub fn request_account_tx<F>(config: Box<Rc<Config>>, account: String, limit: Option<u64>, op: F) 
         where F: Fn(Result<RequestAccountTxResponse, &'static str>) {
