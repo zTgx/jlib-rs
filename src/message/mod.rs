@@ -1,7 +1,8 @@
 pub mod command_trait;
-pub mod subscribe;
-pub mod request_server_info;
 
+//api types
+pub mod subscribe;
+pub mod server_info;
 pub mod ledger_closed;
 pub mod spec_ledger;
 pub mod account_info;
@@ -13,4 +14,6 @@ pub mod account_tx;
 pub mod order_book;
 pub mod brokerage;
 
+//common data type
 pub mod meta;
+pub mod amount;

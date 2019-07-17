@@ -9,14 +9,14 @@ extern crate ws;
 use ws::{connect, CloseCode};
 // use serde_json::json;
 use serde_json::{Value};
-use crate::commands::command_trait::*;
-use crate::commands::subscribe::*;
+use crate::message::command_trait::*;
+use crate::message::subscribe::*;
 
 
 
 
 use crate::transactions::transaction::*;
-use crate::misc::message::Amount;
+use crate::message::amount::Amount;
 use crate::transactions::relation::*;
 use crate::transactions::offer_create::*;
 use crate::transactions::offer_cancel::*;

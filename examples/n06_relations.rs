@@ -1,8 +1,8 @@
 extern crate jlib;
 
 use jlib::misc::config::*;
-use jlib::api::relations::*;
-use jlib::commands::relations::{RequestAccountRelationsResponse};
+use jlib::api::query::relations::*;
+use jlib::message::relations::{RequestAccountRelationsResponse};
 
 use std::rc::Rc;
 

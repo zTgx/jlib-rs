@@ -5,10 +5,8 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 // use std::rc::Rc;
 use std::any::Any;
-// use std::cell::Cell;
 
-use crate::commands::command_trait::CommandConversion;
-// use crate::misc::common::*;
+use crate::message::command_trait::CommandConversion;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct LocalSignTx {

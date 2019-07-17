@@ -1,5 +1,5 @@
 //
-// 请求账号挂单
+// 请求账号信息
 //
 extern crate ws;
 use ws::{connect, CloseCode};
@@ -8,39 +8,40 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::misc::config::*;
-use crate::commands::offer::*;
-use crate::commands::command_trait::CommandConversion;
+use crate::message::account_info::*;
+use crate::message::command_trait::CommandConversion;
 use crate::base::util::downcast_to_string;
 
-pub trait AccountOfferI {
-    fn request_account_offer<F>(&self, config: Box<Rc<Config>>, account: String, op: F) 
-        where F: Fn(Result<RequestAccountOfferResponse, serde_json::error::Error>);
+pub trait AccountInfoI {
+    fn request_account_info<F>(&self, config: Box<Rc<Config>>, account: String, op: F) 
+    where F: Fn(Result<RequestAccountInfoResponse, serde_json::error::Error>);
 }
 
-pub struct AccountOffer {}
-impl AccountOffer {
+pub struct AccountInfo {}
+impl AccountInfo {
     pub fn new() -> Self {
-        AccountOffer {
+        AccountInfo {
         }
     }
 }
 
-impl AccountOfferI for AccountOffer { 
-        fn request_account_offer<F>(&self, config: Box<Rc<Config>>, account: String, op: F) 
-        where F: Fn(Result<RequestAccountOfferResponse, serde_json::error::Error>) {
+impl AccountInfoI for AccountInfo { 
+        fn request_account_info<F>(&self, config: Box<Rc<Config>>, account: String, op: F) 
+        where F: Fn(Result<RequestAccountInfoResponse, serde_json::error::Error>) {
 
             let info = Rc::new(Cell::new("".to_string()));
 
             let account_rc = Rc::new(Cell::new(account));
+
             connect(config.addr, |out| { 
                 let copy = info.clone();
+
                 let account = account_rc.clone();
-                if let Ok(command) = RequestAccountOfferCommand::with_params(account.take()).to_string() {
+                if let Ok(command) = RequestAccountInfoCommand::with_params(account.take()).to_string() {
                     out.send(command).unwrap();
                 }
 
                 move |msg: ws::Message| {
-
                     let c = msg.as_text()?;
                     copy.set(c.to_string());
                     
@@ -52,8 +53,11 @@ impl AccountOfferI for AccountOffer {
             let resp = downcast_to_string(info);
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
                 let x: String = x["result"].to_string();
-                if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountOfferResponse, serde_json::error::Error> {
-                    op(Ok(v))
+                if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
+                    let x: String = x["account_data"].to_string();
+                    if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountInfoResponse, serde_json::error::Error> {
+                        op(Ok(v))
+                    }
                 }
             }         
     }

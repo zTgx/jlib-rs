@@ -8,8 +8,8 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::misc::config::*;
-use crate::commands::brokerage::*;
-use crate::commands::command_trait::CommandConversion;
+use crate::message::brokerage::*;
+use crate::message::command_trait::CommandConversion;
 use crate::base::util::downcast_to_string;
 
 pub trait BrokerageI {

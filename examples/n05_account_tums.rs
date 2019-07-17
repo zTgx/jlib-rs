@@ -1,8 +1,8 @@
 extern crate jlib;
 
 use jlib::misc::config::*;
-use jlib::api::account_tums::*;
-use jlib::commands::account_tums::{RequestAccountTumsResponse};
+use jlib::api::query::account_tums::*;
+use jlib::message::account_tums::{RequestAccountTumsResponse};
 
 use std::rc::Rc;
 

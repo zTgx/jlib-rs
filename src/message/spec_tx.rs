@@ -15,9 +15,9 @@ use serde::de::{self, Visitor, MapAccess};
 extern crate void;
 use void::Void;
 
-use crate::commands::command_trait::CommandConversion;
-use crate::commands::meta::*;
-use crate::misc::message::{Amount, string_or_struct};
+use crate::message::command_trait::CommandConversion;
+use crate::message::meta::*;
+use crate::message::amount::{Amount, string_or_struct};
 use crate::misc::common::*;
 
 

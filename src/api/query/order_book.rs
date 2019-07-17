@@ -8,8 +8,8 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::misc::config::*;
-use crate::commands::order_book::*;
-use crate::commands::command_trait::CommandConversion;
+use crate::message::order_book::*;
+use crate::message::command_trait::CommandConversion;
 use crate::base::util::downcast_to_string;
 
 pub trait OrderBookI {

@@ -1,8 +1,8 @@
 extern crate jlib;
 
 use jlib::misc::config::*;
-use jlib::api::account_tx::*;
-use jlib::commands::account_tx::{RequestAccountTxResponse};
+use jlib::api::query::account_tx::*;
+use jlib::message::account_tx::{RequestAccountTxResponse};
 
 use std::rc::Rc;
 

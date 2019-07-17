@@ -1,8 +1,8 @@
 extern crate jlib;
 
 use jlib::misc::config::*;
-use jlib::api::spec_ledger::*;
-use jlib::commands::spec_ledger::{RequestLedgerResponse};
+use jlib::api::query::spec_ledger::*;
+use jlib::message::spec_ledger::{RequestLedgerResponse};
 
 use std::rc::Rc;
 

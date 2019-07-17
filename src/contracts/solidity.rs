@@ -46,7 +46,7 @@ use std::cell::Cell;
 use std::cell::RefCell;
 
 use crate::misc::config::*;
-use crate::commands::command_trait::CommandConversion;
+use crate::message::command_trait::CommandConversion;
 use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;

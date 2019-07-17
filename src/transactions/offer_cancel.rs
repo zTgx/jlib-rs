@@ -8,7 +8,7 @@ use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 
-use crate::commands::command_trait::CommandConversion;
+use crate::message::command_trait::CommandConversion;
 use crate::misc::common::*;
 
 /*

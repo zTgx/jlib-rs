@@ -5,19 +5,19 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::any::Any;
 
-use crate::commands::command_trait::CommandConversion;
+use crate::message::command_trait::CommandConversion;
 
 /*
-@4.8 请求账号信息
-RequestLedgerCommand 请求格式
+@4.9 获得账号可接收和发送的货币
+RequestAccountTumsCommand 请求格式
 id: u64, //(固定值): 1
-command: String, //(固定值): account_info
+command: String, //(固定值): account_currencies
 relation_type: Option<String>, //None
 account: String, //需要用户传递的参数，钱包的地址
 ledger_index: String //(固定值): 'validated'
 */
 #[derive(Serialize, Deserialize, Debug)]
-pub struct RequestAccountInfoCommand {
+pub struct RequestAccountTumsCommand {
     #[serde(rename="id")]
     id: u64,
 
@@ -34,12 +34,12 @@ pub struct RequestAccountInfoCommand {
     ledger_index: String,
 }
 
-impl RequestAccountInfoCommand {
+impl RequestAccountTumsCommand {
     pub fn with_params(account: String) -> Box<Self> {
         Box::new( 
-            RequestAccountInfoCommand {
+            RequestAccountTumsCommand {
                 id: 1,
-                command: "account_info".to_string(),
+                command: "account_currencies".to_string(),
                 relation_type: None,
                 account: account,
                 ledger_index: "validated".to_string(),
@@ -48,8 +48,8 @@ impl RequestAccountInfoCommand {
     }
 }
 
-impl CommandConversion for RequestAccountInfoCommand {
-    type T = RequestAccountInfoCommand;
+impl CommandConversion for RequestAccountTumsCommand {
+    type T = RequestAccountTumsCommand;
     fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
@@ -94,31 +94,19 @@ impl CommandConversion for RequestAccountInfoCommand {
 RequestAccountInfoResponse 数据返回格式
 */
 #[derive(Serialize, Deserialize, Debug)]
-pub struct RequestAccountInfoResponse {
-    #[serde(rename="Account")]
-    pub account: String,
+pub struct RequestAccountTumsResponse {
+    #[serde(rename="ledger_hash")]
+    pub ledger_hash: String,
 
-    #[serde(rename="Balance")]
-    pub balance: String,
+    #[serde(rename="ledger_index")]
+    pub ledger_index: u64,
 
-    #[serde(rename="Flags")]
-    pub flags: u64,
+    #[serde(rename="receive_currencies")]
+    pub receive_currencies: Vec<String>,
 
-    #[serde(rename="LedgerEntryType")]
-    pub ledger_entry_type: String,
+    #[serde(rename="send_currencies")]
+    pub send_currencies: Vec<String>,
 
-    #[serde(rename="OwnerCount")]
-    pub owner_count: u64,
-
-    #[serde(rename="PreviousTxnID")]
-    pub previous_txn_id: String,
-
-    #[serde(rename="PreviousTxnLgrSeq")]
-    pub previous_txn_lgr_seq: u64,
-
-    #[serde(rename="Sequence")]
-    pub sequence: u64,
-
-    #[serde(rename="index")]
-    pub index: String,
+    #[serde(rename="validated")]
+    pub validated: bool,
 }

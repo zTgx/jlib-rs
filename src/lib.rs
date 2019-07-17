@@ -14,7 +14,7 @@ extern crate ws;
 
 
 pub mod base;
-pub mod commands;
+pub mod message;
 pub mod misc;
 pub mod transactions;
 pub mod api;

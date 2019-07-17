@@ -5,56 +5,51 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::any::Any;
 
-use crate::commands::command_trait::CommandConversion;
+use crate::message::command_trait::CommandConversion;
 
 /*
-@4.14获得挂单佣金设置信息
-RequestBrokerageCommand 请求格式
+@4.11 获得账号挂单
+RequestAccountOfferCommand 请求格式
 id: u64,         //(固定值): 1
-command: String, //(固定值): Fee_Info
-issuer: String, //需要用户传递的参数，[货币发行方]
-app_type: u64,          //需要用户传递的参数，[应用来源]
-currency: String,       //需要用户传递的参数，[货币种类]
+command: String, //(固定值): account_offers
+relation_type: Option<String>, //None
+account: String,     //需要用户传递的参数，钱包的地址
 ledger_index: String //(固定值): 'validated'
 */
 #[derive(Serialize, Deserialize, Debug)]
-pub struct RequestBrokerageCommand {
+pub struct RequestAccountOfferCommand {
     #[serde(rename="id")]
     id: u64,
 
     #[serde(rename="command")]
     command: String,
 
-    #[serde(rename="issuer")]
-    issuer: String,
+    #[serde(rename="relation_type")]
+    relation_type: Option<String>,
 
-    #[serde(rename="app_type")]
-    app_type: u64,
-
-    #[serde(rename="currency")]
-    currency: String,
+    #[serde(rename="account")]
+    account: String,
 
     #[serde(rename="ledger_index")]
     ledger_index: String,
 }
 
-impl RequestBrokerageCommand {
-    pub fn with_params(issuer: String, app_type: u64, currency: String) -> Box<Self> {
+impl RequestAccountOfferCommand {
+    pub fn with_params(account: String) -> Box<Self> {
         Box::new( 
-            RequestBrokerageCommand {
+            RequestAccountOfferCommand {
                 id: 1,
-                command: "Fee_Info".to_string(),
-                issuer: issuer,
-                app_type: app_type,
-                currency: currency,
+                command: "account_offers".to_string(),
+                relation_type: None,
+                account: account,
                 ledger_index: "validated".to_string(),
             }
         )
     }
 }
 
-impl CommandConversion for RequestBrokerageCommand {
-    type T = RequestBrokerageCommand;
+impl CommandConversion for RequestAccountOfferCommand {
+    type T = RequestAccountOfferCommand;
     fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
@@ -96,18 +91,55 @@ impl CommandConversion for RequestBrokerageCommand {
 
 /////////////////////////
 /*
-RequestBrokerageResponse 数据返回格式
+RequestAccountOfferResponse 数据返回格式
 */
+///TODO::Amout!!!!
 #[derive(Serialize, Deserialize, Debug)]
-pub struct RequestBrokerageResponse {
-    #[serde(rename="AppType")]
-    pub app_type: String,
-
+pub struct Token {
     #[serde(rename="currency")]
-    pub currency: String,
+    currency: String,//'USD',
 
     #[serde(rename="issuer")]
-    pub issuer: String,
+    issuer: String,  //'jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS',
+
+    #[serde(rename="value")]
+    value: String,   //'0.5'
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TakerPay {
+    #[serde(rename="flags")]
+    flags: u64,
+
+    #[serde(rename="seq")]
+    seq: u64,
+
+    #[serde(rename="taker_pays")]
+    taker_pays: Token,
+
+    #[serde(rename="taker_gets")]
+    taker_gets: String,//'1000000'
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct TakerGet {
+    #[serde(rename="flags")]
+    flags: u64,
+
+    #[serde(rename="seq")]
+    seq: u64,
+
+    #[serde(rename="taker_gets")]
+    taker_gets: Token,
+
+    #[serde(rename="taker_pays")]
+    taker_pays: String, //'1000000'
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct RequestAccountOfferResponse {
+    #[serde(rename="account")]
+    pub account: String,   
 
     #[serde(rename="ledger_hash")]
     pub ledger_hash: String,
@@ -115,11 +147,8 @@ pub struct RequestBrokerageResponse {
     #[serde(rename="ledger_index")]
     pub ledger_index: u64,
 
-    #[serde(rename="rate_den")]
-    pub rate_den: String,
-
-    #[serde(rename="rate_num")]
-    pub rate_num: String,
+    #[serde(rename="offers")]
+    pub offers: (TakerPay, TakerGet), //???
 
     #[serde(rename="validated")]
     pub validated: bool,

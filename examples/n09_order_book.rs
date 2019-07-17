@@ -1,8 +1,8 @@
 extern crate jlib;
 
 use jlib::misc::config::*;
-use jlib::api::order_book::*;
-use jlib::commands::order_book::{RequestOrderBookResponse, OrderBookItem};
+use jlib::api::query::order_book::*;
+use jlib::message::order_book::{RequestOrderBookResponse, OrderBookItem};
 
 use std::rc::Rc;
 

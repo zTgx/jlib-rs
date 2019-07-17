@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::any::Any;
 
-use crate::commands::command_trait::CommandConversion;
+use crate::message::command_trait::CommandConversion;
 
 //////////////////////
 /*

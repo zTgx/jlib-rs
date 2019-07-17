@@ -5,51 +5,56 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::any::Any;
 
-use crate::commands::command_trait::CommandConversion;
+use crate::message::command_trait::CommandConversion;
 
 /*
-@4.9 获得账号可接收和发送的货币
-RequestAccountTumsCommand 请求格式
-id: u64, //(固定值): 1
-command: String, //(固定值): account_currencies
-relation_type: Option<String>, //None
-account: String, //需要用户传递的参数，钱包的地址
+@4.14获得挂单佣金设置信息
+RequestBrokerageCommand 请求格式
+id: u64,         //(固定值): 1
+command: String, //(固定值): Fee_Info
+issuer: String, //需要用户传递的参数，[货币发行方]
+app_type: u64,          //需要用户传递的参数，[应用来源]
+currency: String,       //需要用户传递的参数，[货币种类]
 ledger_index: String //(固定值): 'validated'
 */
 #[derive(Serialize, Deserialize, Debug)]
-pub struct RequestAccountTumsCommand {
+pub struct RequestBrokerageCommand {
     #[serde(rename="id")]
     id: u64,
 
     #[serde(rename="command")]
     command: String,
 
-    #[serde(rename="relation_type")]
-    relation_type: Option<String>,
+    #[serde(rename="issuer")]
+    issuer: String,
 
-    #[serde(rename="account")]
-    account: String,
+    #[serde(rename="app_type")]
+    app_type: u64,
+
+    #[serde(rename="currency")]
+    currency: String,
 
     #[serde(rename="ledger_index")]
     ledger_index: String,
 }
 
-impl RequestAccountTumsCommand {
-    pub fn with_params(account: String) -> Box<Self> {
+impl RequestBrokerageCommand {
+    pub fn with_params(issuer: String, app_type: u64, currency: String) -> Box<Self> {
         Box::new( 
-            RequestAccountTumsCommand {
+            RequestBrokerageCommand {
                 id: 1,
-                command: "account_currencies".to_string(),
-                relation_type: None,
-                account: account,
+                command: "Fee_Info".to_string(),
+                issuer: issuer,
+                app_type: app_type,
+                currency: currency,
                 ledger_index: "validated".to_string(),
             }
         )
     }
 }
 
-impl CommandConversion for RequestAccountTumsCommand {
-    type T = RequestAccountTumsCommand;
+impl CommandConversion for RequestBrokerageCommand {
+    type T = RequestBrokerageCommand;
     fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
@@ -91,21 +96,30 @@ impl CommandConversion for RequestAccountTumsCommand {
 
 /////////////////////////
 /*
-RequestAccountInfoResponse 数据返回格式
+RequestBrokerageResponse 数据返回格式
 */
 #[derive(Serialize, Deserialize, Debug)]
-pub struct RequestAccountTumsResponse {
+pub struct RequestBrokerageResponse {
+    #[serde(rename="AppType")]
+    pub app_type: String,
+
+    #[serde(rename="currency")]
+    pub currency: String,
+
+    #[serde(rename="issuer")]
+    pub issuer: String,
+
     #[serde(rename="ledger_hash")]
     pub ledger_hash: String,
 
     #[serde(rename="ledger_index")]
     pub ledger_index: u64,
 
-    #[serde(rename="receive_currencies")]
-    pub receive_currencies: Vec<String>,
+    #[serde(rename="rate_den")]
+    pub rate_den: String,
 
-    #[serde(rename="send_currencies")]
-    pub send_currencies: Vec<String>,
+    #[serde(rename="rate_num")]
+    pub rate_num: String,
 
     #[serde(rename="validated")]
     pub validated: bool,
