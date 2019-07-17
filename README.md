@@ -38,8 +38,10 @@ Rust.
     - [x]    4.19.2传入密钥
     - [x]    4.19.3取消挂单
 
+- [x] solidity合约 Deploy and Invoke
+
 待实现工具方法：  
-- [x] 字符串转16进制： fn string_to_hex(s: String) -> String;  
+- [x] 字符串转16进制  
 - [x] 本地签名
 
 
@@ -61,4 +63,4 @@ Rust.
 - [ ] 15, 修改pub fn prepare(tx_json: TxJson)，===》 pub fn prepare(tx_json: &mut TxJson)，在原有基础上修改txjson。
 - [ ] 16, 重构TypeObject compare方法。
 - [x] 17, base/Amount 和 common/Amount映射！！！
-- [ ] 18, LocalSignX / TransactionX 
+- [x] 18, LocalSignX / TransactionX 
