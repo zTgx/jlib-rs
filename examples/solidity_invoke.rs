@@ -1,20 +1,20 @@
 
-extern crate mylib;
+extern crate jlib;
 
-use mylib::misc::config::*;
-use mylib::contracts::solidity::*;
+use jlib::misc::config::*;
+use jlib::contracts::solidity::*;
 
 use std::rc::Rc;
 
 fn main() {
-    let config: Box<Rc<Config>> = Config::new(TEST2, true);
+    let config: Box<Rc<Config>> = Config::new(TEST1, true);
     println!("config : {:?}", config.clone());
 
     //invoke
     //address: 
     let secret  = "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
     let account = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string();
-    let address = "jD4SZgh9tB9esMBZdhgsKMQmJvGmcgSKXi".to_string();
+    let address = "j94WCA3ZSTWv2SkjxHh7friknF7PmyvDiU".to_string();
 
     //concat args:
     //THe First MUST BE: function name which is to be called.

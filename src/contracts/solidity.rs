@@ -126,6 +126,15 @@ impl SolidityInitMessage {
           tx_json: tx_json,
         }
     }
+
+    pub fn with_params(account: String, secret: String, payload: String) -> Self {
+        SolidityInitMessage {
+            id: 1,
+            command: "submit".to_string(),
+            secret: secret,
+            tx_json: SolidityInitTxJson::new(account, payload),
+        }
+    }
 }
 
 impl CommandConversion for SolidityInitMessage {
