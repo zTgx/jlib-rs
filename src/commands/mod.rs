@@ -1,8 +1,9 @@
 pub mod command_trait;
 pub mod subscribe;
 pub mod request_server_info;
+
 pub mod ledger_closed;
-pub mod request_ledger;
+pub mod spec_ledger;
 pub mod request_account_info;
 pub mod request_account_tums;
 pub mod request_account_relations;
