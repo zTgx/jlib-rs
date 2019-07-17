@@ -8,44 +8,56 @@ use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 
-use crate::message::command_trait::CommandConversion;
+use crate::message::common::command_trait::CommandConversion;
+use crate::message::common::amount::Amount;
 use crate::misc::common::*;
 
 /*
-4.19取消挂单
+关系对象
 */
-#[derive(Serialize, Deserialize, Debug)]
-pub struct OfferCancelTxJson {
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct RelationTxJson {
     #[serde(rename="Flags")]
-    pub flags: i32, ///How ???????????
+    pub flags: u32,
 
     #[serde(rename="Fee")]
     pub fee: u64,
 
+    //交易类型：TrustSet信任;RelationDel解冻；RelationSet授权/冻结
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
 
     #[serde(rename="Account")]
     pub account: String,
 
-    #[serde(rename="OfferSequence")]
-    pub offer_sequence: u64,
+    #[serde(rename="Target")]
+    pub target: String,
+
+    //关系类型：0信任；1授权；3冻结/解冻；
+    #[serde(rename="RelationType")]
+    pub relation_type: u64,
+
+    #[serde(rename="LimitAmount")]
+    pub limit_amount: String,//Amount,
 }
 
-impl OfferCancelTxJson {
-        pub fn new(account: String, offer_sequence: u64) -> Self {
-            let flag = Flags::Other;
-            OfferCancelTxJson {
-                flags: 0, ///////////////Hard code
-                fee: 10000, /////////////////////Hard code
-                transaction_type: "OfferCancel".to_string(),
-                account: account,
-                offer_sequence: offer_sequence,
-            }
+impl RelationTxJson {
+    pub fn new(account: String, target: String, relation_type: u64, amount: Amount) -> Self {
+        let flag = Flags::Other;
+        RelationTxJson {
+            flags: flag.get(),
+            fee: 10000,
+            transaction_type: "RelationSet".to_string(),
+            account: account,
+            target: target,
+            relation_type: relation_type,
+            limit_amount: "500000".to_string(),//amount, ?????
         }
+    }
 }
+
 #[derive(Serialize, Deserialize, Debug)]
-pub struct OfferCancelTx {
+pub struct RelationTx {
     #[serde(rename="id")]
     id: u64, 
 
@@ -57,12 +69,12 @@ pub struct OfferCancelTx {
     pub secret: Option<String>,
 
     #[serde(rename="tx_json")]
-    pub tx_json: OfferCancelTxJson,
+    pub tx_json: RelationTxJson,
 }
 
-impl OfferCancelTx {
-    pub fn new(secret: Option<String>, tx_json: OfferCancelTxJson) -> Box<OfferCancelTx> {
-        Box::new( OfferCancelTx {
+impl RelationTx {
+    pub fn new(secret: Option<String>, tx_json: RelationTxJson) -> Box<RelationTx> {
+        Box::new( RelationTx {
             id: 1,
             command: "submit".to_string(),
             secret: secret,
@@ -71,8 +83,8 @@ impl OfferCancelTx {
     }
 }
 
-impl CommandConversion for OfferCancelTx {
-    type T = OfferCancelTx;
+impl CommandConversion for RelationTx {
+    type T = RelationTx;
     fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
@@ -103,10 +115,10 @@ impl CommandConversion for OfferCancelTx {
 }
 
 /*
-OfferCancelTxJsonResponse
+RelationTxJsonResponse
 */
 #[derive(Serialize, Deserialize, Debug)]
-pub struct OfferCancelTxJsonResponse {
+pub struct RelationTxJsonResponse {
     #[serde(rename="Account")]
     pub account: String,
 
@@ -116,11 +128,20 @@ pub struct OfferCancelTxJsonResponse {
     #[serde(rename="Flags")]
     pub flags: i32,
 
+    #[serde(rename="LimitAmount")]
+    pub limit_amount: String,
+    
+    #[serde(rename="RelationType")]
+    pub relation_type: u64,
+
     #[serde(rename="Sequence")]
     pub sequence: u64,
 
     #[serde(rename="SigningPubKey")]
     pub signing_pub_key: String,
+
+    #[serde(rename="Target")]
+    pub target: String,
 
     #[serde(rename="Timestamp")]
     pub time_stamp: u64,
@@ -136,7 +157,7 @@ pub struct OfferCancelTxJsonResponse {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub struct OfferCancelTxResponse {
+pub struct RelationTxResponse {
     #[serde(rename="engine_result")]
     pub engine_result: String,
 
@@ -150,5 +171,5 @@ pub struct OfferCancelTxResponse {
     pub tx_blob: String,
 
     #[serde(rename="tx_json")]
-    pub tx_json: OfferCancelTxJsonResponse,
+    pub tx_json: RelationTxJsonResponse,
 }

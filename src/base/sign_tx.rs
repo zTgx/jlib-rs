@@ -7,16 +7,10 @@
 // use serde_json::Result;
 
 use crate::base::inverse_fields_map::INVERSE_FIELDS_MAP;
-// use crate::base::types_map::TYPES_MAP;
-// use crate::base::serialized_type::*;
-
-// use typename::TypeName;
-// use crate::base::amount::*;
 use crate::base::sign::*;
 use ring::{digest};
 
-use crate::transactions::transaction::{TxJson};
-// use crate::base::type_obj::*;
+use crate::message::transaction::transaction::{TxJson};
 use crate::base::signed_obj::*;
 
 use crate::base::constants::{

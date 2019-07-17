@@ -5,9 +5,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::any::Any;
 
-use crate::message::command_trait::CommandConversion;
-use crate::message::amount::Amount;
-use crate::message::meta::*;
+use crate::message::common::command_trait::CommandConversion;
+use crate::message::common::amount::Amount;
+use crate::message::common::meta::*;
 
 /*
 @4.12获得账号交易列表 

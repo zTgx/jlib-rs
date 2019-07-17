@@ -5,19 +5,19 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::any::Any;
 
-use crate::message::command_trait::CommandConversion;
+use crate::message::common::command_trait::CommandConversion;
 
 /*
-@4.11 获得账号挂单
-RequestAccountOfferCommand 请求格式
+@4.10 获得账号关系 
+RequestAccountRelationsCommand 请求格式
 id: u64,         //(固定值): 1
-command: String, //(固定值): account_offers
+command: String, //(固定值): account_lines
 relation_type: Option<String>, //None
 account: String,     //需要用户传递的参数，钱包的地址
 ledger_index: String //(固定值): 'validated'
 */
 #[derive(Serialize, Deserialize, Debug)]
-pub struct RequestAccountOfferCommand {
+pub struct RequestAccountRelationsCommand {
     #[serde(rename="id")]
     id: u64,
 
@@ -34,13 +34,13 @@ pub struct RequestAccountOfferCommand {
     ledger_index: String,
 }
 
-impl RequestAccountOfferCommand {
-    pub fn with_params(account: String) -> Box<Self> {
+impl RequestAccountRelationsCommand {
+    pub fn with_params(account: String, relation_type: Option<String>) -> Box<Self> {
         Box::new( 
-            RequestAccountOfferCommand {
+            RequestAccountRelationsCommand {
                 id: 1,
-                command: "account_offers".to_string(),
-                relation_type: None,
+                command: "account_lines".to_string(),
+                relation_type: relation_type,
                 account: account,
                 ledger_index: "validated".to_string(),
             }
@@ -48,8 +48,8 @@ impl RequestAccountOfferCommand {
     }
 }
 
-impl CommandConversion for RequestAccountOfferCommand {
-    type T = RequestAccountOfferCommand;
+impl CommandConversion for RequestAccountRelationsCommand {
+    type T = RequestAccountRelationsCommand;
     fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
@@ -91,53 +91,10 @@ impl CommandConversion for RequestAccountOfferCommand {
 
 /////////////////////////
 /*
-RequestAccountOfferResponse 数据返回格式
+RequestAccountRelationsResponse 数据返回格式
 */
-///TODO::Amout!!!!
 #[derive(Serialize, Deserialize, Debug)]
-pub struct Token {
-    #[serde(rename="currency")]
-    currency: String,//'USD',
-
-    #[serde(rename="issuer")]
-    issuer: String,  //'jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS',
-
-    #[serde(rename="value")]
-    value: String,   //'0.5'
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct TakerPay {
-    #[serde(rename="flags")]
-    flags: u64,
-
-    #[serde(rename="seq")]
-    seq: u64,
-
-    #[serde(rename="taker_pays")]
-    taker_pays: Token,
-
-    #[serde(rename="taker_gets")]
-    taker_gets: String,//'1000000'
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct TakerGet {
-    #[serde(rename="flags")]
-    flags: u64,
-
-    #[serde(rename="seq")]
-    seq: u64,
-
-    #[serde(rename="taker_gets")]
-    taker_gets: Token,
-
-    #[serde(rename="taker_pays")]
-    taker_pays: String, //'1000000'
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-pub struct RequestAccountOfferResponse {
+pub struct RequestAccountRelationsResponse {
     #[serde(rename="account")]
     pub account: String,   
 
@@ -147,9 +104,35 @@ pub struct RequestAccountOfferResponse {
     #[serde(rename="ledger_index")]
     pub ledger_index: u64,
 
-    #[serde(rename="offers")]
-    pub offers: (TakerPay, TakerGet), //???
+    #[serde(rename="lines")]
+    pub lines: Vec<Line>,
 
     #[serde(rename="validated")]
     pub validated: bool,
+}
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Line {
+    #[serde(rename="account")]
+    pub account: String,
+
+    #[serde(rename="balance")]
+    pub balance: String,
+
+    #[serde(rename="currency")]
+    pub currency: String,
+
+    #[serde(rename="limit")]
+    pub limit: String,
+
+    #[serde(rename="limit_peer")]
+    pub limit_peer: String,
+
+    #[serde(rename="no_skywell")]
+    pub no_skywell: bool,
+
+    #[serde(rename="quality_in")]
+    pub quality_in: u64,
+
+    #[serde(rename="quality_out")]
+    pub quality_out: u64,
 }

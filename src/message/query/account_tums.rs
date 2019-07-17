@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::any::Any;
 
-use crate::message::command_trait::CommandConversion;
+use crate::message::common::command_trait::CommandConversion;
 
 /*
 @4.9 获得账号可接收和发送的货币

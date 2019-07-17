@@ -8,8 +8,8 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::misc::config::*;
-use crate::message::spec_tx::*;
-use crate::message::command_trait::CommandConversion;
+use crate::message::query::spec_tx::*;
+use crate::message::common::command_trait::CommandConversion;
 use crate::base::util::downcast_to_string;
 
 pub trait SpecTxI {

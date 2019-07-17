@@ -7,19 +7,22 @@ use std::cell::Cell;
 
 extern crate ws;
 use ws::{connect, CloseCode};
-// use serde_json::json;
 use serde_json::{Value};
-use crate::message::command_trait::*;
-use crate::message::subscribe::*;
+
+use crate::message::common::command_trait::*;
+use crate::message::query::subscribe::*;
 
 
 
 
-use crate::transactions::transaction::*;
-use crate::message::amount::Amount;
-use crate::transactions::relation::*;
-use crate::transactions::offer_create::*;
-use crate::transactions::offer_cancel::*;
+// use crate::transactions::transaction::*;
+use crate::message::common::amount::Amount;
+use crate::message::transaction::relation::*;
+use crate::message::transaction::offer_create::*;
+use crate::message::transaction::offer_cancel::*;
+use crate::message::common::memo::*;
+use crate::message::transaction::transaction::*;
+
 use crate::base::sign_tx::*;
 use crate::misc::common::*;
 use crate::misc::config::Config;
@@ -107,24 +110,6 @@ impl Remote  {
         }
     }
 
-    //此方法调试connect
-
-
-
-
-    //[[[接口@4.8~4.11 参数一直，考虑后期合并。]]]!!!
-
-
-
-
-
-
-
-
-
-
-
-
     /*
     4.15支付
     */
@@ -199,7 +184,7 @@ impl Remote  {
             let tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take(), signing_pub_key);
 
             if config.local_sign {
-                use crate::transactions::local_sign_tx::*;
+                use crate::message::transaction::local_sign_tx::*;
                 let mut local_sign = SignTx::default();
 
                 let submit = local_sign.prepare(tx_json, d_secret);

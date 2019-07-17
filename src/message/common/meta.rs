@@ -1,6 +1,6 @@
 
 use serde::{Deserialize, Serialize};
-use crate::message::amount::Amount;
+use crate::message::common::amount::Amount;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct FinalFields {
