@@ -44,48 +44,7 @@ fn main() {
     //     }
     //     Err(err) => { println!("error: {}", err); }
     // }});
-
-    // Remote::request_server_info(config.clone(), |x| match x {
-    //     Ok(response) => {
-    //         println!("build_version : {}", response.build_version);
-    //     }
-
-    //     Err(_) => {
-    //     }
-    // });
-
-    // Remote::request_ledger_closed(config.clone(), |x| match x {
-    //     Ok(response) => {
-    //         println!("ledger hash  : {}", response.ledger_hash);
-    //         println!("ledger index : {}", response.ledger_index);
-    //     }
-
-    //     Err(_) => {
-    //     }
-    // });
-
-    // Remote::request_ledger(config.clone(), Some(88670), None, true, |x| match x {
-    //     Ok(response) => {
-    //         println!("ledger : {:?}", response);
-    //         println!("account_hash: {}", response.account_hash);
-    //     },
-
-    //     Err(_) => {
-
-    //     }
-    // });
     
-    // Remote::request_account_info(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), |x| match x {
-    //     Ok(response) => {
-    //         //println!("ledger : {:?}", response);
-    //         println!("Balance: {}", response.Balance);
-    //     },
-
-    //     Err(_) => {
-
-    //     }
-    // });
-
     // Remote::request_account_tums(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), |x| match x {
     //     Ok(response) => {
     //         //println!("ledger : {:?}", response);

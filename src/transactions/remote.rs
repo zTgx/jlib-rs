@@ -14,7 +14,7 @@ use crate::commands::subscribe::*;
 // use crate::commands::request_server_info::*;
 // use crate::commands::ledger_closed::*;
 // use crate::commands::spec_ledger::*;
-use crate::commands::request_account_info::*;
+// use crate::commands::request_account_info::*;
 use crate::commands::request_account_tums::*;
 use crate::commands::request_account_relations::*;
 use crate::commands::request_account_offer::*;
@@ -114,164 +114,9 @@ impl Remote  {
             Err(_) => { "None".to_string() }
         }
     }
-    
-    // pub fn request_server_info<F> (config: Box<Rc<Config>>, op: F)
-    //     where F: Fn(Result<ServerInfoResponse, &'static str>) {
-        
-    //     let info = Rc::new(Cell::new("".to_string()));
-
-    //     connect(config.addr, |out| { 
-    //         let copy = info.clone();
-
-    //         if let Ok(command) = ServerInfoCommand::default().to_string() {
-    //             out.send(command).unwrap();
-    //         }
-
-    //         move |msg: ws::Message| {
-    //             let c = msg.as_text()?;
-    //             copy.set(c.to_string());
-                
-    //             out.close(CloseCode::Normal) 
-    //         }
-        
-    //     }).unwrap();
-        
-    //     let resp = Remote::print_if(info);
-    //     println!("resp : {}", &resp);
-    //     {
-    //         //TOD::解析的类可以抽象出来～～～
-    //         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-    //             let x: String = x["result"].to_string();
-    //             if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
-    //                 let x: String = x["info"].to_string();
-    //                 if let Ok(v) = serde_json::from_str(&x) as Result<ServerInfoResponse, serde_json::error::Error> {
-    //                     op(Ok(v))
-    //                 }
-    //             }
-    //         }
-    //     }
-
-
-    // }
-
-    // pub fn request_ledger_closed<F>(config: Box<Rc<Config>>, op: F)
-    //     where F: Fn(Result<LedgerClosedResponse, &'static str>) {
-    //         let info = Rc::new(Cell::new("".to_string()));
-
-    //         connect(config.addr, |out| { 
-    //             let copy = info.clone();
-
-    //             if let Ok(command) = LedgerClosedCommand::default().to_string() {
-    //                 out.send(command).unwrap();
-    //             }
-
-    //             move |msg: ws::Message| {
-    //                 let c = msg.as_text()?;
-    //                 copy.set(c.to_string());
-                    
-    //                 out.close(CloseCode::Normal) 
-    //             }
-            
-    //         }).unwrap();
-            
-    //         let resp = Remote::print_if(info);
-    //         println!("resp : {}", &resp);
-    //         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-    //             let x: String = x["result"].to_string();
-    //             if let Ok(x) = serde_json::from_str(&x) as Result<LedgerClosedResponse, serde_json::error::Error> {
-    //                 op(Ok(x));
-    //             }
-    //         }
-
-    // }
-
-    // pub fn request_ledger<F>(config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F) 
-    //     where F: Fn(Result<RequestLedgerResponse, &'static str>) {
-
-    //         let info = Rc::new(Cell::new("".to_string()));
-
-    //         let ledger_index_rc = Rc::new(Cell::new(None));
-    //         if ledger_index.is_some() {
-    //             ledger_index_rc.set(ledger_index);
-    //         }
-    //         let ledger_hash_rc = Rc::new(Cell::new(None));
-    //         if ledger_hash.is_some() {
-    //             ledger_hash_rc.set(ledger_hash);
-    //         }
-    //         let transactions_rc = Rc::new(Cell::new(transactions));
-
-    //         connect(config.addr, |out| { 
-    //             let copy = info.clone();
-
-    //             let index = ledger_index_rc.clone();
-    //             let hash = ledger_hash_rc.clone();
-    //             let trans = transactions_rc.clone();
-    //             if let Ok(command) = RequestLedgerCommand::with_params(index.take(), hash.take(), trans.take()).to_string() {
-    //                 out.send(command).unwrap();
-    //             }
-
-    //             move |msg: ws::Message| {
-    //                 let c = msg.as_text()?;
-    //                 copy.set(c.to_string());
-                    
-    //                 out.close(CloseCode::Normal) 
-    //             }
-            
-    //         }).unwrap();
-            
-    //         let resp = Remote::print_if(info);
-    //         println!("resp : {}", &resp);
-    //         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-    //             let x: String = x["result"].to_string();
-    //             if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
-    //                 let x: String = x["ledger"].to_string();
-    //                 if let Ok(v) = serde_json::from_str(&x) as Result<RequestLedgerResponse, serde_json::error::Error> {
-    //                     op(Ok(v))
-    //                 }
-    //             }
-    //         }         
-    // }
 
     //此方法调试connect
-    pub fn request_account_info<F>(config: Box<Rc<Config>>, account: String, op: F) 
-        where F: Fn(Result<RequestAccountInfoResponse, &'static str>) {
 
-            let info = Rc::new(Cell::new("".to_string()));
-
-            let account_rc = Rc::new(Cell::new(account));
-
-            connect(config.addr, |out| { 
-                let copy = info.clone();
-
-                let account = account_rc.clone();
-                if let Ok(command) = RequestAccountInfoCommand::with_params(account.take()).to_string() {
-                    out.send(command).unwrap();
-                }
-
-                println!("zhtian@remote.connect.");
-                move |msg: ws::Message| {
-                    println!("zhtian@msg");
-
-                    let c = msg.as_text()?;
-                    copy.set(c.to_string());
-                    
-                    out.close(CloseCode::Normal) 
-                }
-            
-            }).unwrap();
-            
-            let resp = Remote::print_if(info);
-            //println!("resp : {}", &resp);
-            if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-                let x: String = x["result"].to_string();
-                if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
-                    let x: String = x["account_data"].to_string();
-                    if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountInfoResponse, serde_json::error::Error> {
-                        op(Ok(v))
-                    }
-                }
-            }         
-    }
 
     pub fn request_account_tums<F>(config: Box<Rc<Config>>, account: String, op: F) 
         where F: Fn(Result<RequestAccountTumsResponse, &'static str>) {

@@ -4,7 +4,8 @@ pub mod request_server_info;
 
 pub mod ledger_closed;
 pub mod spec_ledger;
-pub mod request_account_info;
+pub mod account_info;
+
 pub mod request_account_tums;
 pub mod request_account_relations;
 pub mod request_account_offer;
