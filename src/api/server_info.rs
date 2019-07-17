@@ -1,11 +1,11 @@
+
+//
+// 请求底层服务器信息
+//
 extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
-// use std::any::Any;
 use std::cell::Cell;
-// use std::cell::RefCell;
-
-// use serde_json::json;
 use serde_json::{Value};
 use crate::misc::config::*;
 use crate::commands::request_server_info::*;
