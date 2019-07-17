@@ -68,18 +68,6 @@ fn main() {
     //     }   
     // });
 
-    // let gets = OrderBookItem::with_params("SWT".to_string(), "".to_string());
-    // let pays = OrderBookItem::with_params("CNY".to_string(), "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS".to_string());
-    // Remote::request_order_book(config.clone(), gets, pays, |x| match x {
-    //     Ok(response) => {
-    //         //println!("ledger : {:?}", response);
-    //         println!("ledger_hash: {}", response.ledger_current_index);
-    //     },
-
-    //     Err(_) => {
-
-    //     }   
-    // });
 
     // Remote::request_brokerage(config.clone(), "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS".to_string(),
     //                                            1,

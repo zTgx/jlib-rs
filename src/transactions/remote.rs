@@ -11,16 +11,6 @@ use ws::{connect, CloseCode};
 use serde_json::{Value};
 use crate::commands::command_trait::*;
 use crate::commands::subscribe::*;
-// use crate::commands::request_server_info::*;
-// use crate::commands::ledger_closed::*;
-// use crate::commands::spec_ledger::*;
-// use crate::commands::request_account_info::*;
-// use crate::commands::request_account_tums::*;
-// use crate::commands::request_account_relations::*;
-// use crate::commands::request_account_offer::*;
-// use crate::commands::request_account_tx::*;
-// use crate::commands::request_order_book::*;
-use crate::commands::request_brokerage::*;
 
 
 
@@ -131,46 +121,7 @@ impl Remote  {
 
 
 
-    pub fn request_brokerage<F>(config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F) 
-        where F: Fn(Result<RequestBrokerageResponse, &'static str>) {
 
-            let info = Rc::new(Cell::new("".to_string()));
-
-            let issuer_rc = Rc::new(Cell::new(issuer));
-            let app_rc = Rc::new(Cell::new(app));
-            let currency_rc = Rc::new(Cell::new(currency));
-            
-            connect(config.addr, |out| { 
-                let copy = info.clone();
-
-                let issuer = issuer_rc.clone();
-                let app = app_rc.clone();
-                let currency = currency_rc.clone();
-
-                if let Ok(command) = RequestBrokerageCommand::with_params(issuer.take(), app.take(), currency.take()).to_string() {
-                    out.send(command).unwrap();
-                }
-
-                //返回一个Handler类型(trait)，等待epoll调用。
-                move |msg: ws::Message| {
-                    let c = msg.as_text()?;
-                    copy.set(c.to_string());
-                    
-                    out.close(CloseCode::Normal) 
-                }
-            
-            }).unwrap();
-            
-            let resp = Remote::print_if(info);
-            println!("resp : {}", &resp);
-            if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-                let x: String = x["result"].to_string();
-                println!("x : {}", x);
-                if let Ok(v) = serde_json::from_str(&x) as Result<RequestBrokerageResponse, serde_json::error::Error> {
-                    op(Ok(v))
-                }
-            }         
-    }
 
 
 
