@@ -290,6 +290,19 @@ pub fn downcast_to_string(value: Rc<dyn Any>) -> String {
     }
 }
 
+/*
+工具方法
+*/
+pub fn string_to_hex(s: &String) -> String {
+    let mut ss = String::from("");
+    for x in s.as_bytes() {
+        let hexs = format!("{:x}", x);
+        ss.push_str(&hexs);
+    }
+    
+    ss
+}
+
 //https://solidity.readthedocs.io/en/v0.5.4/abi-spec.html
 //solidity abi spec
 //处理格式说明：
@@ -328,3 +341,4 @@ pub fn check(p: String) -> String {
 
     return check_string(hex_string);
 }
+

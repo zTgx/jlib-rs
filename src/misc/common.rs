@@ -151,18 +151,7 @@ impl Flags {
     // println!("n : {}", n);
 //////////////////////////////Flags End
 
-/*
-工具方法
-*/
-pub fn string_to_hex(s: &String) -> String {
-    let mut ss = String::from("");
-    for x in s.as_bytes() {
-        let hexs = format!("{:x}", x);
-        ss.push_str(&hexs);
-    }
-    
-    ss
-}
+
 
 // fn sigining(tx_json: &TxJson) -> TxJson {
 
