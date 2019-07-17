@@ -44,7 +44,7 @@ Rust.
 
 
 遗留问题:
-- [ ] 1，完善Amount数据结构
+- [x] 1，完善Amount数据结构
 - [ ] 2，TakerGets和TakerPays在不同情况下的数据类型 （Amount or String）
 - [ ] 3，新老服务器接口的更新（涉及到app/brokerage等相关字段）
 - [x] 4，添加[[example]]

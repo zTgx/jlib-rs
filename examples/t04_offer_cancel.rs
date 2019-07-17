@@ -1,29 +1,30 @@
-extern crate mylib;
-use mylib::remote::*;
-use mylib::config::*;
+extern crate jlib;
 
+use jlib::misc::config::*;
 use std::rc::Rc;
+use jlib::api::transaction::cancel_offer::*;
+use jlib::message::transaction::offer_cancel::{OfferCancelTxResponse};
 
 fn main() {
     let config: Box<Rc<Config>> = Config::default_with_box();
-    println!("config : {:?}", config);
 
     let offer_sequence: u64 = 688_u64;
     let account: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
     let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
-    Remote::build_offer_cancel_tx(config.clone(), 
+
+    CancelOffer::new().cancel_offer(    config.clone(), 
                                         account,
                                         offer_sequence,
                                         Some(secret),
 
-                                         |x| match x {
+                                        |x| match x {
         Ok(response) => {
-            //println!("ledger : {:?}", response);
-            println!("tx_blob: {}", response.tx_blob);
+            let res: OfferCancelTxResponse = response;
+            println!("取消挂单: {:?}", &res);
         },
 
         Err(_) => {
-
+            panic!("Error Message.");
         }   
     });
 }
