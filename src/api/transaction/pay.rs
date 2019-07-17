@@ -1,5 +1,5 @@
 //
-// 请求账号信息
+// 支付
 //
 extern crate ws;
 use ws::{connect, CloseCode};
