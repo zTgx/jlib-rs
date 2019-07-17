@@ -1,8 +1,8 @@
 
 extern crate hex;
-extern crate mylib;
+extern crate jlib;
 
-use mylib::base::sign::*;
+use jlib::base::sign::*;
 
 fn main () {
     let message = "11D06DFD3CDC4D8FE00214879A97B3E4B40B75F8DF82D89ECE72A96066A52583";

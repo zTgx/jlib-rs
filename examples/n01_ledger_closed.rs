@@ -2,7 +2,7 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::ledger_closed::*;
-use jlib::message::ledger_closed::{LedgerClosedResponse};
+use jlib::message::query::ledger_closed::{LedgerClosedResponse};
 
 use std::rc::Rc;
 

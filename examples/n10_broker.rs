@@ -2,7 +2,7 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::brokerage::*;
-use jlib::message::brokerage::{RequestBrokerageResponse};
+use jlib::message::query::brokerage::{RequestBrokerageResponse};
 
 use std::rc::Rc;
 

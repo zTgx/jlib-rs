@@ -1,7 +1,7 @@
 #[macro_use] 
 extern crate typename;
 
-extern crate mylib;
+extern crate jlib;
 
 use serde_json::json;
 use serde_json::{Value};

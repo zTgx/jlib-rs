@@ -2,7 +2,7 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::spec_tx::*;
-use jlib::message::spec_tx::{RequestTxResponse};
+use jlib::message::query::spec_tx::{RequestTxResponse};
 
 use std::rc::Rc;
 

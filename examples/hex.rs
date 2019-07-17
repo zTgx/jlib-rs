@@ -1,7 +1,7 @@
 extern crate hex;
 
-extern crate mylib;
-use mylib::base::util::{check};
+extern crate jlib;
+use jlib::base::util::{check};
 
 fn main() {
     // let hex_string = hex::encode("Hello world!");

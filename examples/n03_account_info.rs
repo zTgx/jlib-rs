@@ -2,7 +2,7 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::account_info::*;
-use jlib::message::account_info::{RequestAccountInfoResponse};
+use jlib::message::query::account_info::{RequestAccountInfoResponse};
 
 use std::rc::Rc;
 

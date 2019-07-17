@@ -1,6 +1,6 @@
 extern crate ws;
-extern crate mylib;
-use mylib::misc::config::*;
+extern crate jlib;
+use jlib::misc::config::*;
 use std::rc::Rc;
 
 

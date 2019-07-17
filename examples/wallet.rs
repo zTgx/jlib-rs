@@ -1,7 +1,7 @@
 
-extern crate mylib;
-use mylib::base::wallet::*;
-use mylib::base::config::*;
+extern crate jlib;
+use jlib::base::wallet::*;
+use jlib::base::config::*;
 
 fn main() {
     let config = WalletConfig::new(KeyType::SECP256K1);
