@@ -14,7 +14,7 @@ use crate::base::util::downcast_to_string;
 
 pub trait SpecLedgerI {
     fn request_ledger<F>(&self, config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F) 
-    where F: Fn(Result<RequestLedgerResponse, serde_json::error::Error>);
+    where F: Fn(Result<RequestLedgerResponse, SpecLedgerSideKick>);
 }
 
 pub struct SpecLedger {}
@@ -27,7 +27,7 @@ impl SpecLedger {
 
 impl SpecLedgerI for SpecLedger { 
         fn request_ledger<F>(&self, config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F) 
-        where F: Fn(Result<RequestLedgerResponse, serde_json::error::Error>) {
+        where F: Fn(Result<RequestLedgerResponse, SpecLedgerSideKick>) {
 
             let info = Rc::new(Cell::new("".to_string()));
 
@@ -62,11 +62,19 @@ impl SpecLedgerI for SpecLedger {
             
             let resp = downcast_to_string(info);
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-                let x: String = x["result"].to_string();
-                if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
-                    let x: String = x["ledger"].to_string();
-                    if let Ok(v) = serde_json::from_str(&x) as Result<RequestLedgerResponse, serde_json::error::Error> {
-                        op(Ok(v))
+                let status = x["status"].to_string().get(1..8).unwrap().to_string();
+                if status == "success" {
+                    let x: String = x["result"].to_string();
+                    if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
+                        let x: String = x["ledger"].to_string();
+                        if let Ok(v) = serde_json::from_str(&x) as Result<RequestLedgerResponse, serde_json::error::Error> {
+                            op(Ok(v))
+                        }
+                    }
+                } else  {
+                    println!("err");
+                    if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<SpecLedgerSideKick, serde_json::error::Error> {
+                        op(Err(v))
                     }
                 }
             }         

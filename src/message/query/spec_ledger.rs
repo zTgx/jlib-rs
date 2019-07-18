@@ -6,6 +6,8 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
+use std::error::Error;
+use std::fmt;
 
 /*
 @4.6获取某一账本具体信息
@@ -140,4 +142,33 @@ pub struct RequestLedgerResponse {
 
     #[serde(rename="transactions")]
     pub transactions: Vec<String>,
+}
+
+
+/*
+LedgerClosedSideKick 数据返回格式
+*/
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SpecLedgerSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestLedgerCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for SpecLedgerSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "SpecLedgerSideKick is here!")
+    }
+}
+
+impl Error for SpecLedgerSideKick  {
+    fn description(&self) -> &str {
+        "I'm SpecLedgerSideKick side kick"
+    }
 }
