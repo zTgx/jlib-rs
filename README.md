@@ -24,11 +24,15 @@ Introduction
 **[API Documentation](https://github.com/zTgx/lib/wiki/API-Documentation)**
 
 
-
 Getting Started
 ---------------
 
-For detailed installation and usage instructions, check out the [guide](https://github.com/zTgx/lib/wiki/Getting-Started).
+For detailed installation and usage instructions, check out the [guide](https://github.com/zTgx/lib/wiki/Getting-Started).  
+
+
+More examples
+---------------
+More examples can be found [in the examples directory](examples/) and the full documentation can be [found here](https://github.com/zTgx/lib/wiki).  
 
 
 Contributing
