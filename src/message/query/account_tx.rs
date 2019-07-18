@@ -9,6 +9,9 @@ use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::Amount;
 use crate::message::common::meta::*;
 
+use std::error::Error;
+use std::fmt;
+
 /*
 @4.12获得账号交易列表 
 RequestAccountTxCommand 请求格式
@@ -184,4 +187,30 @@ pub struct RequestAccountTxResponse {
 
     #[serde(rename="transactions")]
     pub transactions: Vec<Transaction>,
+}
+
+//AccounTx
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AccounTxSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestAccountTxCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for AccounTxSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "AccounTxSideKick is here!")
+    }
+}
+
+impl Error for AccounTxSideKick  {
+    fn description(&self) -> &str {
+        "I'm AccounTxSideKick side kick"
+    }
 }
