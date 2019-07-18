@@ -1,4 +1,4 @@
-# [jlib](https://github.com/zTgx/lib) [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+# [jlib](https://github.com/zTgx/lib) [![Build Status](https://travis-ci.org/zTgx/lib.svg?branch=master)](https://travis-ci.org/zTgx/lib) [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 Lightweight blockchain lib for Skywelld write in [Rust](http://www.rust-lang.org).
 ```rust
