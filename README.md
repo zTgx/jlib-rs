@@ -19,7 +19,7 @@ Introduction
 ------------
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-**[Homepage](https://github.com/zTgx/lib/wiki/Home-Page)**
+**[Homepage](https://github.com/zTgx/lib/wiki)**
 
 **[API Documentation](https://github.com/zTgx/lib/wiki/API-Documentation)**
 
