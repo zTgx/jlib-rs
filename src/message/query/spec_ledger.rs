@@ -141,7 +141,7 @@ pub struct RequestLedgerResponse {
     pub transaction_hash: String,
 
     #[serde(rename="transactions")]
-    pub transactions: Vec<String>,
+    pub transactions: Option<Vec<String>>,
 }
 
 

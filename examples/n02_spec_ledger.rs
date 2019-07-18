@@ -6,7 +6,11 @@ use jlib::message::query::spec_ledger::{RequestLedgerResponse, SpecLedgerSideKic
 
 fn main() {
     let config = Config::new(TEST1, true);
-    SpecLedger::new().request_ledger(config.clone(), Some(1), None, true, |x| match x {
+    let ok_ledger_index = 88670;
+    let err_ledger_index = 1;
+    let ledger_hash = None;
+    let return_prev_tx_list = false;
+    SpecLedger::new().request_ledger(config.clone(), Some(ok_ledger_index), ledger_hash, return_prev_tx_list, |x| match x {
         Ok(response) => {
             let res: RequestLedgerResponse = response;
             println!("账本具体信息: \n{:?}", &res);
