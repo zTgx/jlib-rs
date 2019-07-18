@@ -54,22 +54,24 @@ impl AccountTxI for AccountTx {
         
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let result: String = x["result"].to_string();
+            println!("x : {:?}", &x);
+
             let status: String = x["status"].to_string();
 
             println!("status: {}", &status);
-            println!("result: {}", &result.len());
             //check status
-            if status == "success".to_owned() && result.len() != 0 {
-                println!("success.");
+            if status == "success" {
                 //parse success data
+                let result = x["result"].to_string();
                 if let Ok(v) = serde_json::from_str(&result) as Result<RequestAccountTxResponse, serde_json::error::Error> {
                     op(Ok(v))
+                } else {
+                    println!("eeeee");
                 }
 
             } else {
                 println!("error.");
-                // println!("error: {:?}", x.to_string());
+                println!("error: {:?}", x.to_string());
                 //parse error data
                 if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<AccounTxSideKick, serde_json::error::Error> {
                     op(Err(v))

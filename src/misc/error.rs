@@ -38,6 +38,8 @@ pub struct ServerInfoSideKick {
     pub id              : u32,
     pub request         : ServerInfoCommand,
     pub status          : String,
+    
+    #[serde(rename="type")]
     pub rtype           : String,
 }
 
@@ -61,6 +63,8 @@ pub struct AccountInfoSideKick {
     pub id              : u32,
     pub request         : RequestAccountInfoCommand,
     pub status          : String,
+
+    #[serde(rename="type")]
     pub rtype            : String,
 }
 
@@ -85,6 +89,8 @@ pub struct AccounTxSideKick {
     pub id              : u32,
     pub request         : RequestAccountTxCommand,
     pub status          : String,
+    
+    #[serde(rename="type")]
     pub rtype            : String,
 }
 

@@ -119,17 +119,14 @@ pub struct Tx {
     #[serde(rename="Account")]
     pub account: String,
 
-    #[serde(rename="Amount")]
-    pub amount: String,
-
-    #[serde(rename="Destination")]
-    pub destination: String,
-
     #[serde(rename="Fee")]
-    pub fee:  String,
+    pub fee: String,
 
     #[serde(rename="Flags")]
     pub flags: u64,
+
+    #[serde(rename="OfferSequence")]
+    pub offer_sequence: u64,
 
     #[serde(rename="Sequence")]
     pub sequence: u64,
@@ -155,7 +152,6 @@ pub struct Tx {
     #[serde(rename="ledger_index")]
     pub ledger_index: u64,
 }
-
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Transaction {

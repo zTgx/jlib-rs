@@ -69,6 +69,30 @@ pub struct ModifiedNode {
     pub previous_txn_lgr_seq: Option<u64>,
 }
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct CreatedNode {
+    #[serde(rename="LedgerEntryType")]
+    pub ledger_entry_type: String, 
+    
+    #[serde(rename="LedgerIndex")]
+    pub ledger_index: String, 
+    
+    #[serde(rename="NewFields")]
+    pub new_field: NewFields, 
+}
+
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct DeletedNode {
+    #[serde(rename="LedgerEntryType")]
+    pub ledger_entry_type: String, 
+    
+    #[serde(rename="LedgerIndex")]
+    pub ledger_index: String, 
+    
+    #[serde(rename="FinalFields")]
+    pub final_field: FinalFields, 
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Meta {
@@ -89,19 +113,11 @@ pub struct AffectedNodes {
     
     #[serde(rename="CreatedNode")]
     pub create_node: Option<CreatedNode>,
+
+    #[serde(rename="DeletedNode")]
+    pub deleted_node: Option<DeletedNode>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct CreatedNode {
-    #[serde(rename="LedgerEntryType")]
-    pub ledger_entry_type: String, 
-    
-    #[serde(rename="LedgerIndex")]
-    pub ledger_index: String, 
-    
-    #[serde(rename="NewFields")]
-    pub new_field: NewFields, 
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct NewFields {
