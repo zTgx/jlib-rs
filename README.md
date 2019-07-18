@@ -28,7 +28,7 @@ Introduction
 Getting Started
 ---------------
 
-For detailed installation and usage instructions, check out the [guide](https://ws-rs.org/guide).
+For detailed installation and usage instructions, check out the [guide](https://github.com/zTgx/lib/wiki/Getting-Started).
 
 Features
 --------
