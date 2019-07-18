@@ -19,9 +19,9 @@ Introduction
 ------------
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
-**[Homepage](https://github.com/zTgx/lib)**
+**[Homepage](https://github.com/zTgx/lib/wiki/Home-Page)**
 
-**[API Documentation](https://github.com/zTgx/lib)**
+**[API Documentation](https://github.com/zTgx/lib/wiki/API-Documentation)**
 
 
 
@@ -30,14 +30,6 @@ Getting Started
 
 For detailed installation and usage instructions, check out the [guide](https://github.com/zTgx/lib/wiki/Getting-Started).
 
-Features
---------
-
-
-
-Testing
--------
-
 
 Contributing
 ------------
@@ -45,6 +37,7 @@ Contributing
 Please report bugs and make feature requests [here](https://github.com/zTgx/lib/issues).
 
 
+------------
 遗留问题:
 - [x] 1，完善Amount数据结构
 - [ ] 2，TakerGets和TakerPays在不同情况下的数据类型 （Amount or String）
