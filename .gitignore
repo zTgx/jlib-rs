@@ -1,4 +1,3 @@
-/target
-**/*.rs.bk
-src/lib.code-workspace
 Cargo.lock
+target
+
