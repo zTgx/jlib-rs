@@ -1,0 +1,26 @@
+language: rust
+sudo: false
+
+rust:
+  - 1.8.0 # minimum supported rustc version
+  - stable
+  - beta
+  - nightly
+  
+  matrix:
+  fast_finish: true
+  allow_failures:
+    - rust: nightly
+    # Don't fail the build if a dependency updates, but at least have a canary so
+    # we know when it happens.
+    - rust: 1.8.0
+  include:
+      - rust: 1.8.0 # minimum supported rustc version
+        env: FEATURES="--no-default-features"
+
+before_script:
+  - pip install 'travis-cargo<0.2' --user && export PATH=$HOME/.local/bin:$PATH
+
+script:
+  - cargo build --verbose --all  
+ 
