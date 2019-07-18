@@ -7,6 +7,9 @@ use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
 
+use std::error::Error;
+use std::fmt;
+
 /*
 @4.5获取最新账本信息
 LedgerClosedCommand 请求格式
@@ -86,4 +89,32 @@ pub struct LedgerClosedResponse {
 
     #[serde(rename="ledger_index")]
     pub ledger_index: u64,
+}
+
+/*
+LedgerClosedSideKick 数据返回格式
+*/
+#[derive(Debug, Serialize, Deserialize)]
+pub struct LedgerClosedSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : LedgerClosedCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for LedgerClosedSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "LedgerClosedSideKick is here!")
+    }
+}
+
+impl Error for LedgerClosedSideKick  {
+    fn description(&self) -> &str {
+        "I'm LedgerClosedSideKick side kick"
+    }
 }

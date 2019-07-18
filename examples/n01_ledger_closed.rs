@@ -2,12 +2,10 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::ledger_closed::*;
-use jlib::message::query::ledger_closed::{LedgerClosedResponse};
-
-use std::rc::Rc;
+use jlib::message::query::ledger_closed::{LedgerClosedResponse, LedgerClosedSideKick};
 
 fn main() {
-    let config: Box<Rc<Config>> = Config::new(TEST1, true);
+    let config = Config::new(TEST1, true);
     println!("config : {:?}", config);
 
     let _c = LedgerClosed::new().request_ledger_closed(config.clone(), |x| match x {
@@ -20,8 +18,9 @@ fn main() {
             println!("----------------------------------------------------------------------------------");
         }
 
-        Err(_) => {
-            panic!("Error Message.");
+        Err(e) => {
+            let err: LedgerClosedSideKick = e;
+            println!("{:?}", err);
         }
     });
 }

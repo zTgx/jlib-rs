@@ -1,8 +1,9 @@
+#![allow(unused)]
 
 use std::error::Error;
 use std::fmt;
 
-use serde::{Deserialize, Serialize};
+// use serde::{Deserialize, Serialize};
 
 #[derive(Debug)]
 struct SuperError {
