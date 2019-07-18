@@ -39,4 +39,7 @@ Contributing
 
 Please report bugs and make feature requests [here](https://github.com/zTgx/lib/issues).
 
+If you're looking for inspiration, there's list of [open issues](https://github.com/zTgx/lib/issues?state=open) right here on github.
+
+And hey, did you know you can also contribute by just starring the project here on github :)
 
