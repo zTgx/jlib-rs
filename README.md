@@ -1,48 +1,48 @@
-Rust.
+# jlib
 
-接口
-- [x] 3.1创建钱包
-- [ ] 4.1创建Remote对象
-- [x] 4.2创建连接
-- [ ] 4.3关闭连接
-- [x] 4.4请求底层服务器信息
-- [x] 4.5获取最新账本信息
-- [x] 4.6获取某一账本具体信息
-- [x] 4.7查询某一交易具体信息
-- [x] 4.8请求账号信息
-- [x] 4.9获得账号可接收和发送的货币
-- [x] 4.10获得账号关系
-- [x] 4.11获得账号挂单
-- [x] 4.12获得账号交易列表
-- [x] 4.13获得市场挂单列表
-- [x] 4.14获得挂单佣金设置信息
-- [x] 4.15支付 
-    - [x]    4.15.1创建支付对象 
-    - [x]    4.15.2传入密钥
-    - [x]    4.15.3设置备注
-    - [x]    4.15.4提交支付
-- [x] 4.16设置关系
-    - [x]    4.16.1创建关系对象
-    - [x]    4.16.2传入密钥
-    - [x]    4.16.3关系设置
-- [ ] 4.17设置账号属性 -----------待完善
-    - [ ]    4.17.1创建属性对象
-    - [ ]    4.17.2传入密钥
-    - [ ]    4.17.3属性设置
-- [x] 4.18挂单
-    - [x]    4.18.1创建挂单对象
-    - [x]    4.18.2传入密钥
-    - [x]    4.18.3提交挂单
-- [x] 4.19取消挂单
-    - [x]    4.19.1创建取消挂单对象
-    - [x]    4.19.2传入密钥
-    - [x]    4.19.3取消挂单
+Lightweight blockchain lib for Skywelld write in [Rust](http://www.rust-lang.org).
+```rust
 
-- [x] solidity合约 Deploy and Invoke
+/// Request blockchain server status
+let config: Box<Rc<Config>> = Config::new(TEST_SERVER, true);
+ServerInfo::new().request_server_info(config.clone(), |x| match x {
+    Ok(response) => {
+        println!("build_version : {:?}", response.build_version);
+    }
 
-待实现工具方法：  
-- [x] 字符串转16进制  
-- [x] 本地签名
+    Err(_) => {
+    }
+});
+```
+
+Introduction
+------------
+[![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
+
+**[Homepage](https://github.com/zTgx/lib)**
+
+**[API Documentation](https://github.com/zTgx/lib)**
+
+
+
+Getting Started
+---------------
+
+For detailed installation and usage instructions, check out the [guide](https://ws-rs.org/guide).
+
+Features
+--------
+
+
+
+Testing
+-------
+
+
+Contributing
+------------
+
+Please report bugs and make feature requests [here](https://github.com/zTgx/lib/issues).
 
 
 遗留问题:
