@@ -2,7 +2,10 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::account_tx::*;
+
+//Ok && Err
 use jlib::message::query::account_tx::{RequestAccountTxResponse};
+use jlib::misc::error::AccounTxSideKick;
 
 use std::rc::Rc;
 
@@ -15,8 +18,8 @@ fn main() {
             println!("账号交易列表: \n{:?}", &res);
         },
 
-        Err(_) => {
-
+        Err(e) => {
+            println!("e: {:?}", e);
         }   
     });
 }

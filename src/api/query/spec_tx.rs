@@ -58,6 +58,11 @@ impl SpecTxI for SpecTx {
             if let Ok(v) = serde_json::from_str(&x) as Result<RequestTxResponse, serde_json::error::Error> {
                 op(Ok(v))
             }
-        }         
+        }    
+
+        /*
+        resp: "{\"error\":\"txnNotFound\",\"error_code\":27,\"error_message\":\"Transaction not found.\",\"id\":1,\"request\":{\"command\":\"tx\",\"id\":1,\"transaction\":\"4552D9C58078855888A966F4FEE4FA46C413211A96C3174A7980651106C4E2DA\"},\"status\":\"error\",\"type\":\"response\"}\n"
+
+        */     
     }
 }

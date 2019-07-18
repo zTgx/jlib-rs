@@ -63,5 +63,9 @@ impl OrderBookI for OrderBook {
                 op(Ok(v))
             }
         }         
+        /*
+        resp : {"error":"dstIsrMalformed","error_code":46,"error_message":"Invalid field 'taker_gets.issuer', expected non-SWT issuer.","id":1,"request":{"command":"book_offers","id":1,"taker":"jjjjjjjjjjjjjjjjjjjjBZbvri","taker_gets":{"currency":"SWU","issuer":""},"taker_pays":{"currency":"CNY","issuer":"jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS"}},"status":"error","type":"response"}
+
+        */
     }
 }

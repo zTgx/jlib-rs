@@ -55,6 +55,11 @@ impl AccountOfferI for AccountOffer {
                 if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountOfferResponse, serde_json::error::Error> {
                     op(Ok(v))
                 }
-            }         
+            }   
+
+            /*
+            resp: "{\"id\":1,\"result\":{\"account\":\"jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ\",\"ledger_hash\":\"FE2C8AED693FEADC939730AEAEC000F9B01522B04E23F685602D562A669D4AF2\",\"ledger_index\":3765206,\"offers\":[],\"validated\":true},\"status\":\"success\",\"type\":\"response\"}\n"
+
+            */      
     }
 }

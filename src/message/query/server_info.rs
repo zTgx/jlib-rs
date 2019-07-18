@@ -16,7 +16,7 @@ id: u64
 command: String
 值分别为(固定值): 1, "server_info"
 */
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ServerInfoCommand {
     #[serde(rename="id")]
     id: u64,

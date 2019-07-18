@@ -63,6 +63,11 @@ impl BrokerageI for Brokerage {
             if let Ok(v) = serde_json::from_str(&x) as Result<RequestBrokerageResponse, serde_json::error::Error> {
                 op(Ok(v))
             }
-        }         
+        }       
+
+        /*
+        resp : {"error":"unknownCmd","error_code":30,"error_message":"Unknown method.","id":1,"request":{"app_type":1,"command":"Fee_Info","currency":"TES","id":1,"issuer":"jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS","ledger_index":"validated"},"status":"error","type":"response"}
+
+        */  
     }
 }
