@@ -2,9 +2,7 @@ language: rust
 sudo: false
 
 rust:
-  - 1.8.0 # minimum supported rustc version
   - stable
-  - beta
   - nightly
 
 script:
