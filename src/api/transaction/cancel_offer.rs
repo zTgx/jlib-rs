@@ -16,7 +16,7 @@ pub trait CancelOfferI {
     fn cancel_offer<F>(&self, config: Box<Rc<Config>>, account: String, offer_sequence: u64, 
                                                     secret: Option<String>, 
                                                     op: F) 
-    where F: Fn(Result<OfferCancelTxResponse, serde_json::error::Error>);
+    where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>);
 }
 
 pub struct CancelOffer {}
@@ -31,7 +31,7 @@ impl CancelOfferI for CancelOffer {
     fn cancel_offer<F>(&self, config: Box<Rc<Config>>, account: String, offer_sequence: u64, 
                                                     secret: Option<String>, 
                                                     op: F) 
-    where F: Fn(Result<OfferCancelTxResponse, serde_json::error::Error>) {
+    where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
@@ -60,11 +60,17 @@ impl CancelOfferI for CancelOffer {
         }).unwrap();
         
         let resp = downcast_to_string(info);
-        println!("resp : {}", &resp);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let x: String = x["result"].to_string();
-            if let Ok(v) = serde_json::from_str(&x) as Result<OfferCancelTxResponse, serde_json::error::Error> {
-                op(Ok(v))
+            let status = x["status"].to_string();
+            if status == "\"success\"" {
+                let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<OfferCancelTxResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+            } else {
+                if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<OfferCancelSideKick, serde_json::error::Error> {
+                    op(Err(v))
+                } 
             }
         }         
 

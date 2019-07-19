@@ -10,6 +10,8 @@ use std::cell::Cell;
 
 use crate::message::common::command_trait::CommandConversion;
 use crate::misc::common::*;
+use std::error::Error;
+use std::fmt;
 
 /*
 4.19取消挂单
@@ -151,4 +153,29 @@ pub struct OfferCancelTxResponse {
 
     #[serde(rename="tx_json")]
     pub tx_json: OfferCancelTxJsonResponse,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OfferCancelSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : OfferCancelTx,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for OfferCancelSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "OfferCancelSideKick is here!")
+    }
+}
+
+impl Error for OfferCancelSideKick  {
+    fn description(&self) -> &str {
+        "I'm OfferCancelSideKick side kick"
+    }
 }
