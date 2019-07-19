@@ -3,7 +3,8 @@
 use serde_json::json;
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
+use serde::ser::{Serializer, SerializeStruct};
+//use serde_json::Result;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
@@ -18,13 +19,13 @@ use std::fmt;
 /*
 支付对象:
 */
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Deserialize, Debug, Default)]
 pub struct TxJson {
     #[serde(rename="Flags")]
     pub flags: u32,
 
     #[serde(rename="Fee")]
-    pub fee: f64,
+    pub fee: u64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -40,7 +41,7 @@ pub struct TxJson {
 
     #[serde(rename="Memos")]
     pub memo: Option<Vec<Memo>>,
-
+    
     #[serde(rename="Sequence")]
     pub sequence: u32,
 
@@ -54,16 +55,44 @@ pub struct TxJson {
     pub blob: Option<String>,    
 }
 
+impl Serialize for TxJson {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // 3 is the number of fields in the struct.
+        let mut state = serializer.serialize_struct("OfferCreateTxJson", 6)?;
+        
+        state.serialize_field("Flags", &self.flags)?;
+        state.serialize_field("Fee", &self.fee)?;
+        state.serialize_field("TransactionType", &self.transaction_type)?;
+        state.serialize_field("Account", &self.account)?;
+	state.serialize_field("Amount", &self.amount)?;
+	state.serialize_field("Destination", &self.destination)?;
+	state.serialize_field("Memos", &self.memo)?;
+
+    
+	/*
+    pub sequence: u32,
+    pub signing_pub_key: Option<String>,
+    pub txn_signature: Option<String>,
+    pub blob: Option<String>,  
+	*/
+
+        state.end()
+    }
+}
+
 impl TxJson {
     pub fn new(from: String, to: String, amount: Amount, sequence: u32, memo: Option<Vec<Memo>>, signing_pub_key: Option<String>) -> Self {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),
-            fee: 0.01,
+            fee: (0.01 * 1000000f64) as u64,
             transaction_type: "Payment".to_string(),
             account: from,
             destination: to,
-            amount: "0.5".to_string(), //amount ?????
+            amount: (amount.value.parse::<f64>().unwrap() * 1000000f64).to_string(), 
             sequence: sequence,
             memo: memo,
             signing_pub_key: signing_pub_key,
@@ -74,7 +103,7 @@ impl TxJson {
 }
 impl CommandConversion for TxJson {
     type T = TxJson;
-    fn to_string(&self) -> Result<String> {
+    fn to_string(&self) -> Result<String, serde_json::error::Error> {
         //https://crates.io/crates/serde_json
         // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
@@ -120,7 +149,7 @@ impl TransactionTx {
 
 impl CommandConversion for TransactionTx {
     type T = TransactionTx;
-    fn to_string(&self) -> Result<String> {
+    fn to_string(&self) -> Result<String, serde_json::error::Error> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
 
