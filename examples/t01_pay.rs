@@ -11,7 +11,7 @@ fn main() {
     let from: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
     let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
     let to  : String = "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string();
-    let memo: Option<String> = Some("This is memo".to_string());
+    let memo: Option<String> = None;//Some("This is memo".to_string());
 
     Payment::with_params(config.clone(), from, secret)
                  .payment(  to, amount, memo,

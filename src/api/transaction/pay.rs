@@ -148,7 +148,6 @@ impl PaymentI for Payment {
         
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-
             let status = x["status"].to_string();
             if status == "\"success\"" {
                 let x: String = x["result"].to_string();
