@@ -25,7 +25,7 @@ pub struct TxJson {
     pub flags: u32,
 
     #[serde(rename="Fee")]
-    pub fee: u64,
+    pub fee: f64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -67,9 +67,9 @@ impl Serialize for TxJson {
         state.serialize_field("Fee", &self.fee)?;
         state.serialize_field("TransactionType", &self.transaction_type)?;
         state.serialize_field("Account", &self.account)?;
-	state.serialize_field("Amount", &self.amount)?;
-	state.serialize_field("Destination", &self.destination)?;
-	state.serialize_field("Memos", &self.memo)?;
+        state.serialize_field("Amount", &self.amount)?;
+        state.serialize_field("Destination", &self.destination)?;
+        state.serialize_field("Memos", &self.memo)?;
 
     
 	/*
@@ -88,7 +88,7 @@ impl TxJson {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),
-            fee: (0.01 * 1000000f64) as u64,
+            fee: 0.01, //(0.01 * 1000000f64) as u64,
             transaction_type: "Payment".to_string(),
             account: from,
             destination: to,
