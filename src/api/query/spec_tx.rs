@@ -14,7 +14,7 @@ use crate::base::util::downcast_to_string;
 
 pub trait SpecTxI {
     fn request_tx<F>(&self, config: Box<Rc<Config>>, hash: String,  op: F) 
-    where F: Fn(Result<RequestTxResponse, serde_json::error::Error>);
+    where F: Fn(Result<RequestTxResponse, SpecTxSideKick>);
 }
 
 pub struct SpecTx {}
@@ -27,7 +27,7 @@ impl SpecTx {
 
 impl SpecTxI for SpecTx {
     fn request_tx<F>(&self, config: Box<Rc<Config>>, hash: String,  op: F) 
-    where F: Fn(Result<RequestTxResponse, serde_json::error::Error>) {
+    where F: Fn(Result<RequestTxResponse, SpecTxSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
@@ -54,15 +54,17 @@ impl SpecTxI for SpecTx {
         
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let x: String = x["result"].to_string();
-            if let Ok(v) = serde_json::from_str(&x) as Result<RequestTxResponse, serde_json::error::Error> {
-                op(Ok(v))
+            let status = x["status"].to_string();
+            if status == "\"success\"" {
+                let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<RequestTxResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+            } else {
+                if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<SpecTxSideKick, serde_json::error::Error> {
+                    op(Err(v))
+                }
             }
-        }    
-
-        /*
-        resp: "{\"error\":\"txnNotFound\",\"error_code\":27,\"error_message\":\"Transaction not found.\",\"id\":1,\"request\":{\"command\":\"tx\",\"id\":1,\"transaction\":\"4552D9C58078855888A966F4FEE4FA46C413211A96C3174A7980651106C4E2DA\"},\"status\":\"error\",\"type\":\"response\"}\n"
-
-        */     
+        }     
     }
 }

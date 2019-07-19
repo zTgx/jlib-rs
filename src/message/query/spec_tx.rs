@@ -20,6 +20,7 @@ use crate::message::common::meta::*;
 use crate::message::common::amount::{Amount, string_or_struct};
 use crate::misc::common::*;
 
+use std::error::Error;
 
 //////////////////////
 /*
@@ -29,7 +30,7 @@ id: u64,          //为(固定值): 1
 command: String,  //为(固定值): tx
 hash: String,     //需要用户传递的参数，[交易hash]
 */
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct RequestTxCommand {
     #[serde(rename="id")]
     id: u64,
@@ -158,5 +159,29 @@ pub struct RequestTxResponse {
     pub memos: Option<Vec<String>>,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct SpecTxSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestTxCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for SpecTxSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "SpecTxSideKick is here!")
+    }
+}
+
+impl Error for SpecTxSideKick  {
+    fn description(&self) -> &str {
+        "I'm SpecTxSideKick side kick"
+    }
+}
 
 
