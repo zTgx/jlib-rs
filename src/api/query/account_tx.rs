@@ -55,7 +55,7 @@ impl AccountTxI for AccountTx {
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
 
             let status: String = x["status"].to_string();
-            if status == "success" {
+            if status == "\"success\"" {
                 let result = x["result"].to_string();
                 if let Ok(v) = serde_json::from_str(&result) as Result<RequestAccountTxResponse, serde_json::error::Error> {
                     op(Ok(v))

@@ -6,6 +6,8 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
+use std::error::Error;
+use std::fmt;
 
 /*
 @4.8 请求账号信息
@@ -121,4 +123,29 @@ pub struct RequestAccountInfoResponse {
 
     #[serde(rename="index")]
     pub index: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AccounInfoSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestAccountInfoCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for AccounInfoSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "AccounInfoSideKick is here!")
+    }
+}
+
+impl Error for AccounInfoSideKick  {
+    fn description(&self) -> &str {
+        "I'm AccounInfoSideKick side kick"
+    }
 }
