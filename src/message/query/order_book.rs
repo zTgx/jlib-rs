@@ -7,7 +7,9 @@ use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
 use crate::misc::common::*;
-use crate::message::common::amount::Amount;
+use crate::message::common::amount::{Amount, string_or_struct};
+use std::error::Error;
+use std::fmt;
 
 /*
 @4.13获得市场挂单列表
@@ -114,18 +116,6 @@ impl CommandConversion for RequestOrderBookCommand {
 /*
 RequestOrderBookResponse 数据返回格式
 */
-// #[derive(Serialize, Deserialize, Debug)]
-// pub struct Amount {
-//     #[serde(rename="value")]
-//     value: String,
-
-//     #[serde(rename="currency")]
-//     currency: String,
-
-//     #[serde(rename="issuer")]
-//     issuer: String,
-// }
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Offer {
     #[serde(rename="Account")]
@@ -156,9 +146,11 @@ pub struct Offer {
     pub sequence: u64,
 
     #[serde(rename="TakerGets")]
-    pub taker_gets: String, //未充分测试: 对方得到的。（买卖双方，当货币是swt时，数据类型为对象；否则为string）
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_gets: Amount, 
 
     #[serde(rename="TakerPays")]
+    #[serde(deserialize_with = "string_or_struct")]
     pub taker_pays: Amount,
 
     #[serde(rename="index")]
@@ -181,4 +173,30 @@ pub struct RequestOrderBookResponse {
 
     #[serde(rename="validated")]
     pub validated: bool,
+}
+
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OrderBookSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestOrderBookCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for OrderBookSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "OrderBookSideKick is here!")
+    }
+}
+
+impl Error for OrderBookSideKick  {
+    fn description(&self) -> &str {
+        "I'm OrderBookSideKick side kick"
+    }
 }

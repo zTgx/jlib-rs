@@ -2,7 +2,7 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::order_book::*;
-use jlib::message::query::order_book::{RequestOrderBookResponse, OrderBookItem};
+use jlib::message::query::order_book::{RequestOrderBookResponse, OrderBookItem, OrderBookSideKick};
 
 fn main() {
     let config = Config::new(TEST1, true);
@@ -14,8 +14,9 @@ fn main() {
             println!("挂单列表: {:?}",  &res);
         },
 
-        Err(_) => {
-            panic!("Error Message.");
+        Err(e) => {
+            let err: OrderBookSideKick = e;
+            println!("err: {:?}", err);
         }   
     });
 }

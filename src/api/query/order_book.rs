@@ -14,7 +14,7 @@ use crate::base::util::downcast_to_string;
 
 pub trait OrderBookI {
     fn request_order_book<F>(&self, config: Box<Rc<Config>>, gets: OrderBookItem, pays: OrderBookItem, op: F) 
-    where F: Fn(Result<RequestOrderBookResponse, serde_json::error::Error>) ;
+    where F: Fn(Result<RequestOrderBookResponse, OrderBookSideKick>) ;
 }
 
 pub struct OrderBook {}
@@ -27,7 +27,7 @@ impl OrderBook {
 
 impl OrderBookI for OrderBook { 
     fn request_order_book<F>(&self, config: Box<Rc<Config>>, gets: OrderBookItem, pays: OrderBookItem, op: F) 
-    where F: Fn(Result<RequestOrderBookResponse, serde_json::error::Error>) {
+    where F: Fn(Result<RequestOrderBookResponse, OrderBookSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
@@ -56,16 +56,18 @@ impl OrderBookI for OrderBook {
         }).unwrap();
         
         let resp = downcast_to_string(info);
-        println!("resp : {}", &resp);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let x: String = x["result"].to_string();
-            if let Ok(v) = serde_json::from_str(&x) as Result<RequestOrderBookResponse, serde_json::error::Error> {
-                op(Ok(v))
+            let status = x["status"].to_string();
+            if status == "\"success\"" {
+                let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<RequestOrderBookResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+            } else {
+                if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<OrderBookSideKick, serde_json::error::Error> {
+                    op(Err(v))
+                }
             }
-        }         
-        /*
-        resp : {"error":"dstIsrMalformed","error_code":46,"error_message":"Invalid field 'taker_gets.issuer', expected non-SWT issuer.","id":1,"request":{"command":"book_offers","id":1,"taker":"jjjjjjjjjjjjjjjjjjjjBZbvri","taker_gets":{"currency":"SWU","issuer":""},"taker_pays":{"currency":"CNY","issuer":"jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS"}},"status":"error","type":"response"}
-
-        */
+        } 
     }
 }
