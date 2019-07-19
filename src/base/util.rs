@@ -290,13 +290,13 @@ pub fn downcast_to_string(value: Rc<dyn Any>) -> String {
     }
 }
 
-pub fn downcast_to_usize(value: Rc<dyn Any>) -> usize {
-    let mut us: usize = 0;
-    if let Ok(u) = value.downcast::<Cell<usize>>() {
+pub fn downcast_to_usize(value: Rc<dyn Any>) -> u32 {
+    let mut us: u64 = 0;
+    if let Ok(u) = value.downcast::<Cell<u64>>() {
         us = u.take();
     } 
 
-    us
+    us as u32
 }
 
 /*

@@ -37,7 +37,7 @@ impl Payment {
     }
 
     pub fn get_account_seq(&self) -> u32 {
-        let seq_rc = Rc::new(Cell::new(0u32));
+        let seq_rc = Rc::new(Cell::new(0u64));
 
         let acc = String::from(self.account.as_str());
         AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
@@ -45,12 +45,12 @@ impl Payment {
                 println!("account info: {:?}", &response);
                 let seq = seq_rc.clone();
 
-                seq.set(response.sequence as u32);
+                seq.set(response.sequence);
             },
             Err(_) => { }
         });
 
-        ( downcast_to_usize(seq_rc) + 1usize )as u32
+       downcast_to_usize(seq_rc)
     }
 }
 

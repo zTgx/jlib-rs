@@ -4,13 +4,24 @@ use jlib::misc::config::*;
 use jlib::api::query::account_info::*;
 use jlib::message::query::account_info::{RequestAccountInfoResponse, AccounInfoSideKick};
 
+use std::rc::Rc;
+use std::any::Any;
+use std::cell::Cell;
+use jlib::base::util::{downcast_to_usize};
+
+
 fn main() {
     let config = Config::new(TEST1, true);
-    let account = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyth".to_string();
+    let account = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
+
+    let seq_rc = Rc::new(Cell::new(0u64));
     AccountInfo::new().request_account_info(config.clone(), account, |x| match x {
         Ok(response) => {
             let res: RequestAccountInfoResponse = response;
             println!("账号信息: \n{:?}", &res);
+
+            let seq = seq_rc.clone();
+            seq.set(res.sequence);
         },
 
         Err(e) => {
@@ -18,5 +29,8 @@ fn main() {
             println!("{:?}", err);
         }
     });
+
+    let x = downcast_to_usize(seq_rc);
+    println!("x : {}", x);
 }
 
