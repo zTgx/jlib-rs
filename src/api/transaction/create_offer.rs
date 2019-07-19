@@ -17,7 +17,7 @@ pub trait CreateOfferI {
     fn build_offer_create_tx<F>(&self, config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
                                                     secret: Option<String>, 
                                                     op: F) 
-    where F: Fn(Result<OfferCreateTxResponse, serde_json::error::Error>);
+    where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>);
 }
 
 pub struct CreateOffer {}
@@ -32,7 +32,7 @@ impl CreateOfferI for CreateOffer {
     fn build_offer_create_tx<F>(&self, config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
                                                     secret: Option<String>, 
                                                     op: F) 
-    where F: Fn(Result<OfferCreateTxResponse, serde_json::error::Error>) {
+    where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
@@ -68,11 +68,17 @@ impl CreateOfferI for CreateOffer {
         }).unwrap();
         
         let resp = downcast_to_string(info);
-        println!("resP: {:?}", resp);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let x: String = x["result"].to_string();
-            if let Ok(v) = serde_json::from_str(&x) as Result<OfferCreateTxResponse, serde_json::error::Error> {
-                op(Ok(v))
+            let status = x["status"].to_string();
+            if status == "\"success\"" {
+                let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<OfferCreateTxResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+            } else {
+                if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<OfferCreateSideKick, serde_json::error::Error> {
+                    op(Err(v))
+                } 
             }
         }         
 

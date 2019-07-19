@@ -3,7 +3,8 @@
 extern crate void;
 
 use serde::ser::{Serializer, SerializeStruct};
-use std::fmt; //fmt METHOD
+use std::error::Error;
+use std::fmt;
 use std::marker::PhantomData;
 use std::str::FromStr;
 
@@ -12,7 +13,6 @@ use serde::de::{self, Visitor, MapAccess};
 
 use void::Void;
 
-// use serde_json::Result;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
@@ -206,4 +206,29 @@ pub struct OfferCreateTxResponse {
 
     #[serde(rename="tx_json")]
     pub tx_json: OfferCreateTxJsonResponse,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct OfferCreateSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : OfferCreateTx,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for OfferCreateSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "OfferCreateSideKick is here!")
+    }
+}
+
+impl Error for OfferCreateSideKick  {
+    fn description(&self) -> &str {
+        "I'm OfferCreateSideKick side kick"
+    }
 }

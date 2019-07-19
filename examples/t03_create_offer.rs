@@ -1,13 +1,12 @@
 extern crate jlib;
 
 use jlib::misc::config::*;
-use std::rc::Rc;
 use jlib::message::common::amount::Amount;
 use jlib::api::transaction::create_offer::*;
-use jlib::message::transaction::offer_create::{OfferCreateTxResponse};
+use jlib::message::transaction::offer_create::{OfferCreateTxResponse, OfferCreateSideKick};
 
 fn main() {
-    let config: Box<Rc<Config>> = Config::new(TEST1, true);
+    let config = Config::new(TEST1, true);
 
     //Sell
     let taker_gets: Amount = Amount::new("CNY".to_string(), "0.01".to_string(), "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string());
@@ -32,8 +31,9 @@ fn main() {
             println!("[交易费: {}]", fee);
         },
 
-        Err(_) => {
-            panic!("Error Message.");
+        Err(e) => {
+            let err: OfferCreateSideKick = e;
+            println!("err: {:?}", err);
         }   
     });
 }
