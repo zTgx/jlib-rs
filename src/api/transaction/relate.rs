@@ -17,7 +17,7 @@ pub trait RelateI {
     fn set_relation<F>(&self, config: Box<Rc<Config>>, account: String, target: String, relation_type: u64, amount: Amount, 
                                                     secret: Option<String>, 
                                                     op: F) 
-    where F: Fn(Result<RelationTxResponse, serde_json::error::Error>);
+    where F: Fn(Result<RelationTxResponse, RelationSideKick>);
 }
 
 pub struct Relate {}
@@ -32,7 +32,7 @@ impl RelateI for Relate {
     fn set_relation<F>(&self, config: Box<Rc<Config>>, account: String, target: String, relation_type: u64, amount: Amount, 
                                                     secret: Option<String>, 
                                                     op: F) 
-    where F: Fn(Result<RelationTxResponse, serde_json::error::Error>) {
+    where F: Fn(Result<RelationTxResponse, RelationSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
@@ -66,10 +66,17 @@ impl RelateI for Relate {
         
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let x: String = x["result"].to_string();
-            if let Ok(v) = serde_json::from_str(&x) as Result<RelationTxResponse, serde_json::error::Error> {
-                op(Ok(v))
-            }
+            let status = x["status"].to_string();
+            if status == "\"success\"" {
+                let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<RelationTxResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+            } else {
+                if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<RelationSideKick, serde_json::error::Error> {
+                    op(Err(v))
+                } 
+            }            
         }         
     }
 }

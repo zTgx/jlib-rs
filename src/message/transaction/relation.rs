@@ -11,6 +11,8 @@ use std::cell::Cell;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::Amount;
 use crate::misc::common::*;
+use std::error::Error;
+use std::fmt;
 
 /*
 关系对象
@@ -172,4 +174,29 @@ pub struct RelationTxResponse {
 
     #[serde(rename="tx_json")]
     pub tx_json: RelationTxJsonResponse,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RelationSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RelationTx,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for RelationSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "RelationSideKick is here!")
+    }
+}
+
+impl Error for RelationSideKick  {
+    fn description(&self) -> &str {
+        "I'm RelationSideKick side kick"
+    }
 }
