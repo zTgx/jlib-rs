@@ -14,7 +14,7 @@ use crate::base::util::downcast_to_string;
 
 pub trait BrokerageI {
     fn request_brokerage<F>(&self, config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F) 
-    where F: Fn(Result<RequestBrokerageResponse, serde_json::error::Error>) ;
+    where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) ;
 }
 
 pub struct Brokerage {}
@@ -27,7 +27,7 @@ impl Brokerage {
 
 impl BrokerageI for Brokerage { 
     fn request_brokerage<F>(&self, config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F) 
-    where F: Fn(Result<RequestBrokerageResponse, serde_json::error::Error>) {
+    where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
@@ -57,17 +57,18 @@ impl BrokerageI for Brokerage {
         }).unwrap();
         
         let resp = downcast_to_string(info);
-        println!("resp : {}", &resp);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let x: String = x["result"].to_string();
-            if let Ok(v) = serde_json::from_str(&x) as Result<RequestBrokerageResponse, serde_json::error::Error> {
-                op(Ok(v))
+            let status = x["status"].to_string();
+            if status == "\"success\"" {
+                let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<RequestBrokerageResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+            } else {
+                if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<BrokerageSideKick, serde_json::error::Error> {
+                    op(Err(v))
+                }
             }
-        }       
-
-        /*
-        resp : {"error":"unknownCmd","error_code":30,"error_message":"Unknown method.","id":1,"request":{"app_type":1,"command":"Fee_Info","currency":"TES","id":1,"issuer":"jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS","ledger_index":"validated"},"status":"error","type":"response"}
-
-        */  
+        }        
     }
 }

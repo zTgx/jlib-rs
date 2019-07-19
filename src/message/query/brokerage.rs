@@ -6,6 +6,8 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
+use std::error::Error;
+use std::fmt;
 
 /*
 @4.14获得挂单佣金设置信息
@@ -123,4 +125,29 @@ pub struct RequestBrokerageResponse {
 
     #[serde(rename="validated")]
     pub validated: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct BrokerageSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestBrokerageCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for BrokerageSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "BrokerageSideKick is here!")
+    }
+}
+
+impl Error for BrokerageSideKick  {
+    fn description(&self) -> &str {
+        "I'm BrokerageSideKick side kick"
+    }
 }
