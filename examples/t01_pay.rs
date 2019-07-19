@@ -8,8 +8,8 @@ use jlib::message::common::amount::Amount;
 fn main() {
     let config = Config::new(TEST1, true);
     let amount: Amount = Amount::new("SWT".to_string(), "0.5".to_string(), "".to_string());
-    let from: String = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyth".to_string();
-    let secret:String= "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
+    let from: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
+    let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
     let to  : String = "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string();
     let memo: Option<String> = None;
 
