@@ -8,6 +8,7 @@ use std::any::Any;
 use crate::message::common::command_trait::CommandConversion;
 use std::error::Error;
 use std::fmt;
+use crate::message::common::amount::{Amount, string_or_struct};
 
 /*
 @4.11 获得账号挂单
@@ -95,47 +96,44 @@ impl CommandConversion for RequestAccountOfferCommand {
 /*
 RequestAccountOfferResponse 数据返回格式
 */
-///TODO::Amout!!!!
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Token {
-    #[serde(rename="currency")]
-    currency: String,//'USD',
-
-    #[serde(rename="issuer")]
-    issuer: String,  //'jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS',
-
-    #[serde(rename="value")]
-    value: String,   //'0.5'
-}
-
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TakerPay {
     #[serde(rename="flags")]
-    flags: u64,
+    pub flags: u64,
 
     #[serde(rename="seq")]
-    seq: u64,
+    pub seq: u64,
 
     #[serde(rename="taker_pays")]
-    taker_pays: Token,
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_pays: Amount,
 
     #[serde(rename="taker_gets")]
-    taker_gets: String,//'1000000'
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_gets: Amount,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TakerGet {
     #[serde(rename="flags")]
-    flags: u64,
+    pub flags: u64,
 
     #[serde(rename="seq")]
-    seq: u64,
+    pub seq: u64,
 
     #[serde(rename="taker_gets")]
-    taker_gets: Token,
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_gets: Amount,
 
     #[serde(rename="taker_pays")]
-    taker_pays: String, //'1000000'
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_pays: Amount,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Offers {
+    pub taker_pay: Option<TakerPay>,
+    pub taker_get: Option<TakerGet>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -150,7 +148,7 @@ pub struct RequestAccountOfferResponse {
     pub ledger_index: u64,
 
     #[serde(rename="offers")]
-    pub offers: (TakerPay, TakerGet), //???
+    pub offers: Vec<Offers>, //(TakerPay, TakerGet), //???
 
     #[serde(rename="validated")]
     pub validated: bool,
