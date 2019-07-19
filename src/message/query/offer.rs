@@ -6,6 +6,8 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
+use std::error::Error;
+use std::fmt;
 
 /*
 @4.11 获得账号挂单
@@ -152,4 +154,29 @@ pub struct RequestAccountOfferResponse {
 
     #[serde(rename="validated")]
     pub validated: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AccountOffersSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestAccountOfferCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for AccountOffersSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "AccountOffersSideKick is here!")
+    }
+}
+
+impl Error for AccountOffersSideKick  {
+    fn description(&self) -> &str {
+        "I'm AccountOffersSideKick side kick"
+    }
 }

@@ -14,7 +14,7 @@ use crate::base::util::downcast_to_string;
 
 pub trait AccountOfferI {
     fn request_account_offer<F>(&self, config: Box<Rc<Config>>, account: String, op: F) 
-        where F: Fn(Result<RequestAccountOfferResponse, serde_json::error::Error>);
+        where F: Fn(Result<RequestAccountOfferResponse, AccountOffersSideKick>);
 }
 
 pub struct AccountOffer {}
@@ -27,11 +27,11 @@ impl AccountOffer {
 
 impl AccountOfferI for AccountOffer { 
         fn request_account_offer<F>(&self, config: Box<Rc<Config>>, account: String, op: F) 
-        where F: Fn(Result<RequestAccountOfferResponse, serde_json::error::Error>) {
+        where F: Fn(Result<RequestAccountOfferResponse, AccountOffersSideKick>) {
 
             let info = Rc::new(Cell::new("".to_string()));
-
             let account_rc = Rc::new(Cell::new(account));
+
             connect(config.addr, |out| { 
                 let copy = info.clone();
                 let account = account_rc.clone();
@@ -51,15 +51,17 @@ impl AccountOfferI for AccountOffer {
             
             let resp = downcast_to_string(info);
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-                let x: String = x["result"].to_string();
-                if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountOfferResponse, serde_json::error::Error> {
-                    op(Ok(v))
+                let status: String = x["status"].to_string();
+                if status == "\"success\"" { 
+                    let x: String = x["result"].to_string();
+                    if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountOfferResponse, serde_json::error::Error> {
+                        op(Ok(v))
+                    }
+                } else {
+                    if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<AccountOffersSideKick, serde_json::error::Error> {
+                        op(Err(v))
+                    }
                 }
-            }   
-
-            /*
-            resp: "{\"id\":1,\"result\":{\"account\":\"jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ\",\"ledger_hash\":\"FE2C8AED693FEADC939730AEAEC000F9B01522B04E23F685602D562A669D4AF2\",\"ledger_index\":3765206,\"offers\":[],\"validated\":true},\"status\":\"success\",\"type\":\"response\"}\n"
-
-            */      
+            }       
     }
 }
