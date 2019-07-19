@@ -290,6 +290,15 @@ pub fn downcast_to_string(value: Rc<dyn Any>) -> String {
     }
 }
 
+pub fn downcast_to_usize(value: Rc<dyn Any>) -> usize {
+    let mut us: usize = 0;
+    if let Ok(u) = value.downcast::<Cell<usize>>() {
+        us = u.take();
+    } 
+
+    us
+}
+
 /*
 工具方法
 */

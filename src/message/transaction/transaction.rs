@@ -12,6 +12,8 @@ use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::Amount;
 use crate::message::common::memo::*;
 use crate::misc::common::*;
+use std::error::Error;
+use std::fmt;
 
 /*
 支付对象:
@@ -40,7 +42,7 @@ pub struct TxJson {
     pub memo: Option<Vec<Memo>>,
 
     #[serde(rename="Sequence")]
-    pub sequence: Option<u32>,
+    pub sequence: u32,
 
     #[serde(rename="SigningPubKey")]
     pub signing_pub_key: Option<String>,
@@ -53,7 +55,7 @@ pub struct TxJson {
 }
 
 impl TxJson {
-    pub fn new(from: String, to: String, amount: Amount, memo: Option<Vec<Memo>>, sequence: Option<u32>, signing_pub_key: Option<String>) -> Self {
+    pub fn new(from: String, to: String, amount: Amount, sequence: u32, memo: Option<Vec<Memo>>, signing_pub_key: Option<String>) -> Self {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),
@@ -62,8 +64,8 @@ impl TxJson {
             account: from,
             destination: to,
             amount: "0.5".to_string(), //amount ?????
-            memo: memo,
             sequence: sequence,
+            memo: memo,
             signing_pub_key: signing_pub_key,
             txn_signature: None,
             blob: None,
@@ -96,7 +98,7 @@ pub struct TransactionTx {
 
     //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
-    pub secret: Option<String>,
+    pub secret: String,
 
     #[serde(rename="command")]
     pub command: String, //Submit
@@ -106,7 +108,7 @@ pub struct TransactionTx {
 }
 
 impl TransactionTx {
-    pub fn new(secret: Option<String>, tx_json: TxJson) -> Box<TransactionTx> {
+    pub fn new(secret: String, tx_json: TxJson) -> Box<TransactionTx> {
         Box::new( TransactionTx {
             id: 1,
             command: "submit".to_string(),
@@ -205,4 +207,30 @@ pub struct TransactionTxResponse {
 
     #[serde(rename="tx_json")]
     pub tx_json: TxJsonResponse,
+}
+
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PaymentSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : TransactionTx,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for PaymentSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "PaymentSideKick is here!")
+    }
+}
+
+impl Error for PaymentSideKick  {
+    fn description(&self) -> &str {
+        "I'm PaymentSideKick side kick"
+    }
 }

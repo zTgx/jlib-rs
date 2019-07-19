@@ -177,7 +177,7 @@ impl SignTx {
                     output.insert(index, destination);
                 },
                 TX_SEQUENCE => {
-                    let value = tx_json.sequence.unwrap();
+                    let value = tx_json.sequence;
                     let sequence = TxJsonSequenceBuilder::new(value).build();
                     output.insert(index, sequence);
                 },

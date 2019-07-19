@@ -14,32 +14,49 @@ use crate::base::util::downcast_to_string;
 use crate::message::common::memo::*;
 use crate::base::sign_tx::*;
 use crate::message::common::amount::Amount;
-use crate::base::util::{string_to_hex};
+use crate::base::util::{string_to_hex, downcast_to_usize};
+use crate::api::query::account_info::*;
 
 pub trait PaymentI {
-    fn payment<F>(&self, config: Box<Rc<Config>>, from: String, to: String, amount: Amount, 
-                                                    memo: Option<String>, 
-                                                    sequence: Option<u32>,
-                                                    secret: Option<String>, 
-                                                    op: F) 
-    where F: Fn(Result<TransactionTxResponse, serde_json::error::Error>);
+    fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F) 
+    where F: Fn(Result<TransactionTxResponse, PaymentSideKick>);
 }
 
-pub struct Payment {}
+pub struct Payment {
+    pub config: Box<Rc<Config>>,
+    pub account: String,
+    pub secret: String,
+}
 impl Payment {
-    pub fn new() -> Self {
+    pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
         Payment {
+            config: config,
+            account: account,
+            secret: secret,
         }
+    }
+
+    pub fn get_account_seq(&self) -> u32 {
+        let seq_rc = Rc::new(Cell::new(0u32));
+
+        let acc = String::from(self.account.as_str());
+        AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
+            Ok(response) => {
+                println!("account info: {:?}", &response);
+                let seq = seq_rc.clone();
+
+                seq.set(response.sequence as u32);
+            },
+            Err(_) => { }
+        });
+
+        ( downcast_to_usize(seq_rc) + 1usize )as u32
     }
 }
 
 impl PaymentI for Payment { 
-    fn payment<F>(&self, config: Box<Rc<Config>>, from: String, to: String, amount: Amount, 
-                                                    memo: Option<String>, 
-                                                    sequence: Option<u32>,
-                                                    secret: Option<String>, 
-                                                    op: F) 
-    where F: Fn(Result<TransactionTxResponse, serde_json::error::Error>) {
+    fn payment<F>(&self,  to: String, amount: Amount, memo: Option<String>, op: F) 
+    where F: Fn(Result<TransactionTxResponse, PaymentSideKick>) {
         //params check
         // var tx = new Transaction(this);
         // if (options === null || typeof options !== 'object') {
@@ -62,11 +79,21 @@ impl PaymentI for Payment {
         //     return tx;
         // }
 
+
+
         let info = Rc::new(Cell::new("".to_string()));
 
-        let from_rc = Rc::new(Cell::new(from));
-        let to_rc = Rc::new(Cell::new(to));
+        let from_rc = Rc::new(Cell::new(String::from(self.account.as_str())));
+        let to_rc   = Rc::new(Cell::new(to));
         let amount_rc = Rc::new(Cell::new(amount));
+
+        //Get Account Seq
+        let seq = self.get_account_seq();
+        println!("seq : {}", seq);
+        let sequence_rc = Rc::new(Cell::new(seq));
+
+        let secret_rc = Rc::new(Cell::new(String::from(self.secret.as_str())));
+
         let memo_rc = Rc::new(Cell::new(None));
         if memo.is_some() {
             let mut v: Vec<Memo> = Vec::new();
@@ -75,14 +102,8 @@ impl PaymentI for Payment {
             memo_rc.set(Some(v));
         }
 
-        let sequence_rc = Rc::new(Cell::new(None));
-        if sequence.is_some() {
-            sequence_rc.set(sequence);
-        }
-
-        let secret_rc = Rc::new(Cell::new(secret));
         
-        connect(config.addr, |out| { 
+        connect(self.config.addr, |out| { 
             let copy = info.clone();
 
             let from = from_rc.clone();
@@ -95,31 +116,27 @@ impl PaymentI for Payment {
 
             //txjson
             use crate::base::*;
-            let mut signing_pub_key: Option<String> = None;
+            let x = secret.take();
+            let signing_pub_key = Some(util::get_public_key_from_secret(&x).property.public_key);
+            let d_secret = String::from(x.as_str());
 
-            let mut d_secret = "".to_string();
-            if let Some(x) = secret.take() {
-                signing_pub_key = Some(util::get_public_key_from_secret(&x).property.public_key);
-                d_secret = String::from(x.as_str());
-            }
-            let tx_json = TxJson::new(from.take(), to.take(), amount.take(), memo.take(), sequence.take(), signing_pub_key);
+            let tx_json = TxJson::new(from.take(), to.take(), amount.take(),sequence.take(),  memo.take(), signing_pub_key);
 
-            if config.local_sign {
+            if self.config.local_sign {
                 use crate::message::transaction::local_sign_tx::*;
                 let mut local_sign = SignTx::default();
 
                 let submit = local_sign.prepare(tx_json, d_secret);
 
-                if let Ok(command) = LocalSignTx::new(secret.take(), submit.unwrap()).to_string() {
+                if let Ok(command) = LocalSignTx::new(Some(secret.take()), submit.unwrap()).to_string() {
                     out.send(command).unwrap()
                 }
             } else {
-                if let Ok(command) = TransactionTx::new(Some(d_secret), tx_json).to_string() {
+                if let Ok(command) = TransactionTx::new(d_secret, tx_json).to_string() {
                     out.send(command).unwrap()
                 }
             }
             
-
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());
@@ -131,9 +148,17 @@ impl PaymentI for Payment {
         
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let x: String = x["result"].to_string();
-            if let Ok(v) = serde_json::from_str(&x) as Result<TransactionTxResponse, serde_json::error::Error> {
-                op(Ok(v))
+
+            let status = x["status"].to_string();
+            if status == "\"success\"" {
+                let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<TransactionTxResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+            } else {
+                if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<PaymentSideKick, serde_json::error::Error> {
+                    op(Err(v))
+                } 
             }
         }         
     }
