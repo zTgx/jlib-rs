@@ -6,6 +6,8 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
+use std::error::Error;
+use std::fmt;
 
 /*
 @4.10 获得账号关系 
@@ -135,4 +137,29 @@ pub struct Line {
 
     #[serde(rename="quality_out")]
     pub quality_out: u64,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RelationsSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestAccountRelationsCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for RelationsSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "RelationsSideKick is here!")
+    }
+}
+
+impl Error for RelationsSideKick  {
+    fn description(&self) -> &str {
+        "I'm RelationsSideKick side kick"
+    }
 }

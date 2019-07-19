@@ -2,21 +2,21 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::relations::*;
-use jlib::message::query::relations::{RequestAccountRelationsResponse};
-
-use std::rc::Rc;
+use jlib::message::query::relations::{RequestAccountRelationsResponse, RelationsSideKick};
 
 fn main() {
-    let config: Box<Rc<Config>> = Config::new(TEST1, true);
+    let config = Config::new(TEST1, true);
     let account = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
-    Relations::new().request_account_relations(config.clone(), account, Some("trust".to_string()), |x| match x {
+    let rtype = Some("trust".to_string());
+    Relations::new().request_account_relations(config.clone(), account, rtype, |x| match x {
         Ok(response) => {
             let res: RequestAccountRelationsResponse = response;
             println!("账号关系: {:?}", &res);
         },
 
-        Err(_) => {
-            panic!("Error Message.");
+        Err(e) => {
+            let err: RelationsSideKick= e;
+            println!("err: {:?}", err);
         }
     });   
 }
