@@ -14,7 +14,7 @@ use crate::base::util::downcast_to_string;
 
 pub trait AccountTumsI {
     fn request_account_tums<F>(&self, config: Box<Rc<Config>>, account: String, op: F) 
-    where F: Fn(Result<RequestAccountTumsResponse, serde_json::error::Error>) ;
+    where F: Fn(Result<RequestAccountTumsResponse, AccounTumSideKick>) ;
 }
 
 pub struct AccountTums {}
@@ -27,10 +27,9 @@ impl AccountTums {
 
 impl AccountTumsI for AccountTums { 
         fn request_account_tums<F>(&self, config: Box<Rc<Config>>, account: String, op: F) 
-        where F: Fn(Result<RequestAccountTumsResponse, serde_json::error::Error>) {
+        where F: Fn(Result<RequestAccountTumsResponse, AccounTumSideKick>) {
 
             let info = Rc::new(Cell::new("".to_string()));
-
             let account_rc = Rc::new(Cell::new(account));
 
             connect(config.addr, |out| { 
@@ -53,9 +52,16 @@ impl AccountTumsI for AccountTums {
             
             let resp = downcast_to_string(info);
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-                let x: String = x["result"].to_string();
-                if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountTumsResponse, serde_json::error::Error> {
-                    op(Ok(v))
+                let status: String = x["status"].to_string();
+                if status == "\"success\"" { 
+                    let x: String = x["result"].to_string();
+                    if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountTumsResponse, serde_json::error::Error> {
+                        op(Ok(v))
+                    }
+                } else {
+                    if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<AccounTumSideKick, serde_json::error::Error> {
+                        op(Err(v))
+                    }
                 }
             }         
     }

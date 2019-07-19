@@ -6,6 +6,8 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
+use std::error::Error;
+use std::fmt;
 
 /*
 @4.9 获得账号可接收和发送的货币
@@ -109,4 +111,29 @@ pub struct RequestAccountTumsResponse {
 
     #[serde(rename="validated")]
     pub validated: bool,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct AccounTumSideKick {
+    pub error           : String,
+    pub error_code      : i32,
+    pub error_message   : String,
+    pub id              : u32,
+    pub request         : RequestAccountTumsCommand,
+    pub status          : String,
+    
+    #[serde(rename="type")]
+    pub rtype            : String,
+}
+
+impl fmt::Display for AccounTumSideKick {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "AccounTumSideKick is here!")
+    }
+}
+
+impl Error for AccounTumSideKick  {
+    fn description(&self) -> &str {
+        "I'm AccounTumSideKick side kick"
+    }
 }

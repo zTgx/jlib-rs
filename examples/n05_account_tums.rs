@@ -2,12 +2,10 @@ extern crate jlib;
 
 use jlib::misc::config::*;
 use jlib::api::query::account_tums::*;
-use jlib::message::query::account_tums::{RequestAccountTumsResponse};
-
-use std::rc::Rc;
+use jlib::message::query::account_tums::{RequestAccountTumsResponse, AccounTumSideKick};
 
 fn main() {
-    let config: Box<Rc<Config>> = Config::new(TEST2, true);
+    let config = Config::new(TEST2, true);
     let account = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
     AccountTums::new().request_account_tums(config.clone(), account, |x| match x {
         Ok(response) => {
@@ -15,8 +13,9 @@ fn main() {
             println!("可接收和发送的货币: \n{:?}", &res);
         },
 
-        Err(_) => {
-
+        Err(e) => {
+            let err: AccounTumSideKick = e;
+            println!("err: {:?}", err);
         }
     });
 }
