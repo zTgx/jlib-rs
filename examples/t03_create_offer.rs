@@ -18,7 +18,7 @@ fn main() {
 
     let account: String = "jn9XgdNptm9DhjZN2qLtxjTfVuDt6rQwLh".to_string();
     let secret:String= "sh6Wgh5XchPNVCcRkLyE291ecT5Gi".to_string();
-    CreateOffer::new().build_offer_create_tx(   config.clone(), 
+    CreateOffer::new().create_offer(   config.clone(), 
                                                 account,
                                                 taker_gets,
                                                 taker_pays,

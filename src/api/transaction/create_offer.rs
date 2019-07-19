@@ -14,7 +14,7 @@ use crate::base::util::downcast_to_string;
 use crate::message::common::amount::Amount;
 
 pub trait CreateOfferI {
-    fn build_offer_create_tx<F>(&self, config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
+    fn create_offer<F>(&self, config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
                                                     secret: Option<String>, 
                                                     op: F) 
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>);
@@ -29,7 +29,7 @@ impl CreateOffer {
 }
 
 impl CreateOfferI for CreateOffer { 
-    fn build_offer_create_tx<F>(&self, config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
+    fn create_offer<F>(&self, config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
                                                     secret: Option<String>, 
                                                     op: F) 
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>) {
