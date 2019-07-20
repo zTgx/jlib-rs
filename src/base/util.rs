@@ -1,33 +1,19 @@
-extern crate bs58;
 
 use super::constants::*;
 use ring::{digest};
-
-extern crate secp256k1;
-// use secp256k1::key::{ SecretKey};
-// use secp256k1::key::PublicKey;
-// use secp256k1::Secp256k1;
-// use secp256k1::key::ONE_KEY;
-
 use crate::base::constants::ALPHABET;
 use std::collections::HashMap;
-
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
-// use std::cell::RefCell;
+use basex_rs::BaseX;
 
 pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
-    // println!("before concat args: {:?}", left);
-
     //append vs.extend
     left.extend(right);
-
-    // println!("after concat args : {:?}", left);
 }
 
 pub fn encode_checked(x: &mut Vec<u8>) -> Vec<u8> {
-    //let vv: &[u8] = &[ 33, 228, 98, 120, 229, 208, 105, 36, 76, 162, 155, 0, 178, 95, 45, 115, 89 ];
     let vv: &[u8] = x.as_slice();
 
     let ac = digest::digest(&digest::SHA256, vv);
@@ -36,7 +22,6 @@ pub fn encode_checked(x: &mut Vec<u8>) -> Vec<u8> {
         let x = format!("{:x}", c);
         x.as_str().chars().nth(0).unwrap() as u8
     }).collect::<Vec<u8>>();
-    // println!("checked : {:?}", xx.get(..4));
 
     xx.get(..4).unwrap().to_vec()
 }
@@ -105,13 +90,9 @@ pub fn encode(source: &[u8]) -> String {
 
 //entropy的生成方式: 取值index范围，1 ~ 倒数第5
 pub fn entropy(secret: &String) -> Vec<u8> {
-    // let prefix = "00";
-    //ssndDcNoc4FvwVPveY3KbfWh8fNh3
-    let buf = bs58::decode(secret).with_alphabet(ALPHABET).into_vec().unwrap();
-
+    let buf = BaseX::decode(secret.to_string()).unwrap();
     buf[1..buf.len()-4].to_vec()
 }
-
 
 pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
     let mut i = 0u32;

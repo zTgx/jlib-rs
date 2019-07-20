@@ -1,6 +1,6 @@
 
 
-extern crate bs58;
+// extern crate bs58;
 
 // use crate::base::constants::ALPHABET;
 use crate::base::*;

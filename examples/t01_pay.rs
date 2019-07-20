@@ -13,18 +13,16 @@ fn main() {
     let to  : String = "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string();
     let memo: Option<String> = None;//Some("This is memo".to_string());
 
-    Payment::with_params(config.clone(), from, secret)
-                 .payment(  to, amount, memo,
+    Payment::with_params(config.clone(), from, secret).payment(  to, amount, memo,
+         |x| match x {
+            Ok(response) => {
+                let res: TransactionTxResponse = response;
+                println!("支付信息: {:?}", &res);
+            },
 
-                                |x| match x {
-        Ok(response) => {
-            let res: TransactionTxResponse = response;
-            println!("支付信息: {:?}", &res);
-        },
-
-        Err(e) => {
-            let err: PaymentSideKick = e;
-            println!("err: {:?}", err);
-        }       
+            Err(e) => {
+                let err: PaymentSideKick = e;
+                println!("err: {:?}", err);
+            }
     });
 }
