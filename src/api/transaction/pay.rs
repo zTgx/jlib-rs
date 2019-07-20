@@ -18,7 +18,7 @@ use crate::base::util::{string_to_hex, downcast_to_usize};
 use crate::api::query::account_info::*;
 
 pub trait PaymentI {
-    fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F) 
+    fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F)
     where F: Fn(Result<TransactionTxResponse, PaymentSideKick>);
 }
 
@@ -42,9 +42,7 @@ impl Payment {
         let acc = String::from(self.account.as_str());
         AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
             Ok(response) => {
-                println!("account info: {:?}", &response);
                 let seq = seq_rc.clone();
-
                 seq.set(response.sequence);
             },
             Err(_) => { }
@@ -54,8 +52,8 @@ impl Payment {
     }
 }
 
-impl PaymentI for Payment { 
-    fn payment<F>(&self,  to: String, amount: Amount, memo: Option<String>, op: F) 
+impl PaymentI for Payment {
+    fn payment<F>(&self,  to: String, amount: Amount, memo: Option<String>, op: F)
     where F: Fn(Result<TransactionTxResponse, PaymentSideKick>) {
         //params check
         // var tx = new Transaction(this);
@@ -89,7 +87,6 @@ impl PaymentI for Payment {
 
         //Get Account Seq
         let seq = self.get_account_seq();
-        println!("seq : {}", seq);
         let sequence_rc = Rc::new(Cell::new(seq));
 
         let secret_rc = Rc::new(Cell::new(String::from(self.secret.as_str())));
@@ -102,8 +99,7 @@ impl PaymentI for Payment {
             memo_rc.set(Some(v));
         }
 
-        
-        connect(self.config.addr, |out| { 
+        connect(self.config.addr, |out| {
             let copy = info.clone();
 
             let from = from_rc.clone();
@@ -117,6 +113,7 @@ impl PaymentI for Payment {
             //txjson
             use crate::base::*;
             let x = secret.take();
+
             let signing_pub_key = Some(util::get_public_key_from_secret(&x).property.public_key);
             let d_secret = String::from(x.as_str());
 
@@ -126,9 +123,8 @@ impl PaymentI for Payment {
                 use crate::message::transaction::local_sign_tx::*;
                 let mut local_sign = SignTx::default();
 
-                let submit = local_sign.prepare(tx_json, d_secret);
-
-                if let Ok(command) = LocalSignTx::new(Some(secret.take()), submit.unwrap()).to_string() {
+                let blob = local_sign.prepare(tx_json, d_secret);
+                if let Ok(command) = LocalSignTx::new(blob.unwrap()).to_string() {
                     out.send(command).unwrap()
                 }
             } else {
@@ -136,17 +132,19 @@ impl PaymentI for Payment {
                     out.send(command).unwrap()
                 }
             }
-            
+
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());
-                
-                out.close(CloseCode::Normal) 
+
+                out.close(CloseCode::Normal)
             }
-        
+
         }).unwrap();
-        
+
         let resp = downcast_to_string(info);
+        println!("resp: {}", &resp);
+
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             let status = x["status"].to_string();
             if status == "\"success\"" {
@@ -157,8 +155,8 @@ impl PaymentI for Payment {
             } else {
                 if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<PaymentSideKick, serde_json::error::Error> {
                     op(Err(v))
-                } 
+                }
             }
-        }         
+        }
     }
 }

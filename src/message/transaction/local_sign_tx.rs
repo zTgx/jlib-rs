@@ -1,6 +1,4 @@
 
-// use serde_json::json;
-// use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 use std::any::Any;
 use serde::ser::{Serializer, SerializeStruct};
@@ -9,22 +7,18 @@ use crate::message::common::command_trait::CommandConversion;
 #[derive(Deserialize, Debug, Default)]
 pub struct LocalSignTx {
     #[serde(rename="id")]
-    id: u64, 
-
-    //如果需要本地签名为false， secret必须，否则可以为空。
-    #[serde(rename="secret")]
-    pub secret: Option<String>,
+    id: u64,
 
     #[serde(rename="command")]
-    pub command: String, //Submit
+    pub command: String,
 
     #[serde(rename="tx_blob")]
-    pub tx_json: String,
+    pub tx_blob: String,
 }
 
 impl Serialize for LocalSignTx {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
+    where
         S: Serializer,
         {
             // 3 is the number of fields in the struct.
@@ -32,7 +26,7 @@ impl Serialize for LocalSignTx {
 
             state.serialize_field("id", &self.id)?;
             state.serialize_field("command", &self.command)?;
-            state.serialize_field("tx_json", &self.tx_json)?;
+            state.serialize_field("tx_blob", &self.tx_blob)?;
 
             state.end()
         }
@@ -40,14 +34,13 @@ impl Serialize for LocalSignTx {
 
 
 impl LocalSignTx {
-    pub fn new(secret: Option<String>, tx_json: String) -> Box<LocalSignTx> {
-        Box::new( LocalSignTx {
-id: 2,
-command: "submit".to_string(),
-secret: secret,
-tx_json: tx_json,
-})
-}
+    pub fn new(tx_blob: String) -> LocalSignTx {
+        LocalSignTx {
+            id: 1,
+            command: "submit".to_string(),
+            tx_blob: tx_blob,
+        }
+    }
 }
 
 impl CommandConversion for LocalSignTx {

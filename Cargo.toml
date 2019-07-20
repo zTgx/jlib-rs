@@ -3,7 +3,7 @@
 license = "MIT"
 name = "jlib"
 readme = "README.md"
-repository = "https://github.com/zTgx/lib.git"
+repository = "https://github.com/zTgx/jlib.git"
 version = "0.0.1"
 
 [dependencies]
@@ -29,6 +29,3 @@ typename = "0.1.1"
 ryu = "1.0"
 void = "1.0.2"
 url = "1.7.2"
-
-[dependencies.x25519-dalek]
-version = "^0.5"

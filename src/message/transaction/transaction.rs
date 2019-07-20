@@ -41,7 +41,7 @@ pub struct TxJson {
 
     #[serde(rename="Memos")]
     pub memo: Option<Vec<Memo>>,
-    
+
     #[serde(rename="Sequence")]
     pub sequence: u32,
 
@@ -52,7 +52,7 @@ pub struct TxJson {
     pub txn_signature: Option<String>,
 
     #[serde(rename="Blob")]
-    pub blob: Option<String>,    
+    pub blob: Option<String>,
 }
 
 impl Serialize for TxJson {
@@ -62,7 +62,7 @@ impl Serialize for TxJson {
     {
         // 3 is the number of fields in the struct.
         let mut state = serializer.serialize_struct("OfferCreateTxJson", 6)?;
-        
+
         state.serialize_field("Flags", &self.flags)?;
         state.serialize_field("Fee", &self.fee)?;
         state.serialize_field("TransactionType", &self.transaction_type)?;
@@ -71,12 +71,12 @@ impl Serialize for TxJson {
         state.serialize_field("Destination", &self.destination)?;
         state.serialize_field("Memos", &self.memo)?;
 
-    
+
 	/*
     pub sequence: u32,
     pub signing_pub_key: Option<String>,
     pub txn_signature: Option<String>,
-    pub blob: Option<String>,  
+    pub blob: Option<String>,
 	*/
 
         state.end()
@@ -92,7 +92,7 @@ impl TxJson {
             transaction_type: "Payment".to_string(),
             account: from,
             destination: to,
-            amount: (amount.value.parse::<f64>().unwrap() * 1000000f64).to_string(), 
+            amount: amount.value,//(amount.value.parse::<f64>().unwrap() * 1000000f64).to_string(), 
             sequence: sequence,
             memo: memo,
             signing_pub_key: signing_pub_key,
@@ -113,7 +113,7 @@ impl CommandConversion for TxJson {
 
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -123,7 +123,7 @@ impl CommandConversion for TxJson {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TransactionTx {
     #[serde(rename="id")]
-    id: u64, 
+    id: u64,
 
     //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
@@ -162,7 +162,7 @@ impl CommandConversion for TransactionTx {
 
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -173,7 +173,7 @@ impl CommandConversion for TransactionTx {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -191,7 +191,7 @@ pub struct TxJsonResponse {
 
     #[serde(rename="Destination")]
     pub destination: String,
-    
+
     #[serde(rename="Fee")]
     pub fee: String,
 
@@ -247,7 +247,7 @@ pub struct PaymentSideKick {
     pub id              : u32,
     pub request         : TransactionTx,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

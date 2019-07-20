@@ -1,10 +1,7 @@
 
-/**
- * Data type map.
- *
- * Mapping of type ids to data types. The type id is specified by the high
- *
- */
+
+//Mapping of type ids to data types. The type id is specified by the high
+
 lazy_static! {
 pub static ref TYPES_MAP: [&'static str; 20] = {
     let v: [&'static str; 20] = [

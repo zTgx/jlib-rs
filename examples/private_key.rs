@@ -1,5 +1,4 @@
 
-// use ring::{digest};
 extern crate num;
 
 extern crate secp256k1;
@@ -7,11 +6,14 @@ use secp256k1::key::{ SecretKey};
 use secp256k1::key::PublicKey;
 use secp256k1::Secp256k1;
 // use secp256k1::key::ONE_KEY;
-// use secp256k1::constants::*;    
+// use secp256k1::constants::*;
 
 extern crate crypto;
 use crypto::ripemd160::Ripemd160 ;
 use crypto::digest::Digest;
+
+extern crate ring;
+use ring::{digest};
 
 extern crate jlib;
 use jlib::base::*;
@@ -19,13 +21,15 @@ use jlib::base::*;
 fn main() {
 
     let mut seed =  vec![ 27, 160, 140, 35, 48, 34, 206, 80, 166, 40, 137, 17, 158, 180, 155, 221 ];
+    let mut seed = vec![ 174, 179, 217, 40, 181, 196, 74, 143, 90, 182, 95, 148, 159, 31, 76, 146 ];
 
     let private_gen = util::scalar_multiple(&seed, None);
-    // println!("private gen : {:?}", private_gen);
+    println!("private gen : {:?}", private_gen);
     let secp = Secp256k1::new();
     let mut secret_key = SecretKey::from_slice(&private_gen).expect("32 bytes, within curve order");
+    println!("secret_key: {:?}", secret_key);
     let mut public_gen = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
-    // println!("public gen : {:?}", public_gen);
+    println!("public gen : {:?}", public_gen);
 
     //derivePrivateKey return
     //secp256k1.ScalarMultiple(publicGen.encodeCompressed(), 0).add(privateGen).mod(order);
@@ -45,7 +49,7 @@ fn main() {
         let mut public_gen = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
         let public_key = hex::encode(public_gen);
         println!("public key : {:?}", public_key);
-    
+
         ////////////////////////address
         if let Ok(key) = hex::decode(public_key) {
             println!("address key : {:?}", key);
@@ -64,7 +68,7 @@ fn main() {
             let mut ret: &mut [u8] = &mut [0u8;20];
             ripemd160x.result(ret);
             println!("ripemd160x ret : {:?}",  ret);
-            
+
             let ripemd160x= ripemd160x.result_str();
             println!("ripemd160x : {}", ripemd160x);
 
@@ -86,6 +90,6 @@ fn main() {
 
             }
         }
-    
+
     }
 }

@@ -1,4 +1,4 @@
-// #[macro_use] 
+// #[macro_use]
 // extern crate typename;
 
 // use serde_json::json;
@@ -14,7 +14,7 @@ use crate::message::transaction::transaction::{TxJson};
 use crate::base::signed_obj::*;
 
 use crate::base::constants::{
-    TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
+    TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
     TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS,SignStreamType
 };
 use std::rc::Rc;
@@ -84,7 +84,7 @@ impl SignTx {
         self.format_tx_obj(tx_json, &mut tx, &self.fields);
 
         self.calc_txn_sig(&mut tx);
-        
+
         //Step 5 : blob
         let outp = self.calc_blob(&mut tx);
         println!("output blob: {:?}", outp);
@@ -117,7 +117,7 @@ impl SignTx {
     pub fn calc_blob(&self, signed_tx_json: &mut SignedTxJson) -> Option<String> {
         let output: Vec<u8> = signed_tx_json.serialize();
         Some(hex::encode(&output).to_ascii_uppercase())
-    }  
+    }
 
     //Output Hex String
     pub fn update_txn_signature(&self, so: &Vec<u8>) -> String {
@@ -127,7 +127,7 @@ impl SignTx {
 
         let hash = hex::encode(&ctx.finish().as_ref());
         let message = hash.get(0..64).unwrap().to_ascii_uppercase();
-        
+
         //  let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
         let private_key = util::get_public_key_from_secret(&self.secret).property.secret_key;
         let key = &hex::decode(private_key).unwrap()[1..];
@@ -147,37 +147,53 @@ impl SignTx {
             match key {
                 TX_FLAGS => {
                     let value = tx_json.flags;
+                    println!("value: {}", value);
+
                     let flags = TxJsonFlagsBuilder::new(value).build();
                     output.insert(index, flags);
                 },
                 TX_FEE => {
                     let value = tx_json.fee;
+
+                    println!("value: {}", value);
+
                     let fee = TxJsonFeeBuilder::new(value.to_string()).build();
                     output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
                     //TRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPES
+
+                    println!("value: {}", tx_json.transaction_type);
+
                     let value = 0u16;//tx_json.transaction_type;
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
                     output.insert(index, transaction_type);
                 },
                 TX_ACCOUNT => {
                     let value = String::from(tx_json.account.as_str());
+                    println!("value: {}", value);
+
                     let account = TxJsonAccountBuilder::new(value).build();
                     output.insert(index, account);
                 },
                 TX_AMOUNT => {
                     let value = String::from(tx_json.amount.as_str());
+                    println!("value: {}", value);
+
                     let amount = TxJsonAmountBuilder::new(value).build();
                     output.insert(index, amount);
                 },
                 TX_DESTINATION => {
                     let value = String::from(tx_json.destination.as_str());
+                    println!("value: {}", value);
+
                     let destination = TxJsonDestinationBuilder::new(value).build();
                     output.insert(index, destination);
                 },
                 TX_SEQUENCE => {
                     let value = tx_json.sequence;
+                    println!("value: {}", value);
+
                     let sequence = TxJsonSequenceBuilder::new(value).build();
                     output.insert(index, sequence);
                 },
@@ -185,6 +201,8 @@ impl SignTx {
                 TX_SIGNING_PUB_KEY => {
                     let _value = Rc::try_unwrap(tx_json).unwrap_err();
                     let value = util::get_public_key_from_secret(&self.secret).property.public_key;
+                    println!("value: {}", value);
+                    
                     // let value = String::from("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020");
                     let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
                     output.insert(index, signing_pub_key);
@@ -209,7 +227,7 @@ impl SignTx {
     //Refactor..........compare...!!!!!!!!
     pub fn sort_fields(fields: &mut Vec<&str>) {
         fields.sort_by( |a, b| {
-                                
+
             let a_field_coordinates = INVERSE_FIELDS_MAP.get(a).unwrap();
             let a_type_bits = a_field_coordinates[0];
             let a_field_bits = a_field_coordinates[1];
@@ -220,12 +238,14 @@ impl SignTx {
 
             // Sort by type id first, then by field id
             if a_type_bits != b_type_bits {
-              //  a_type_bits - b_type_bits 
+              //  a_type_bits - b_type_bits
               a_type_bits.cmp(&b_type_bits)
             } else {
               // a_field_bits - b_field_bits
               a_field_bits.cmp(&b_field_bits)
             }
         });
+
+        println!("sorted: {:?}", &fields);
     }
 }
