@@ -1,5 +1,5 @@
 
-// #[macro_use] 
+// #[macro_use]
 // extern crate typename;
 
 pub mod sign;
@@ -10,7 +10,6 @@ pub mod base_data;
 pub mod wallet;
 pub mod config;
 pub mod seed;
-pub mod encodex;
 pub mod keypair;
 pub mod address;
 
@@ -58,7 +57,7 @@ impl TransactionTypeMap {
                                     ("SetFee"          , 101)
                                 ]
                                 .iter().cloned().collect();
-                                
+
         TransactionTypeMap {
             m: map,
         }
@@ -72,7 +71,7 @@ impl TWHashMap for TransactionTypeMap {
     fn get_key_from_value(&self, value: i32) -> Option<&'static str> {
         let mut k = None;
         for (key, val) in self.m.iter() {
-    
+
             if *val == value {
                 k = Some(*key);
 
@@ -156,7 +155,7 @@ impl TWHashMap for TransactionResultMap {
         }
 
         k
-    }  
+    }
 }
 
 
@@ -237,4 +236,3 @@ lazy_static! {
         map
     };
 }
-
