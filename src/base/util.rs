@@ -1,8 +1,6 @@
 
-use super::constants::*;
+use super::constants::{CURVE_ORDER, CURVE_ZERO};
 use ring::{digest};
-use crate::base::constants::ALPHABET;
-use std::collections::HashMap;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
@@ -27,65 +25,7 @@ pub fn encode_checked(x: &mut Vec<u8>) -> Vec<u8> {
 }
 
 pub fn encode_raw(x: &mut Vec<u8>) -> String {
-    encode(x.as_mut_slice())
-}
-
-pub fn encode(source: &[u8]) -> String {
-
-    let base = ALPHABET.len() as u16;
-
-    let mut digits: Vec<u16> = vec![0u16; 1];
-
-    let mut i = 0;
-    while i < source.len() {
-
-        let mut j = 0;
-        let mut carry: u16 = source[i] as u16;
-
-        let digits_len = digits.len();
-        while j < digits_len {
-            carry += digits.as_slice()[j] << 8;
-
-            digits.as_mut_slice()[j] = carry % (base as u16);
-
-            carry = (carry / (base as u16)) | 0;
-
-            j += 1;
-        }
-
-        while carry > 0 {
-            digits.push(carry % (base as u16));
-            carry = (carry / base) | 0;
-        }
-
-        i += 1;
-    }
-
-    let mut string = "".to_string();
-
-    //  for (var k = 0; source[k] === 0 && k < source.length - 1; ++k) string += ALPHABET[0]
-    // deal with leading zeros
-    let mut k = 0;
-    while source[k] == 0 && k < source.len() - 1 {
-
-        string.push(ALPHABET[0] as char);
-
-        k += 1;
-    }
-
-    // convert digits to a string
-    let mut q: i32 = (digits.len() - 1) as i32;
-    while q >= 0 {
-
-        let uu: u8 = ALPHABET[digits[q as usize] as usize];
-        let xx = uu as char;
-
-        string.push( xx );
-
-        q -= 1;
-    }
-
-    String::from(string.as_str())
+    BaseX::encode(x.as_mut_slice())
 }
 
 //entropy的生成方式: 取值index范围，1 ~ 倒数第5
@@ -110,33 +50,16 @@ pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
 
         let mut key = [0u8; 64];
         key.copy_from_slice(ctx.finish().as_ref());
-        // for x in key.iter() {
-        //     println!("{}", x );
-        // }
+
         let mut key = key.to_vec();
         key.truncate(32);
 
-        // let finish = ctx.finish();
-        // let xx: String = finish.as_ref().iter().map(|c| {
-        //     let x = format!("{:x}", c);
-        //     x
-        // }).collect();
-        // let key = xx.get(0..32).unwrap().to_string();
-
         if key.as_slice() < CURVE_ORDER && key.as_slice() > CURVE_ZERO {
-
-
-            // println!("scalar key : {:?}", key);
-            // let mut key = key.to_vec();
-            // key.truncate(32);
             return key;
         }
 
         i += 1;
     } // end while
-
-    //never get this
-    //vec![0]
 }
 
 //通过secret计算出publickey
@@ -153,7 +76,6 @@ pub fn get_public_key_from_secret(secret: &String) -> Keypair {
 
     //keypair
     let key_pair = KeypairBuilder::new(&seed).build();
-    println!("key pair : {:?}", key_pair);
 
     key_pair
 }
@@ -195,72 +117,8 @@ pub fn decode_checked(encoded: String) -> Option<Vec<u8>> {
 }
 
 pub fn decode_raw(encoded: String) -> Option<Vec<u8>> {
-    decode(encoded)
-}
-
-pub fn decode(string: String) -> Option<Vec<u8>> {
-    if string.len() == 0 { return None; }
-
-    let alphabet_map = generate_alpha_map();
-    let base = ALPHABET.len() as u16;
-    let ledger = ALPHABET[0] as char;
-
-    let mut bytes: Vec<u8> = vec![];
-    let mut i = 0;
-    while i < string.len() {
-        let c = string.as_str().chars().nth(i).unwrap();
-        let val = alphabet_map.get(&c);
-        if val.is_none() {
-            return None;
-        }
-
-        let mut j = 0;
-        let mut carry: u16 = *val.unwrap() as u16;
-        while j < bytes.len() {
-            carry += bytes[j] as u16 * base;
-            bytes[j] = (carry as u8) & 0xff;
-            carry >>= 8;
-
-            j += 1;
-        }
-
-        while carry > 0 {
-            bytes.push((carry as u8) & 0xff );
-            carry >>= 8;
-        }
-
-        i += 1;
-    }
-
-    // deal with leading zeros
-    let mut k = 0;
-    while string.as_str().chars().nth(k).unwrap() == ledger && k < string.len() - 1 {
-      bytes.push(0);
-
-      k += 1;
-    }
-
-    bytes.as_mut_slice().reverse();
-
-    Some(bytes)
-}
-
-//default source ALPHABET.
-pub fn generate_alpha_map() -> HashMap<char, usize> {
-    let mut map: HashMap<char, usize> = HashMap::new();
-    let lens = ALPHABET.len();
-    // let leader = ALPHABET[0];
-
-    // pre-compute lookup table
-    let mut i = 0;
-    while i < lens {
-        let x = ALPHABET[i] as char;
-        map.insert(x, i);
-
-        i += 1;
-    }
-
-    map
+    // decode(encoded)
+    BaseX::decode(encoded)
 }
 
 pub fn downcast_to_string(value: Rc<dyn Any>) -> String {
