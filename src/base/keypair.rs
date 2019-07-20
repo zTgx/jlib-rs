@@ -10,7 +10,7 @@ use secp256k1::key::{ SecretKey};
 use secp256k1::key::PublicKey;
 use secp256k1::Secp256k1;
 // use secp256k1::key::ONE_KEY;
-// use secp256k1::constants::*; 
+// use secp256k1::constants::*;
 
 use crate::base::seed::*;
 
@@ -37,8 +37,8 @@ impl Clone for KeypairProperty {
             _ =>
             KeypairProperty {
                 secret_key: self.secret_key.to_owned(),
-              
-                public_key: self.public_key.to_owned(),   
+
+                public_key: self.public_key.to_owned(),
             },
         }
     }
@@ -83,15 +83,18 @@ impl <'a> KeypairBuilder <'a> {
 
     fn generate(&self, seed: &String) -> KeypairProperty {
         let seed = util::entropy(seed);
-
+        // println!("seed: {:?}", seed);
         let private_gen = util::scalar_multiple(&seed, None);
         let secp = Secp256k1::new();
-        let secret_key = SecretKey::from_slice(&private_gen).expect("32 bytes, within curve order");
-        let public_gen = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
+        let mut secret_key = SecretKey::from_slice(&private_gen).expect("32 bytes, within curve order");
+        // println!("secret_key: {:?}", secret_key);
+        let mut public_gen = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
+        // println!("public_gen: {:?}", public_gen);
 
         let public_gen_output = util::scalar_multiple(public_gen.as_slice(), Some(0));
-        let secret_key2 = SecretKey::from_slice(&public_gen_output).expect("32 bytes, within curve order");
-        // let x = secret_key2.add_assign(&secret_key[..]);
+        // println!("before add : {:?}", public_gen_output);
+        let mut secret_key2 = SecretKey::from_slice(&public_gen_output).expect("32 bytes, within curve order");
+        let x = secret_key2.add_assign(&secret_key[..]);
 
         let private_key = "00".to_owned() + secret_key2.to_string().as_str();
 
@@ -110,4 +113,3 @@ impl <'a> KeypairBuilder <'a> {
         }
     }
 }
-
