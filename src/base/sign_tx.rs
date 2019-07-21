@@ -19,6 +19,7 @@ use crate::base::constants::{
 };
 use std::rc::Rc;
 use crate::base::*;
+use crate::base::keypair::*;
 
 const PRE_FIELDS: [&'static str; 7] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence"];
 
@@ -26,6 +27,7 @@ const PRE_FIELDS: [&'static str; 7] = ["Flags", "Fee", "TransactionType", "Accou
 pub struct SignTx {
     pub fields: Vec<&'static str>,
     pub secret: String,
+    // pub keypair: Keypair,
 
     pub so_flags           : SignStreamType,
     pub so_fee             : SignStreamType,
@@ -147,22 +149,15 @@ impl SignTx {
             match key {
                 TX_FLAGS => {
                     let value = tx_json.flags;
-                    println!("value: {}", value);
-
                     let flags = TxJsonFlagsBuilder::new(value).build();
                     output.insert(index, flags);
                 },
                 TX_FEE => {
                     let value = tx_json.fee;
-
-                    println!("value: {}", value);
-
                     let fee = TxJsonFeeBuilder::new(value.to_string()).build();
                     output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
-                    //TRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPESTRANSACTION_TYPES
-
                     println!("value: {}", tx_json.transaction_type);
 
                     let value = 0u16;//tx_json.transaction_type;
@@ -171,41 +166,32 @@ impl SignTx {
                 },
                 TX_ACCOUNT => {
                     let value = String::from(tx_json.account.as_str());
-                    println!("value: {}", value);
-
                     let account = TxJsonAccountBuilder::new(value).build();
                     output.insert(index, account);
                 },
                 TX_AMOUNT => {
                     let value = String::from(tx_json.amount.as_str());
-                    println!("value: {}", value);
 
                     let amount = TxJsonAmountBuilder::new(value).build();
                     output.insert(index, amount);
                 },
                 TX_DESTINATION => {
                     let value = String::from(tx_json.destination.as_str());
-                    println!("value: {}", value);
-
                     let destination = TxJsonDestinationBuilder::new(value).build();
                     output.insert(index, destination);
                 },
                 TX_SEQUENCE => {
                     let value = tx_json.sequence;
-                    println!("value: {}", value);
-
                     let sequence = TxJsonSequenceBuilder::new(value).build();
                     output.insert(index, sequence);
                 },
 
                 TX_SIGNING_PUB_KEY => {
-                    let _value = Rc::try_unwrap(tx_json).unwrap_err();
-                    let value = util::get_public_key_from_secret(&self.secret).property.public_key;
-                    println!("value: {}", value);
-                    
-                    // let value = String::from("0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020");
-                    let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
-                    output.insert(index, signing_pub_key);
+                    if let Some(public_key) = &tx_json.signing_pub_key {
+                        let value = String::from(public_key.as_str());
+                        let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
+                        output.insert(index, signing_pub_key);
+                    }
                 },
                 // TX_SIGNATURE => {
                 //     let value: TxJson = Rc::try_unwrap(tx_json).unwrap();
