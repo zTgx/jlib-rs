@@ -657,8 +657,8 @@ impl TxJsonSerializer for TxJsonMemo {
         tmp.append(&mut s);
 
         //Object ending marker
-        let mut end_mark = STInt8::serialize(0xe1);
-        tmp.append(&mut end_mark);
+        //let mut end_mark = STInt8::serialize(0xe1);
+        //tmp.append(&mut end_mark);
 
         self.output = Some(tmp);
 

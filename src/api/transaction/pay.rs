@@ -84,7 +84,7 @@ impl PaymentI for Payment {
         let amount_rc = Rc::new(Cell::new(amount));
 
         //Get Account Seq
-        let seq = 105;//self.get_account_seq();
+        let seq = self.get_account_seq();
         let sequence_rc = Rc::new(Cell::new(seq));
 
         let secret_rc = Rc::new(Cell::new(String::from(self.secret.as_str())));
