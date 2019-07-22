@@ -15,13 +15,15 @@ use crate::base::signed_obj::*;
 
 use crate::base::constants::{
     TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
-    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, SignStreamType
+    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, TX_ARRAY, SignStreamType
 };
 use std::rc::Rc;
 use crate::base::*;
 use crate::base::keypair::*;
 
-const PRE_FIELDS: [&'static str; 8] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence", "Memos"];
+const PRE_FIELDS: [&'static str; 7] = [
+                    "Flags", "Fee", "TransactionType", "Account", 
+                    "Amount", "Destination", "Sequence"];
 
 //等待数据去填充
 pub struct SignTx {
@@ -68,9 +70,10 @@ impl SignTx {
         //Step 1: Get Non-None field. [SigningPubKey] / [TxnSignature] / [Memos]
         // let mut fields: Vec<&str> = vec![];
         self.fields.extend_from_slice(&PRE_FIELDS);
-        // if tx_json.memo.is_some() {
-        //     self.fields.push("Memos");
-        // }
+        if tx_json.memo.is_some() {
+            self.fields.push("Memos");
+        }
+
         if tx_json.signing_pub_key.is_some() {
             self.fields.push("SigningPubKey");
         }
@@ -196,7 +199,25 @@ impl SignTx {
 
                 TX_MEMOS => {
                     if let Some(value) = &tx_json.memo {
-                        let value = format!("{:?}", value.memo[0].memo_data.memo_data); //Memos
+                        println!("value: {:?}", &value);
+                        // let value = format!("{:?}", value[0].memo.memo_data.memo_data); //Memos
+                        let mut v: Vec<String> = vec![];
+                        let mut i = 0;
+                        while i < value.len() {
+                            let x = String::from( value[i].memo.memo_data.memo_data.as_str() );
+                            v.push( x );
+
+                            i += 1;
+                        }
+                        println!("done...1");
+                        let tx_array = TxJsonArrayBuilder::new(v).build();
+                        println!("done...");
+                        output.insert(index, tx_array);
+                    }
+                },
+                TX_ARRAY => {
+                    if let Some(value) = &tx_json.memo {
+                        let value = format!("{:?}", value[0].memo.memo_data.memo_data); //Memos
                         let tx_memo = TxJsonMemosBuilder::new(value).build();
                         output.insert(index, tx_memo);
                     }
@@ -221,8 +242,8 @@ impl SignTx {
 
     //Refactor..........compare...!!!!!!!!
     pub fn sort_fields(fields: &mut Vec<&str>) {
-        fields.sort_by( |a, b| {
 
+        fields.sort_by( |a, b| {
             let a_field_coordinates = INVERSE_FIELDS_MAP.get(a).unwrap();
             let a_type_bits = a_field_coordinates[0];
             let a_field_bits = a_field_coordinates[1];

@@ -135,6 +135,7 @@ pub fn downcast_to_usize(value: Rc<dyn Any>) -> u32 {
     us as u32
 }
 
+
 /*
 工具方法
 */

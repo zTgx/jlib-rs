@@ -77,8 +77,6 @@ impl PaymentI for Payment {
         //     return tx;
         // }
 
-
-
         let info = Rc::new(Cell::new("".to_string()));
 
         let from_rc = Rc::new(Cell::new(String::from(self.account.as_str())));
@@ -86,15 +84,17 @@ impl PaymentI for Payment {
         let amount_rc = Rc::new(Cell::new(amount));
 
         //Get Account Seq
-        let seq = self.get_account_seq();
+        let seq = 105;//self.get_account_seq();
         let sequence_rc = Rc::new(Cell::new(seq));
 
         let secret_rc = Rc::new(Cell::new(String::from(self.secret.as_str())));
 
         let memo_rc = Rc::new(Cell::new(None));
         if memo.is_some() {
-            let v: Memos = Memos::new( Memo::new(MemoData::new(string_to_hex(&memo.unwrap()))) );
-            memo_rc.set(Some(v));
+            let v: Memos = Memos::new( Memo::new(MemoData::new( string_to_hex(&memo.unwrap()).to_ascii_uppercase()  )) );
+            println!("v: {:?}", &v);
+
+            memo_rc.set(Some(vec![v]));
         }
 
         connect(self.config.addr, |out| {

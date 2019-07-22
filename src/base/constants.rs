@@ -23,6 +23,10 @@ pub const  TX_SEQUENCE          : &'static str = "Sequence";
 pub const  TX_TRANSACTION_TYPE  : &'static str = "TransactionType";
 pub const  TX_FLAGS             : &'static str = "Flags";
 pub const  TX_MEMOS             : &'static str = "Memos";
+pub const  TX_MEMO              : &'static str = "Memo";
+pub const  TX_MEMODATA          : &'static str = "MemoData";
+pub const  TX_ARRAY             : &'static str = "Array";
+
 
 pub type SignStreamType = Option<Vec<u8>>;
 

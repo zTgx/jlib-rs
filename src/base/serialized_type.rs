@@ -398,6 +398,33 @@ impl SerializedSTMemos for STMemo {
     fn parse() {}
 }
 
+//STArray
+pub trait SerializedSTArray {
+  fn serialize(value: &Vec<String>) -> Vec<u8>;
+  fn parse();
+}
+pub struct STArray {}
+impl STArray {
+    pub fn new() -> Self {
+        STArray {}
+    }
+}
+impl SerializedSTArray for STArray {
+    fn serialize(value: &Vec<String>) -> Vec<u8> {
+        let mut v: Vec<u8> = vec![];
+        let mut i = 0;
+        while i < value.len() {
+
+            v.extend_from_slice(&STMemo::serialize(&value[i]));
+
+            i += 1;
+        }
+
+        v
+    }
+
+    fn parse() {}
+}
 
 // lazy_static! {
 
