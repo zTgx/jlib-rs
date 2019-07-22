@@ -27,3 +27,16 @@ impl Memo {
         }
     }
 }
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct Memos {
+    #[serde(rename="Memos")]
+    pub memo: Vec<Memo>,
+}
+impl Memos {
+    pub fn new(memo: Memo) -> Self {
+        Memos {
+            memo: vec![memo],
+        }
+    }
+}

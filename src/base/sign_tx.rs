@@ -15,13 +15,13 @@ use crate::base::signed_obj::*;
 
 use crate::base::constants::{
     TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
-    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS,SignStreamType
+    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, SignStreamType
 };
 use std::rc::Rc;
 use crate::base::*;
 use crate::base::keypair::*;
 
-const PRE_FIELDS: [&'static str; 7] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence"];
+const PRE_FIELDS: [&'static str; 8] = ["Flags", "Fee", "TransactionType", "Account", "Amount", "Destination", "Sequence", "Memos"];
 
 //等待数据去填充
 pub struct SignTx {
@@ -68,9 +68,9 @@ impl SignTx {
         //Step 1: Get Non-None field. [SigningPubKey] / [TxnSignature] / [Memos]
         // let mut fields: Vec<&str> = vec![];
         self.fields.extend_from_slice(&PRE_FIELDS);
-        if tx_json.memo.is_some() {
-            self.fields.push("Memos");
-        }
+        // if tx_json.memo.is_some() {
+        //     self.fields.push("Memos");
+        // }
         if tx_json.signing_pub_key.is_some() {
             self.fields.push("SigningPubKey");
         }
@@ -192,6 +192,15 @@ impl SignTx {
                         let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
                         output.insert(index, signing_pub_key);
                     }
+                },
+
+                TX_MEMOS => {
+                    if let Some(value) = &tx_json.memo {
+                        let value = format!("{:?}", value.memo[0].memo_data.memo_data); //Memos
+                        let tx_memo = TxJsonMemosBuilder::new(value).build();
+                        output.insert(index, tx_memo);
+                    }
+                    
                 },
                 // TX_SIGNATURE => {
                 //     let value: TxJson = Rc::try_unwrap(tx_json).unwrap();

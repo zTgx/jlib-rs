@@ -304,8 +304,18 @@ impl STVL {
 }
 impl SerializedSTVL for STVL {
     fn serialize(value: &String) -> Vec<u8> {
-        let mut byte_data = hex::decode(value).unwrap();
-        serialize_varint(&mut byte_data)
+        println!("input: {:?}", &value);
+
+        let value = value.trim_start_matches("\"");
+        let value = value.trim_end_matches("\"");
+                println!("after trim value: {:?}", &value);
+
+        let mut v: Vec<u8> = vec![];
+        if let Ok(mut data) = hex::decode(value) {
+            v = serialize_varint(&mut data);
+        }          
+
+        v
     }
 
     fn parse() {
@@ -366,16 +376,28 @@ impl STVector256 {
 }
 
 //STMemo
-pub struct STMemo {
-    // pub id: i32,
+///////////////////////////////////////////
+pub trait SerializedSTMemos {
+  fn serialize(value: &String) -> Vec<u8>;
+  fn parse();
 }
+
+pub struct STMemo {}
 impl STMemo {
     pub fn new() -> Self {
-        STMemo {
-            // id: 20,
-        }
+        STMemo { }
     }
 }
+
+impl SerializedSTMemos for STMemo {
+    fn serialize(value: &String) -> Vec<u8> {
+        //convertStringToHex
+        STVL::serialize(&value.to_ascii_uppercase())
+    }
+
+    fn parse() {}
+}
+
 
 // lazy_static! {
 

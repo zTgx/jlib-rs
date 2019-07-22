@@ -40,7 +40,7 @@ pub struct TxJson {
     pub destination: String,
 
     #[serde(rename="Memos")]
-    pub memo: Option<Vec<Memo>>,
+    pub memo: Option<Memos>, //Option<Vec<Memo>>,
 
     #[serde(rename="Sequence")]
     pub sequence: u32,
@@ -84,7 +84,7 @@ impl Serialize for TxJson {
 }
 
 impl TxJson {
-    pub fn new(from: String, to: String, amount: Amount, sequence: u32, memo: Option<Vec<Memo>>, signing_pub_key: Option<String>) -> Self {
+    pub fn new(from: String, to: String, amount: Amount, sequence: u32, memo: Option<Memos>, signing_pub_key: Option<String>) -> Self {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),

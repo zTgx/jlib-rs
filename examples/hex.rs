@@ -3,9 +3,23 @@ extern crate hex;
 extern crate jlib;
 use jlib::base::util::{check};
 
+fn hexx(string: &String) -> Vec<u8> {
+    let mut v: Vec<u8> = vec![];
+    if let Ok(x) = hex::decode(string) {
+        v = x;
+    }
+
+    v
+}
 fn main() {
-    // let hex_string = hex::encode("Hello world!");
-    // println!("{}", hex_string); // Prints '48656c6c6f20776f726c6421'
+    let hex_string = hex::encode("TTTTTTTTTTTTTTTTTTTTTis memo");
+    println!("{}", hex_string); // Prints '48656c6c6f20776f726c6421'
+
+    let x = "5454545454545454545454545454545454545454546973206D656D6F".to_string();
+    let v = hexx(&x);
+    println!("v ： {:?}", v);
+    
+    return;
 
     // let x = format!("{:x}", 79);
     // // let tar = format!("{:?}", hex_string);

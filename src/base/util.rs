@@ -107,11 +107,7 @@ pub fn decode_multi_versioned(address: String) -> Option<Vec<u8>> {
 }
 
 pub fn decode_checked(encoded: String) -> Option<Vec<u8>> {
-        println!("decode_versioned.");
-
     let buf = decode_raw(encoded).unwrap();
-
-    println!("decode_versioned.buf : {:?}", buf);
 
     Some(buf[1..21].to_vec())
 }
