@@ -15,7 +15,7 @@ use crate::base::signed_obj::*;
 
 use crate::base::constants::{
     TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
-    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, TX_ARRAY, SignStreamType
+    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE, TX_FLAGS, TX_MEMOS, SignStreamType
 };
 use std::rc::Rc;
 use crate::base::*;
@@ -199,7 +199,6 @@ impl SignTx {
 
                 TX_MEMOS => {
                     if let Some(value) = &tx_json.memo {
-                        println!("value: {:?}", &value);
                         // let value = format!("{:?}", value[0].memo.memo_data.memo_data); //Memos
                         let mut v: Vec<String> = vec![];
                         let mut i = 0;
@@ -209,19 +208,10 @@ impl SignTx {
 
                             i += 1;
                         }
-                        println!("done...1");
-                        let tx_array = TxJsonArrayBuilder::new(v).build();
-                        println!("done...");
-                        output.insert(index, tx_array);
+
+                        let tx_memos = TxJsonMemosBuilder::new(v).build();
+                        output.insert(index, tx_memos);
                     }
-                },
-                TX_ARRAY => {
-                    if let Some(value) = &tx_json.memo {
-                        let value = format!("{:?}", value[0].memo.memo_data.memo_data); //Memos
-                        let tx_memo = TxJsonMemosBuilder::new(value).build();
-                        output.insert(index, tx_memo);
-                    }
-                    
                 },
                 // TX_SIGNATURE => {
                 //     let value: TxJson = Rc::try_unwrap(tx_json).unwrap();

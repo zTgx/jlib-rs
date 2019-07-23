@@ -616,19 +616,69 @@ impl TxJsonBuilder for TxJsonTxnSignatureBuilder {
     }
 }
 
-//memo builder
-pub struct TxJsonMemo {
+//memodata builder
+pub struct TxJsonMemoData {
     pub name    : String,
     pub type_obj: Option<TypeObj>,
     pub value   : String,
 
     pub output  : SignStreamType,
 }
-impl TxJsonMemo {
+impl TxJsonMemoData {
     pub fn new(value: String) -> Self {
+        TxJsonMemoData {
+            name        : TX_MEMODATA.to_string(),
+            type_obj    : TypeObjBuilder::new(TX_MEMODATA).build(),
+            value       : value,
+
+            output: None,
+        }
+    }
+}
+impl TxJsonSerializer for TxJsonMemoData {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        let mut s = STMemo::serialize(&self.value);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+
+        println!("TxJsonMemo so : {:?}", &so);
+    }
+}
+
+//memo
+pub struct TxJsonMemo {
+    pub name     : String,
+    pub type_obj : Option<TypeObj>,
+    pub value    : TxJsonMemoData,
+
+    pub output: SignStreamType,
+}
+
+impl TxJsonMemo {
+    pub fn new(value: TxJsonMemoData) -> Self {
         TxJsonMemo {
-            name: TX_MEMODATA.to_string(),
-            type_obj: TypeObjBuilder::new(TX_MEMODATA).build(),
+            name     : TX_MEMO.to_string(),
+            type_obj : TypeObjBuilder::new(TX_MEMO).build(),
             value    : value,
 
             output: None,
@@ -652,13 +702,13 @@ impl TxJsonSerializer for TxJsonMemo {
             raw.serialize_header(&mut tmp);
         }
 
-        let mut s = STMemo::serialize(&self.value);
-        println!("memo value hex : {:?}", &s);
-        tmp.append(&mut s);
+        // let mut s = TxJsonMemoData::new(String::from( self.value.as_str() ));
+        let s = &mut self.value;
+        s.serialize_obj(&mut tmp);
 
         //Object ending marker
-        //let mut end_mark = STInt8::serialize(0xe1);
-        //tmp.append(&mut end_mark);
+        let mut end_mark = STInt8::serialize(0xe1);
+        tmp.append(&mut end_mark);
 
         self.output = Some(tmp);
 
@@ -666,24 +716,42 @@ impl TxJsonSerializer for TxJsonMemo {
             so.extend_from_slice(&x);
         }
 
-        println!("TxJsonMemo so : {:?}", &so);
+        println!("TxJsonMemos so : {:?}", &so);
     }
 }
 
-//memos builder
+pub struct TxJsonMemoBuilder {
+    pub value: String,
+}
+impl  TxJsonMemoBuilder  {
+    pub fn new(value: String) -> Self {
+        TxJsonMemoBuilder {
+            value: value,
+        }
+    }
+}
+impl TxJsonBuilder for TxJsonMemoBuilder {
+    fn build(&self) -> Box<dyn TxJsonSerializer> {
+        let meme_data = TxJsonMemoData::new( String::from( self.value.as_str() ) );
+        Box::new( TxJsonMemo::new( meme_data ) )
+    }
+}
+
+
+//array builder
 pub struct TxJsonMemos {
     pub name     : String,
     pub type_obj : Option<TypeObj>,
-    pub value    : String,
+    pub value    : Vec<Box<dyn TxJsonSerializer>>,//TxJsonMemo>,
 
     pub output: SignStreamType,
 }
 
 impl TxJsonMemos {
-    pub fn new(value: String) -> Self {
+    pub fn new(value: Vec<Box<dyn TxJsonSerializer>>) -> Self {
         TxJsonMemos {
-            name     : TX_MEMO.to_string(),
-            type_obj : TypeObjBuilder::new(TX_MEMO).build(),
+            name     : TX_MEMOS.to_string(),
+            type_obj : TypeObjBuilder::new(TX_MEMOS).build(),
             value    : value,
 
             output: None,
@@ -707,85 +775,11 @@ impl TxJsonSerializer for TxJsonMemos {
             raw.serialize_header(&mut tmp);
         }
 
-        // let mut s = STMemo::serialize(&self.value);
-        // println!("memo value hex : {:?}", &s);
-        // tmp.append(&mut s);
-
-        let mut s = TxJsonMemo::new(String::from( self.value.as_str() ));
-        s.serialize_obj(&mut tmp);
-
-        //Object ending marker
-        let mut end_mark = STInt8::serialize(0xe1);
-        tmp.append(&mut end_mark);
-
-        self.output = Some(tmp);
-
-        if let Some(x) = &self.output {
-            so.extend_from_slice(&x);
-        }
-
-        println!("TxJsonMemos so : {:?}", &so);
-    }
-}
-
-pub struct TxJsonMemosBuilder {
-    pub value: String,
-}
-impl TxJsonMemosBuilder {
-    pub fn new(value: String) -> Self {
-        TxJsonMemosBuilder {
-            value: value,
-        }
-    }
-}
-impl TxJsonBuilder for TxJsonMemosBuilder {
-    fn build(&self) -> Box<dyn TxJsonSerializer> {
-        Box::new( TxJsonMemos::new( String::from(self.value.as_str())) )
-    }
-}
-
-
-//array builder
-pub struct TxJsonArray {
-    pub name     : String,
-    pub type_obj : Option<TypeObj>,
-    pub value    : Vec<String>,
-
-    pub output: SignStreamType,
-}
-
-impl TxJsonArray {
-    pub fn new(value: Vec<String>) -> Self {
-        TxJsonArray {
-            name     : TX_MEMOS.to_string(),
-            type_obj : TypeObjBuilder::new(TX_MEMOS).build(),
-            value    : value,
-
-            output: None,
-        }
-    }
-}
-impl TxJsonSerializer for TxJsonArray {
-    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
-
-        if self.output.is_some() {
-            if let Some(x) = &self.output {
-                so.extend_from_slice(&x);
-            }
-
-            return;
-        }
-
-        let mut tmp: Vec<u8> = vec![];
-        //serialize header
-        if let Some(raw) = &self.type_obj {
-            raw.serialize_header(&mut tmp);
-        }
-
         let mut i = 0;
         while i < self.value.len() {
             //get memo, not memos~~~~~~            
-            let mut s = TxJsonMemos::new(String::from( self.value[i].as_str() ));
+            // let mut s = TxJsonMemo::new(String::from( self.value[i].as_str() ));
+            let s = &mut self.value[i];
             s.serialize_obj(&mut tmp);
 
             i += 1;
@@ -808,28 +802,29 @@ impl TxJsonSerializer for TxJsonArray {
     }
 }
 
-pub struct TxJsonArrayBuilder {
+pub struct TxJsonMemosBuilder {
     pub value: Vec<String>,
 }
-impl TxJsonArrayBuilder {
+impl TxJsonMemosBuilder {
     pub fn new(value: Vec<String>) -> Self {
-        TxJsonArrayBuilder {
+        TxJsonMemosBuilder {
             value: value,
         }
     }
 }
-impl TxJsonBuilder for TxJsonArrayBuilder {
+impl TxJsonBuilder for TxJsonMemosBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
-        let mut v: Vec<String> = vec![];
+        let mut v: Vec<Box<dyn TxJsonSerializer>> = vec![];
         let mut i = 0;
         while i < self.value.len() {
-            v.push(String::from( self.value[0].as_str() ));
+            let s = TxJsonMemoBuilder::new( String::from( self.value[i].as_str() ) ).build();
+
+            v.push( s );
 
             i += 1;
         }
 
-        println!("333333333333333");
-        Box::new( TxJsonArray::new( v ) )
+        Box::new( TxJsonMemos::new( v ) )
     }
 }
 
@@ -849,7 +844,6 @@ impl SignedTxJson {
     pub fn serialize(&mut self) -> Vec<u8> {
         let mut so: Vec<u8> = vec![];
         for component in self.components.as_mut_slice() {
-            println!("serialize...");
             component.serialize_obj(&mut so);
         }
 
