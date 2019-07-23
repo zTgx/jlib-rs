@@ -53,6 +53,8 @@ use serde_json::Result;
 use serde_json::{Value};
 use crate::base::util::{downcast_to_string, check};
 
+use super::cast_rs::hex_t;
+
 //////////////////////
 /*
 @合约部署请求
@@ -98,7 +100,7 @@ impl SolidityInitTxJson {
             account: account,
             amount: 100000000,
             method: 0,
-            payload: hex::encode(payload),
+            payload: hex_t::encode(payload),
         }
     }
 }

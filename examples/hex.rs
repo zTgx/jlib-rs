@@ -3,6 +3,9 @@ extern crate hex;
 extern crate jlib;
 use jlib::base::util::{check};
 
+extern crate cast_rs;
+use cast_rs::hex_t;
+
 fn hexx(string: &String) -> Vec<u8> {
     let mut v: Vec<u8> = vec![];
     if let Ok(x) = hex::decode(string) {
@@ -14,6 +17,10 @@ fn hexx(string: &String) -> Vec<u8> {
 fn main() {
     let hex_string = hex::encode("TTTTTTTTTTTTTTTTTTTTTis memo");
     println!("{}", hex_string); // Prints '48656c6c6f20776f726c6421'
+
+    let hex_string = hex_t::encode("TTTTTTTTTTTTTTTTTTTTTis memo");
+    println!("hex_t : {}", hex_string); // Prints '48656c6c6f20776f726c6421'
+
 
     let x = "5454545454545454545454545454545454545454546973206D656D6F".to_string();
     let v = hexx(&x);
