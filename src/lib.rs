@@ -12,6 +12,7 @@ extern crate num;
 extern crate void;
 extern crate ws;
 extern crate basex_rs;
+extern crate cast_rs;
 
 pub mod base;
 pub mod message;

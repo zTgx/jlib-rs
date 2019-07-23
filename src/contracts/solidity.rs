@@ -53,7 +53,7 @@ use serde_json::Result;
 use serde_json::{Value};
 use crate::base::util::{downcast_to_string, check};
 
-use super::cast_rs::hex_t;
+use cast_rs::hex_t;
 
 //////////////////////
 /*

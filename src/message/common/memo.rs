@@ -40,3 +40,23 @@ impl Memos {
         }
     }
 }
+
+pub struct MemosBuilder {
+    pub value: String,
+}
+impl MemosBuilder {
+    pub fn new(value: String) -> Self {
+        MemosBuilder {
+            value: value,
+        }
+    }
+
+    pub fn build(&self) -> Memos {
+        let data = MemoData::new( String::from( self.value.as_str() ) );
+        let memo = Memo::new(data);
+
+        Memos {
+            memo: memo,
+        }
+    }
+}

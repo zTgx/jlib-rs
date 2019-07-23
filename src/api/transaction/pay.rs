@@ -17,6 +17,8 @@ use crate::message::common::amount::Amount;
 use crate::base::util::{string_to_hex, downcast_to_usize};
 use crate::api::query::account_info::*;
 
+use cast_rs::hex_t;
+
 pub trait PaymentI {
     fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F)
     where F: Fn(Result<TransactionTxResponse, PaymentSideKick>);
@@ -79,24 +81,24 @@ impl PaymentI for Payment {
 
         let info = Rc::new(Cell::new("".to_string()));
 
-        let from_rc = Rc::new(Cell::new(String::from(self.account.as_str())));
-        let to_rc   = Rc::new(Cell::new(to));
+        let from_rc   = Rc::new(Cell::new(String::from(self.account.as_str())));
+        let secret_rc = Rc::new(Cell::new(String::from(self.secret.as_str())));
+        
+        let to_rc     = Rc::new(Cell::new(to));
         let amount_rc = Rc::new(Cell::new(amount));
+        let memo_rc   = Rc::new(Cell::new(None));
+        if memo.is_some() {
+            // let v: Memos = Memos::new( Memo::new(MemoData::new( string_to_hex(&memo.unwrap()).to_ascii_uppercase()  )) );
+            let memos = MemosBuilder::new( hex_t::encode(&memo.unwrap()).to_ascii_uppercase() ).build();
+            memo_rc.set(Some(vec![memos]));
+        }
 
         //Get Account Seq
         let seq = self.get_account_seq();
         let sequence_rc = Rc::new(Cell::new(seq));
 
-        let secret_rc = Rc::new(Cell::new(String::from(self.secret.as_str())));
 
-        let memo_rc = Rc::new(Cell::new(None));
-        if memo.is_some() {
-            let v: Memos = Memos::new( Memo::new(MemoData::new( string_to_hex(&memo.unwrap()).to_ascii_uppercase()  )) );
-            println!("v: {:?}", &v);
-
-            memo_rc.set(Some(vec![v]));
-        }
-
+        
         connect(self.config.addr, |out| {
             let copy = info.clone();
 
