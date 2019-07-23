@@ -14,41 +14,45 @@ use crate::base::util::downcast_to_string;
 use crate::message::common::amount::Amount;
 
 pub trait CreateOfferI {
-    fn create_offer<F>(&self, config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
-                                                    secret: Option<String>, 
-                                                    op: F) 
+    fn create_offer<F>(&self, taker_gets: Amount, taker_pays: Amount, op: F) 
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>);
 }
 
-pub struct CreateOffer {}
+pub struct CreateOffer {
+    pub config: Box<Rc<Config>>,
+    pub account: String,
+    pub secret: String,
+}
 impl CreateOffer {
-    pub fn new() -> Self {
+        pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
         CreateOffer {
+            config  : config,
+            account : account,
+            secret  : secret,
         }
     }
 }
 
 impl CreateOfferI for CreateOffer { 
-    fn create_offer<F>(&self, config: Box<Rc<Config>>, account: String, taker_gets: Amount, taker_pays: Amount, 
-                                                    secret: Option<String>, 
-                                                    op: F) 
+    fn create_offer<F>(&self, taker_gets: Amount, taker_pays: Amount, op: F) 
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
-        let account_rc = Rc::new(Cell::new(account));
+        let account_rc = Rc::new(Cell::new(String::from(self.account.as_str())));
+        let secret_rc  = Rc::new(Cell::new(String::from(self.secret.as_str())));
+
         let taker_gets_rc = Rc::new(Cell::new(taker_gets));
         let taker_pays_rc = Rc::new(Cell::new(taker_pays));
-        let secret_rc = Rc::new(Cell::new(secret));
         
-        connect(config.addr, |out| { 
+        connect(self.config.addr, |out| { 
             let copy = info.clone();
 
             let account = account_rc.clone();
-            let taker_gets = taker_gets_rc.clone();
-            let taker_pays = taker_pays_rc.clone();
             let secret = secret_rc.clone();
 
+            let taker_gets = taker_gets_rc.clone();
+            let taker_pays = taker_pays_rc.clone();
 
             // let xy = OfferCreateTx::new(secret.take(), OfferCreateTxJson::new(account.take(), 
             //                                                                 taker_gets.take(), taker_pays.take()));

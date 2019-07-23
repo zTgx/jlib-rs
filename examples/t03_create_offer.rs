@@ -16,14 +16,9 @@ fn main() {
     // let taker_gets: Amount = Amount::new("SWT".to_string(), "1".to_string(), "".to_string());
     // let taker_pays: Amount = Amount::new("CNY".to_string(), "0.01".to_string(), "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string());
 
-    let account: String = "jn9XgdNptm9DhjZN2qLtxjTfVuDt6rQwLh".to_string();
-    let secret:String= "sh6Wgh5XchPNVCcRkLyE291ecT5Gi".to_string();
-    CreateOffer::new().create_offer(   config.clone(), 
-                                                account,
-                                                taker_gets,
-                                                taker_pays,
-                                                Some(secret),
-
+    let account: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
+    let secret : String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
+    CreateOffer::with_params(config.clone(), account, secret).create_offer( taker_gets, taker_pays,
                                                 |x| match x {
         Ok(response) => {
             let res: OfferCreateTxResponse = response;

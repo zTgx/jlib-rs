@@ -101,14 +101,14 @@ pub struct OfferCreateTx {
 
     //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
-    pub secret: Option<String>,
+    pub secret: String,
 
     #[serde(rename="tx_json")]
     pub tx_json: OfferCreateTxJson,
 }
 
 impl OfferCreateTx {
-    pub fn new(secret: Option<String>, tx_json: OfferCreateTxJson) -> Box<OfferCreateTx> {
+    pub fn new(secret: String, tx_json: OfferCreateTxJson) -> Box<OfferCreateTx> {
         Box::new( OfferCreateTx {
             id: 1,
             command: "submit".to_string(),
