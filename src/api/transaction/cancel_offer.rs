@@ -13,38 +13,42 @@ use crate::message::common::command_trait::CommandConversion;
 use crate::base::util::downcast_to_string;
 
 pub trait CancelOfferI {
-    fn cancel_offer<F>(&self, config: Box<Rc<Config>>, account: String, offer_sequence: u64, 
-                                                    secret: Option<String>, 
-                                                    op: F) 
+    fn cancel_offer<F>(&self, offer_sequence: u64, op: F) 
     where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>);
 }
 
-pub struct CancelOffer {}
+pub struct CancelOffer {
+    pub config: Box<Rc<Config>>,
+    pub account: String,
+    pub secret: String,
+}
 impl CancelOffer {
-    pub fn new() -> Self {
+        pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
         CancelOffer {
+            config  : config,
+            account : account,
+            secret  : secret,
         }
     }
 }
 
 impl CancelOfferI for CancelOffer { 
-    fn cancel_offer<F>(&self, config: Box<Rc<Config>>, account: String, offer_sequence: u64, 
-                                                    secret: Option<String>, 
-                                                    op: F) 
+    fn cancel_offer<F>(&self, offer_sequence: u64, op: F) 
     where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
-        let account_rc = Rc::new(Cell::new(account));
+        let account_rc = Rc::new(Cell::new(String::from(self.account.as_str())));
+        let secret_rc  = Rc::new(Cell::new(String::from(self.secret.as_str())));
+
         let offer_sequence_rc = Rc::new(Cell::new(offer_sequence));
-        let secret_rc = Rc::new(Cell::new(secret));
         
-        connect(config.addr, |out| { 
+        connect(self.config.addr, |out| { 
             let copy = info.clone();
 
-            let account = account_rc.clone();
+            let account        = account_rc.clone();
+            let secret         = secret_rc.clone();
             let offer_sequence = offer_sequence_rc.clone();
-            let secret = secret_rc.clone();
 
             if let Ok(command) = OfferCancelTx::new(secret.take(), OfferCancelTxJson::new(account.take(),  offer_sequence.take())).to_string() {
                 out.send(command).unwrap()

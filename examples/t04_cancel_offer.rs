@@ -8,14 +8,10 @@ fn main() {
     let config = Config::new(TEST1, true);
 
     let account: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
-    let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
+    let secret : String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
     let offer_sequence: u64 = 688_u64;
 
-    CancelOffer::new().cancel_offer(    config.clone(), 
-                                        account,
-                                        offer_sequence,
-                                        Some(secret),
-
+    CancelOffer::with_params(config.clone(), account, secret).cancel_offer( offer_sequence,
                                         |x| match x {
         Ok(response) => {
             let res: OfferCancelTxResponse = response;

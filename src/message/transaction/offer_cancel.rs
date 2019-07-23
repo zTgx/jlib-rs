@@ -3,7 +3,6 @@
 use serde_json::json;
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
@@ -23,7 +22,7 @@ pub struct OfferCancelTxJson {
 
     #[serde(rename="Fee")]
     pub fee: u64,
-
+    
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
 
@@ -39,7 +38,7 @@ impl OfferCancelTxJson {
             let flag = Flags::Other;
             OfferCancelTxJson {
                 flags: 0, ///////////////Hard code
-                fee: 10000, /////////////////////Hard code
+                fee: 10000,
                 transaction_type: "OfferCancel".to_string(),
                 account: account,
                 offer_sequence: offer_sequence,
@@ -52,22 +51,21 @@ pub struct OfferCancelTx {
     id: u64, 
 
     #[serde(rename="command")]
-    pub command: String, //Submit
+    pub command: String,
 
-    //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
-    pub secret: Option<String>,
+    pub secret: String,
 
     #[serde(rename="tx_json")]
     pub tx_json: OfferCancelTxJson,
 }
 
 impl OfferCancelTx {
-    pub fn new(secret: Option<String>, tx_json: OfferCancelTxJson) -> Box<OfferCancelTx> {
+    pub fn new(secret: String, tx_json: OfferCancelTxJson) -> Box<OfferCancelTx> {
         Box::new( OfferCancelTx {
-            id: 1,
+            id     : 1,
             command: "submit".to_string(),
-            secret: secret,
+            secret : secret,
             tx_json: tx_json,
         })
     }
@@ -75,7 +73,7 @@ impl OfferCancelTx {
 
 impl CommandConversion for OfferCancelTx {
     type T = OfferCancelTx;
-    fn to_string(&self) -> Result<String> {
+    fn to_string(&self) -> Result<String, serde_json::error::Error> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
 
