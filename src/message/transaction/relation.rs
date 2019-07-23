@@ -16,7 +16,7 @@ use std::error::Error;
 use std::fmt;
 
 /*
-关系对象
+关系对象: LimitAmount Can't be Native.!!!
 */
 #[derive(Deserialize, Debug, Default)]
 pub struct RelationTxJson {
