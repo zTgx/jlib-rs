@@ -43,14 +43,27 @@ impl Amount {
         ret
     }
 
-    pub fn mul_million(value: String) -> String {
-        let mut ret = 0u64;
-        if let Ok(x) = value.parse::<u64>() {
-            ret = x * 1_000_000;
+    pub fn mul_million(value: &String) -> String {
+        let mut ret = 0f64;
+        if let Ok(x) = value.parse::<f64>() {
+            ret = x * 1_000_000f64;
         }
 
-        ret.to_string()
+        (ret as u64).to_string()
     }
+
+    //TODO::
+    // pub fn decorate(&mut self) -> Self {
+    //     if self.is_string() {
+    //         self.value = Amount::mul_million(&self.value);
+    //     } 
+
+    //     Amount {
+    //         value: String::from( self.value.as_str() ),
+    //         currency: self.currency,
+    //         issuer: self.issuer,
+    //     }
+    // }
 }
 
 impl FromStr for Amount {

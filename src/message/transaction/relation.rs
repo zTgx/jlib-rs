@@ -3,7 +3,8 @@
 use serde_json::json;
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
+use serde::ser::{Serializer, SerializeStruct};
+
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
@@ -17,7 +18,7 @@ use std::fmt;
 /*
 关系对象
 */
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Deserialize, Debug, Default)]
 pub struct RelationTxJson {
     #[serde(rename="Flags")]
     pub flags: u32,
@@ -60,6 +61,32 @@ impl RelationTxJson {
     }
 }
 
+impl Serialize for RelationTxJson {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // 3 is the number of fields in the struct.
+        let mut state = serializer.serialize_struct("RelationTxJson", 7)?;
+        
+        state.serialize_field("Flags", &self.flags)?;
+        state.serialize_field("Fee", &self.fee)?;
+        state.serialize_field("TransactionType", &self.transaction_type)?;
+        state.serialize_field("Account", &self.account)?;
+
+        state.serialize_field("Target", &self.target)?;
+        state.serialize_field("RelationType", &self.relation_type)?;
+
+        if self.limit_amount.is_string() {
+            state.serialize_field("LimitAmount", &Amount::mul_million(&self.limit_amount.value))?;
+        } else {
+            state.serialize_field("LimitAmount", &self.limit_amount)?;
+        }
+
+        state.end()
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RelationTx {
     #[serde(rename="id")]
@@ -89,7 +116,7 @@ impl RelationTx {
 
 impl CommandConversion for RelationTx {
     type T = RelationTx;
-    fn to_string(&self) -> Result<String> {
+    fn to_string(&self) -> Result<String, serde_json::error::Error> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
 
