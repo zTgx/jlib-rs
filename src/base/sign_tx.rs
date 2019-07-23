@@ -63,6 +63,7 @@ impl Default for SignTx {
         }
     }
 }
+
 impl SignTx {
     pub fn prepare(&mut self, tx_json: TxJson, secret: String) -> Option<String> {
         self.secret = secret;

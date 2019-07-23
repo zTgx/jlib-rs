@@ -18,7 +18,7 @@ use std::fmt;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OfferCancelTxJson {
     #[serde(rename="Flags")]
-    pub flags: i32, ///How ???????????
+    pub flags: u32, ///How ???????????
 
     #[serde(rename="Fee")]
     pub fee: u64,

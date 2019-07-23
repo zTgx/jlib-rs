@@ -5,10 +5,23 @@ extern crate secp256k1;
 use secp256k1::key::{SecretKey, PublicKey};
 use secp256k1::{Secp256k1, Message};
 
-pub struct SignatureX {
+use ring::{digest};
+use cast_rs::hex_t;
+use crate::base::keypair::*;
+
+pub struct SignatureX <'a> {
+    pub keypair: &'a Keypair,
 }
 
-impl SignatureX {
+impl <'a> SignatureX <'a> {
+    pub fn new(keypair: &'a Keypair) -> Self {
+        SignatureX {
+            keypair: keypair,
+        }
+    }
+}
+
+impl <'a> SignatureX <'a> {
     /*
     @sign
     message: [u8]   /   message bytes needed to be sign.
@@ -44,5 +57,26 @@ impl SignatureX {
 
         false
     }
+
+    //Output Hex String
+    pub fn sign_txn_signature(&self, so: &Vec<u8>) -> String {
+        let mut ctx = digest::Context::new(&digest::SHA512);
+        ctx.update(&[83,84,88, 0]);
+        ctx.update(&so);
+
+        let hash = hex_t::encode(&ctx.finish().as_ref());
+        let message = hash.get(0..64).unwrap().to_ascii_uppercase();
+
+        let private_key = &self.keypair.property.secret_key;
+//        let private_key = util::get_public_key_from_secret(&self.secret).property.secret_key;
+        let key = &hex_t::decode(private_key).unwrap()[1..];
+
+        let msg = hex_t::decode(message).unwrap();
+
+        let signed_hex_string = SignatureX::sign(&msg, &key);
+
+        return signed_hex_string;
+    }
+
 }
 

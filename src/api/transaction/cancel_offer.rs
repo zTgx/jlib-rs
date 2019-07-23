@@ -12,6 +12,8 @@ use crate::message::transaction::offer_cancel::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::util::downcast_to_string;
 
+use crate::base::sign_cancel_offer::*;
+
 pub trait CancelOfferI {
     fn cancel_offer<F>(&self, offer_sequence: u64, op: F) 
     where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>);
@@ -49,9 +51,24 @@ impl CancelOfferI for CancelOffer {
             let account        = account_rc.clone();
             let secret         = secret_rc.clone();
             let offer_sequence = offer_sequence_rc.clone();
+            
+            let tx_json = OfferCancelTxJson::new(account.take(),  offer_sequence.take());
+            //local sign
+            if self.config.local_sign {
+                //Keypair对象的生成不合理，待重构!!!
+                use crate::base::keypair::*;
+                use crate::base::seed::*;
+                let seed_property = SeedProperty::new(&secret.take(), 16);
+                let seed = SeedBuilder::new(seed_property).build();
 
-            if let Ok(command) = OfferCancelTx::new(secret.take(), OfferCancelTxJson::new(account.take(),  offer_sequence.take())).to_string() {
-                out.send(command).unwrap()
+                //keypair
+                let keypair = KeypairBuilder::new(&seed).build();
+                let blob = SignTxCancelOffer::with_params(&keypair, &tx_json).build();
+                println!("cancel offer: {}", blob);
+            } else {
+                if let Ok(command) = OfferCancelTx::new(secret.take(), tx_json).to_string() {
+                    out.send(command).unwrap()
+                }
             }
 
             move |msg: ws::Message| {
