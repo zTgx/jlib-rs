@@ -14,7 +14,7 @@ fn main() {
     //address: 
     let secret  = "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
     let account = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string();
-    let address = "j94WCA3ZSTWv2SkjxHh7friknF7PmyvDiU".to_string();
+    let address = "jJpU95p4ekWaJJZ7biS7oSM1QGsetxb269".to_string();
 
     //concat args:
     //THe First MUST BE: function name which is to be called.

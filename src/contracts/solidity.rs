@@ -284,7 +284,7 @@ impl SolidityInvokeMessage {
             id: 1,
             command: "submit".to_string(),
             secret: secret,
-            tx_json: SolidityInvokeTxJson::new(account, address, hex::encode(hex_method), v)
+            tx_json: SolidityInvokeTxJson::new(account, address, hex_t::encode(hex_method), v)
         }
     }
 }
