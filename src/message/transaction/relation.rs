@@ -9,7 +9,7 @@ use std::any::Any;
 use std::cell::Cell;
 
 use crate::message::common::command_trait::CommandConversion;
-use crate::message::common::amount::Amount;
+use crate::message::common::amount::{Amount, string_or_struct};
 use crate::misc::common::*;
 use std::error::Error;
 use std::fmt;
@@ -40,20 +40,22 @@ pub struct RelationTxJson {
     pub relation_type: u64,
 
     #[serde(rename="LimitAmount")]
-    pub limit_amount: String,//Amount,
+    #[serde(deserialize_with = "string_or_struct")]
+    pub limit_amount: Amount,
 }
 
 impl RelationTxJson {
-    pub fn new(account: String, target: String, relation_type: u64, amount: Amount) -> Self {
+    pub fn new(account: String, target: String, rtype: u64, amount: Amount) -> Self {
         let flag = Flags::Other;
+
         RelationTxJson {
             flags: flag.get(),
             fee: 10000,
             transaction_type: "RelationSet".to_string(),
             account: account,
             target: target,
-            relation_type: relation_type,
-            limit_amount: "500000".to_string(),//amount, ?????
+            relation_type: rtype,
+            limit_amount: amount,
         }
     }
 }
@@ -68,14 +70,14 @@ pub struct RelationTx {
 
     //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
-    pub secret: Option<String>,
+    pub secret: String,
 
     #[serde(rename="tx_json")]
     pub tx_json: RelationTxJson,
 }
 
 impl RelationTx {
-    pub fn new(secret: Option<String>, tx_json: RelationTxJson) -> Box<RelationTx> {
+    pub fn new(secret: String, tx_json: RelationTxJson) -> Box<RelationTx> {
         Box::new( RelationTx {
             id: 1,
             command: "submit".to_string(),
@@ -131,7 +133,8 @@ pub struct RelationTxJsonResponse {
     pub flags: i32,
 
     #[serde(rename="LimitAmount")]
-    pub limit_amount: String,
+    #[serde(deserialize_with = "string_or_struct")]
+    pub limit_amount: Amount,
     
     #[serde(rename="RelationType")]
     pub relation_type: u64,

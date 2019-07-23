@@ -24,9 +24,9 @@ pub struct Amount {
 impl Amount {
     pub fn new(currency: String, value: String, issuer: String) -> Self {
         Amount {
-            value: value,
+            value   : value,
             currency: Some(currency),
-            issuer: Some(issuer),
+            issuer  : Some(issuer),
         }
     }
 
@@ -41,6 +41,15 @@ impl Amount {
         }
         
         ret
+    }
+
+    pub fn mul_million(value: String) -> String {
+        let mut ret = 0u64;
+        if let Ok(x) = value.parse::<u64>() {
+            ret = x * 1_000_000;
+        }
+
+        ret.to_string()
     }
 }
 

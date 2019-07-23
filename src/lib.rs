@@ -19,3 +19,22 @@ pub mod message;
 pub mod misc;
 pub mod api;
 pub mod contracts;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+//0信任；1授权；3冻结/解冻；
+//Default` cannot be derived for enums, only structs
+#[derive(Debug)]
+pub enum RelationType {
+    TRUST     = 0,
+    AUTHORIZE = 1,
+    FREEZE    = 3,
+}
+impl RelationType {
+    pub fn get(&self) -> u64 {
+        match *self {
+            RelationType::TRUST     => { 0 },
+            RelationType::AUTHORIZE => { 1 },
+            RelationType::FREEZE    => { 3 },
+        }
+    }
+}

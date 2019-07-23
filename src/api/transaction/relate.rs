@@ -12,46 +12,53 @@ use crate::message::transaction::relation::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::util::downcast_to_string;
 use crate::message::common::amount::Amount;
+use RelationType;
 
 pub trait RelateI {
-    fn set_relation<F>(&self, config: Box<Rc<Config>>, account: String, target: String, relation_type: u64, amount: Amount, 
-                                                    secret: Option<String>, 
-                                                    op: F) 
+    fn set_relation<F>(&self, relation_type: RelationType, target: String, amount: Amount, op: F)
     where F: Fn(Result<RelationTxResponse, RelationSideKick>);
 }
 
-pub struct Relate {}
+pub struct Relate {
+    pub config : Box<Rc<Config>>,
+    pub account: String,
+    pub secret : String,
+}
 impl Relate {
-    pub fn new() -> Self {
+    pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
         Relate {
+            config : config,
+            account: account,
+            secret : secret,
         }
     }
 }
 
 impl RelateI for Relate { 
-    fn set_relation<F>(&self, config: Box<Rc<Config>>, account: String, target: String, relation_type: u64, amount: Amount, 
-                                                    secret: Option<String>, 
-                                                    op: F) 
+    fn set_relation<F>(&self, rtype: RelationType, target: String, amount: Amount, op: F) 
     where F: Fn(Result<RelationTxResponse, RelationSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
-        let account_rc = Rc::new(Cell::new(account));
+        let account_rc = Rc::new(Cell::new(String::from(self.account.as_str())));
+        let secret_rc  = Rc::new(Cell::new(String::from(self.secret.as_str())));
+
+        let rtype_rc  = Rc::new(Cell::new(rtype.get()));
         let target_rc = Rc::new(Cell::new(target));
-        let relation_type_rc = Rc::new(Cell::new(relation_type));
+
         let amount_rc = Rc::new(Cell::new(amount));
-        let secret_rc = Rc::new(Cell::new(secret));
         
-        connect(config.addr, |out| { 
+        connect(self.config.addr, |out| { 
             let copy = info.clone();
 
             let account = account_rc.clone();
-            let target   = target_rc.clone();
-            let relation_type = relation_type_rc.clone();
-            let amount = amount_rc.clone();
             let secret = secret_rc.clone();
 
-            if let Ok(command) = RelationTx::new(secret.take(), RelationTxJson::new(account.take(), target.take(), relation_type.take(), amount.take())).to_string() {
+            let rtype  = rtype_rc.clone();
+            let target = target_rc.clone();
+            let amount = amount_rc.clone();
+
+            if let Ok(command) = RelationTx::new(secret.take(), RelationTxJson::new(account.take(), target.take(), rtype.take(), amount.take())).to_string() {
                 out.send(command).unwrap()
             }
 
