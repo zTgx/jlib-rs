@@ -14,7 +14,7 @@ use crate::base::util::downcast_to_string;
 use crate::message::common::memo::*;
 use crate::base::sign_tx::*;
 use crate::message::common::amount::Amount;
-use crate::base::util::{string_to_hex, downcast_to_usize};
+use crate::base::util::{downcast_to_usize};
 use crate::api::query::account_info::*;
 
 use cast_rs::hex_t;
@@ -88,28 +88,26 @@ impl PaymentI for Payment {
         let amount_rc = Rc::new(Cell::new(amount));
         let memo_rc   = Rc::new(Cell::new(None));
         if memo.is_some() {
-            // let v: Memos = Memos::new( Memo::new(MemoData::new( string_to_hex(&memo.unwrap()).to_ascii_uppercase()  )) );
-            let memos = MemosBuilder::new( hex_t::encode(&memo.unwrap()).to_ascii_uppercase() ).build();
+            let upper_hex_memo = hex_t::encode(&memo.unwrap()).to_ascii_uppercase();
+            let memos = MemosBuilder::new( upper_hex_memo ).build();
             memo_rc.set(Some(vec![memos]));
         }
 
         //Get Account Seq
         let seq = self.get_account_seq();
         let sequence_rc = Rc::new(Cell::new(seq));
-
-
         
         connect(self.config.addr, |out| {
             let copy = info.clone();
 
-            let from = from_rc.clone();
-            let to   = to_rc.clone();
+            let from   = from_rc.clone();
+            let secret = secret_rc.clone();
 
+            let to     = to_rc.clone();
             let amount = amount_rc.clone();
             let memo   = memo_rc.clone();
-            let sequence = sequence_rc.clone();
 
-            let secret = secret_rc.clone();
+            let sequence = sequence_rc.clone();
 
             //txjson
             use crate::base::*;
