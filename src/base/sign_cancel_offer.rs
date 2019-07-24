@@ -3,7 +3,6 @@
 
 use std::rc::Rc;
 
-use crate::base::sign_tx::{SignTx};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 
 use crate::base::signed_obj::{
@@ -17,7 +16,7 @@ use crate::base::constants::{
 
 use crate::base::keypair::*;
 
-use crate::base::sign_tx::{PRE_FIELDS};
+use crate::base::sign_tx::{SignTx, PRE_FIELDS};
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);

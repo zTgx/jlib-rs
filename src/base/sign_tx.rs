@@ -9,9 +9,12 @@ use cast_rs::hex_t;
 use crate::base::sign::SignatureX;
 use crate::base::inverse_fields_map::INVERSE_FIELDS_MAP;
 
+use crate::message::transaction::transaction::{TxJson};
+
 use crate::base::constants::{
     TX_SIGNATURE, 
 };
+use crate::base::sign_pay::{SignTxPay};
 
 
 pub const PRE_FIELDS: [&'static str; 6] = ["Flags", "Fee", "TransactionType", "Account", "SigningPubKey", "Sequence"];
@@ -29,7 +32,12 @@ impl SignTx {
     }
 }
 
+//Entrance
 impl SignTx {
+    pub fn pay(&self, tx_json: &TxJson) -> String {
+        SignTxPay::with_params(&self.keypair, &tx_json, self.sequence).build(self)
+    }
+
     pub fn cancel_offer(&self, tx_json: &OfferCancelTxJson) -> String {
         SignTxCancelOffer::with_params(&self.keypair, &tx_json, self.sequence).build(self)
     }

@@ -25,7 +25,7 @@ pub struct TxJson {
     pub flags: u32,
 
     #[serde(rename="Fee")]
-    pub fee: u64,
+    pub fee: f64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -44,15 +44,6 @@ pub struct TxJson {
 
     #[serde(rename="Sequence")]
     pub sequence: u32,
-
-    #[serde(rename="SigningPubKey")]
-    pub signing_pub_key: Option<String>,
-
-    #[serde(rename="TxnSignature")]
-    pub txn_signature: Option<String>,
-
-    #[serde(rename="Blob")]
-    pub blob: Option<String>,
 }
 
 impl Serialize for TxJson {
@@ -68,38 +59,26 @@ impl Serialize for TxJson {
         state.serialize_field("TransactionType", &self.transaction_type)?;
         state.serialize_field("Account", &self.account)?;
 
-        //
         state.serialize_field("Amount", &Amount::mul_million(&self.amount))?;
         state.serialize_field("Destination", &self.destination)?;
         state.serialize_field("Memos", &self.memo)?;
-
-
-	/*
-    pub sequence: u32,
-    pub signing_pub_key: Option<String>,
-    pub txn_signature: Option<String>,
-    pub blob: Option<String>,
-	*/
 
         state.end()
     }
 }
 
 impl TxJson {
-    pub fn new(from: String, to: String, amount: Amount, sequence: u32, memo: Option<Vec<Memos>>, signing_pub_key: Option<String>) -> Self {
+    pub fn new(from: String, to: String, amount: Amount, sequence: u32, memo: Option<Vec<Memos>>) -> Self {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),
-            fee: 10000,
+            fee: 0.01,
             transaction_type: "Payment".to_string(),
             account: from,
             destination: to,
             amount: amount.value,//(amount.value.parse::<f64>().unwrap() * 1000000f64).to_string(), 
             sequence: sequence,
             memo: memo,
-            signing_pub_key: signing_pub_key,
-            txn_signature: None,
-            blob: None,
         }
     }
 }
@@ -127,12 +106,11 @@ pub struct TransactionTx {
     #[serde(rename="id")]
     id: u64,
 
-    //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
     pub secret: String,
 
     #[serde(rename="command")]
-    pub command: String, //Submit
+    pub command: String,
 
     #[serde(rename="tx_json")]
     pub tx_json: TxJson,
@@ -143,7 +121,7 @@ impl TransactionTx {
         Box::new( TransactionTx {
             id: 1,
             command: "submit".to_string(),
-            secret: secret,
+            secret : secret,
             tx_json: tx_json,
         })
     }

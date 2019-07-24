@@ -11,12 +11,14 @@ use crate::misc::config::*;
 use crate::message::transaction::transaction::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::memo::*;
-use crate::base::sign_pay::*;
 use crate::message::common::amount::Amount;
 use crate::base::util::{downcast_to_usize, downcast_to_string};
 use crate::api::query::account_info::*;
 
 use cast_rs::hex_t;
+
+use crate::message::transaction::local_sign_tx::{LocalSignTx};
+use crate::base::sign_tx::{SignTx};
 
 pub trait PaymentI {
     fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F)
@@ -91,10 +93,6 @@ impl PaymentI for Payment {
             let memos = MemosBuilder::new( upper_hex_memo ).build();
             memo_rc.set(Some(vec![memos]));
         }
-
-        //Get Account Seq
-        let seq = self.get_account_seq();
-        let sequence_rc = Rc::new(Cell::new(seq));
         
         connect(self.config.addr, |out| {
             let copy = info.clone();
@@ -106,27 +104,16 @@ impl PaymentI for Payment {
             let amount = amount_rc.clone();
             let memo   = memo_rc.clone();
 
-            let sequence = sequence_rc.clone();
-
-            //txjson
-            use crate::base::*;
-            let x = secret.take();
-
-            let signing_pub_key = Some(util::get_keypair_from_secret(&x).property.public_key);
-            let d_secret = String::from(x.as_str());
-
-            let tx_json = TxJson::new(from.take(), to.take(), amount.take(),sequence.take(),  memo.take(), signing_pub_key);
-
+            //Get Account Seq
+            let sequence = 105;//self.get_account_seq();
+            let tx_json = TxJson::new(from.take(), to.take(), amount.take(), sequence, memo.take());
             if self.config.local_sign {
-                use crate::message::transaction::local_sign_tx::*;
-                let mut local_sign = SignTx::default();
-
-                let blob = local_sign.prepare(tx_json, d_secret);
-                if let Ok(command) = LocalSignTx::new(blob.unwrap()).to_string() {
+                let blob = SignTx::with_params(sequence, &secret.take()).pay(&tx_json);
+                if let Ok(command) = LocalSignTx::new(blob).to_string() {
                     out.send(command).unwrap()
                 }
             } else {
-                if let Ok(command) = TransactionTx::new(d_secret, tx_json).to_string() {
+                if let Ok(command) = TransactionTx::new(secret.take(), tx_json).to_string() {
                     out.send(command).unwrap()
                 }
             }
