@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 use std::str::FromStr;
-
+use serde_json::{Value};
 use serde::{Deserialize, Serialize, Deserializer};
 use serde::de::{self, Visitor, MapAccess};
 
@@ -43,6 +43,16 @@ impl Amount {
         ret
     }
 
+    pub fn is_native(&self) -> bool {
+        if let Some(x) = &self.currency {
+            if *x == "SWT".to_string() {
+                return true;
+            }
+        }
+
+        false
+    }
+
     pub fn mul_million(value: &String) -> String {
         let mut ret = 0f64;
         if let Ok(x) = value.parse::<f64>() {
@@ -70,11 +80,14 @@ impl FromStr for Amount {
     type Err = Void;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Amount {
-            value: s.to_string(),
-            currency: None,
-            issuer: None,
-        })
+        println!("s: {}", &s);
+        Ok(
+            Amount {
+                value: s.to_string(),
+                currency: Some("SWT".to_string()),//None,
+                issuer: None,
+            }
+        )
     }
 }
 pub fn string_or_struct<'de, T, D>(deserializer: D) -> Result<T, D::Error>

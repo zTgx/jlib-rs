@@ -462,6 +462,8 @@ impl TxJsonSerializer for TxJsonLimitAmount {
         }
 
         let amount = Amount::from_json(String::from(self.value.as_str()));
+        println!("swt: {:?}", amount);
+
         let mut s = STAmount::serialize(amount);
         tmp.append(&mut s);
 
