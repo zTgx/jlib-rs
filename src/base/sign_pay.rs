@@ -136,7 +136,7 @@ impl SignTx {
         let message = hash.get(0..64).unwrap().to_ascii_uppercase();
 
         //  let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
-        let private_key = util::get_public_key_from_secret(&self.secret).property.secret_key;
+        let private_key = util::get_keypair_from_secret(&self.secret).property.secret_key;
         let key = &hex::decode(private_key).unwrap()[1..];
         // println!("key : {:?}", key);
         let msg = hex::decode(message).unwrap();

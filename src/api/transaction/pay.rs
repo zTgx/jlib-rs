@@ -112,7 +112,7 @@ impl PaymentI for Payment {
             use crate::base::*;
             let x = secret.take();
 
-            let signing_pub_key = Some(util::get_public_key_from_secret(&x).property.public_key);
+            let signing_pub_key = Some(util::get_keypair_from_secret(&x).property.public_key);
             let d_secret = String::from(x.as_str());
 
             let tx_json = TxJson::new(from.take(), to.take(), amount.take(),sequence.take(),  memo.take(), signing_pub_key);

@@ -3,7 +3,7 @@ use crate::base::sign_cancel_offer::*;
 
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 use crate::base::keypair::*;
-use crate::base::util::{get_public_key_from_secret};
+use crate::base::util::{get_keypair_from_secret};
 use crate::base::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBuilder};
 use cast_rs::hex_t;
 use crate::base::sign::SignatureX;
@@ -24,7 +24,7 @@ impl SignTx {
     pub fn with_params(sequence: u32, secret: &str) -> Self {
         SignTx {
             sequence: sequence,
-            keypair : get_public_key_from_secret(&secret.to_string()),
+            keypair : get_keypair_from_secret(&secret.to_string()),
         }
     }
 }

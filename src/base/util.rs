@@ -5,6 +5,7 @@ use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 use basex_rs::BaseX;
+use crate::base::keypair::{Keypair};
 
 pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
     //append vs.extend
@@ -62,9 +63,7 @@ pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
     } // end while
 }
 
-//通过secret计算出publickey
-use crate::base::keypair::*;
-pub fn get_public_key_from_secret(secret: &String) -> Keypair {
+pub fn get_keypair_from_secret(secret: &String) -> Keypair {
 
     use crate::base::seed::*;
     use crate::base::keypair::*;
