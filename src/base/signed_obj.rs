@@ -9,7 +9,8 @@
 use crate::base::type_obj::*;
 use crate::base::constants::{
     TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
-    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, TX_MEMO, TX_MEMODATA, SignStreamType
+    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, TX_MEMO, TX_MEMODATA, SignStreamType,
+    TX_OFFER_SEQUENCE,
 };
 use crate::base::serialized_type::*;
 use crate::base::amount::*;
@@ -225,6 +226,72 @@ impl TxJsonBuilder for TxJsonSequenceBuilder {
     }
 }
 
+//OfferSequence
+pub struct TxJsonOfferSequence {
+    pub name    : String,
+    pub type_obj: Option<TypeObj>,
+    pub value   : u32,
+
+    //output
+    pub output: SignStreamType,
+}
+
+impl TxJsonOfferSequence {
+    pub fn new(value: u32) -> Self {
+        TxJsonOfferSequence {
+            name    : TX_OFFER_SEQUENCE.to_string(),
+            type_obj : TypeObjBuilder::new(TX_OFFER_SEQUENCE).build(),
+            value   : value,
+
+            output: None,
+        }
+    }
+}
+impl TxJsonSerializer for TxJsonOfferSequence {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        let mut s = STInt32::serialize(self.value);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+
+        println!("TxJsonOfferSequence so : {:?}", &so);
+    }
+}
+pub struct TxJsonOfferSequenceBuilder {
+    pub value: u32,
+}
+impl TxJsonOfferSequenceBuilder {
+    pub fn new(value: u32) -> Self {
+        TxJsonOfferSequenceBuilder {
+            value: value,
+        }
+    }
+}
+impl TxJsonBuilder for TxJsonOfferSequenceBuilder {
+    fn build(&self) -> Box<dyn TxJsonSerializer> {
+        Box::new( TxJsonOfferSequence::new(self.value) )
+    }
+}
+
 //Amount
 pub struct TxJsonAmount {
     pub name    : String,
@@ -327,7 +394,7 @@ impl TxJsonSerializer for TxJsonFee {
             raw.serialize_header(&mut tmp);
         }
 
-        let amount = Amount::from_json(String::from(self.value.as_str()));
+        let amount = Amount::from_json(String::from( self.value.as_str()));
         let mut s = STAmount::serialize(amount);
         tmp.append(&mut s);
 

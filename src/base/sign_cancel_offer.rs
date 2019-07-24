@@ -5,44 +5,52 @@ use std::rc::Rc;
 
 use crate::base::sign_tx::{SignTx};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
+
+//    TxJson,
 use crate::base::signed_obj::{
-    SignedTxJson, TxJsonBuilder, 
-    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonAmountBuilder, TxJsonTxnSignatureBuilder,
+    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, TxJsonOfferSequenceBuilder, 
+    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder, TxJsonTxnSignatureBuilder,
 };
 
 use crate::base::constants::{
-    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, 
+    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY, TX_OFFER_SEQUENCE, 
 };
 
 use crate::base::keypair::*;
 use crate::base::sign::{SignatureX};
+use cast_rs::hex_t;
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self);
     fn format(&mut self, tx: &mut SignedTxJson);
 }
 
-static PRE_FIELDS: [&'static str; 4] = ["Flags", "Fee", "TransactionType", "Account"];
+static PRE_FIELDS: [&'static str; 5] = ["Flags", "Fee", "TransactionType", "Account", "SigningPubKey"];
 
 pub struct SignTxCancelOffer <'a> {
     pub fields : Vec<&'a str>,
     pub keypair: &'a Keypair,
     pub tx_json: &'a OfferCancelTxJson,
+
+    pub sequence: u32,
 }
 
 impl <'a> SignTxCancelOffer <'a> {
-    pub fn with_params(keypair: &'a Keypair, tx_json: &'a OfferCancelTxJson) -> Self {
+    pub fn with_params(keypair: &'a Keypair, tx_json: &'a OfferCancelTxJson, sequence: u32) -> Self {
         let mut pre = vec![];
         pre.extend_from_slice(&PRE_FIELDS);
         SignTxCancelOffer {
             fields : pre,
             keypair: keypair,
             tx_json: tx_json,
+
+            sequence: sequence,
         }
     }
 
     //output blob which is signed.
     pub fn build(&mut self) -> String {
+
         //Step 1
         self.prepare();
 
@@ -52,9 +60,11 @@ impl <'a> SignTxCancelOffer <'a> {
 
         //Step 3
         self.update_txn_signature(&mut output);
+        // SignTx::get_txn_signature(&mut self.fields, &mut output);
 
         //Step 4
         SignTxCancelOffer::calc_blob(&mut output)
+        // SignTx::get_blob(&mut output)
     }
 
     pub fn update_txn_signature(&mut self, signed_tx_json: &mut SignedTxJson) {
@@ -92,9 +102,8 @@ impl <'a> SignTxCancelOffer <'a> {
 
 impl <'a> FormatSignTxJson for SignTxCancelOffer <'a> {
     fn prepare(&mut self) {
-        if self.tx_json.offer_sequence != 0 {
-            self.update("Sequence")
-        }
+        self.update(TX_SEQUENCE);
+        self.update(TX_OFFER_SEQUENCE)
     }
 
     fn format(&mut self, output: &mut SignedTxJson) {
@@ -116,11 +125,14 @@ impl <'a> FormatSignTxJson for SignTxCancelOffer <'a> {
                     output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
-                    println!("value: {}", tx_json.transaction_type);
-
-                    let value = 0u16;//tx_json.transaction_type;
+                    let value = 8u16;//tx_json.transaction_type;
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
                     output.insert(index, transaction_type);
+                },
+                TX_SIGNING_PUB_KEY => {
+                    let value = String::from( self.keypair.property.public_key.as_str() );
+                    let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
+                    output.insert(index, signing_pub_key);
                 },
                 TX_ACCOUNT => {
                     let value = String::from(tx_json.account.as_str());
@@ -128,12 +140,15 @@ impl <'a> FormatSignTxJson for SignTxCancelOffer <'a> {
                     output.insert(index, account);
                 },
                 TX_SEQUENCE => {
-                    let value = tx_json.offer_sequence.to_string();
-
-                    let amount = TxJsonAmountBuilder::new(value).build();
+                    let value = self.sequence;
+                    let amount = TxJsonSequenceBuilder::new(value).build();
                     output.insert(index, amount);
                 },
-
+                TX_OFFER_SEQUENCE => {
+                    let value = tx_json.offer_sequence as u32;
+                    let amount = TxJsonOfferSequenceBuilder::new(value).build();
+                    output.insert(index, amount);
+                }
                 _ => {
                     panic!("pppppppppppppppppppppppnic.................");
                 }

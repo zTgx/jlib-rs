@@ -10,11 +10,10 @@ use serde_json::{Value};
 use crate::misc::config::*;
 use crate::message::transaction::transaction::*;
 use crate::message::common::command_trait::CommandConversion;
-use crate::base::util::downcast_to_string;
 use crate::message::common::memo::*;
 use crate::base::sign_tx::*;
 use crate::message::common::amount::Amount;
-use crate::base::util::{downcast_to_usize};
+use crate::base::util::{downcast_to_usize, downcast_to_string};
 use crate::api::query::account_info::*;
 
 use cast_rs::hex_t;

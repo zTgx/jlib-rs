@@ -21,7 +21,7 @@ pub struct OfferCancelTxJson {
     pub flags: u32, ///How ???????????
 
     #[serde(rename="Fee")]
-    pub fee: u64,
+    pub fee: f64,
     
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -38,7 +38,7 @@ impl OfferCancelTxJson {
             let flag = Flags::Other;
             OfferCancelTxJson {
                 flags: 0, ///////////////Hard code
-                fee: 10000,
+                fee  : 0.01,
                 transaction_type: "OfferCancel".to_string(),
                 account: account,
                 offer_sequence: offer_sequence,

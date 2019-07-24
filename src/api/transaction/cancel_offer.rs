@@ -10,9 +10,10 @@ use serde_json::{Value};
 use crate::misc::config::*;
 use crate::message::transaction::offer_cancel::*;
 use crate::message::common::command_trait::CommandConversion;
-use crate::base::util::downcast_to_string;
-
+use crate::api::query::account_info::*;
 use crate::base::sign_cancel_offer::*;
+use crate::message::transaction::local_sign_tx::LocalSignTx;
+use crate::base::util::{downcast_to_string,downcast_to_usize};
 
 pub trait CancelOfferI {
     fn cancel_offer<F>(&self, offer_sequence: u64, op: F) 
@@ -31,6 +32,21 @@ impl CancelOffer {
             account : account,
             secret  : secret,
         }
+    }
+
+    pub fn get_account_seq(&self) -> u32 {
+        let seq_rc = Rc::new(Cell::new(0u64));
+
+        let acc = String::from(self.account.as_str());
+        AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
+            Ok(response) => {
+                let seq = seq_rc.clone();
+                seq.set(response.sequence);
+            },
+            Err(_) => { }
+        });
+
+       downcast_to_usize(seq_rc)
     }
 }
 
@@ -51,6 +67,10 @@ impl CancelOfferI for CancelOffer {
             let account        = account_rc.clone();
             let secret         = secret_rc.clone();
             let offer_sequence = offer_sequence_rc.clone();
+
+            //Get Account Seq
+            let seq = 105;//self.get_account_seq();
+            // let sequence_rc = Rc::new(Cell::new(seq));
             
             let tx_json = OfferCancelTxJson::new(account.take(),  offer_sequence.take());
             //local sign
@@ -63,8 +83,13 @@ impl CancelOfferI for CancelOffer {
 
                 //keypair
                 let keypair = KeypairBuilder::new(&seed).build();
-                let blob = SignTxCancelOffer::with_params(&keypair, &tx_json).build();
+                println!("keypair: {:?}", keypair);
+
+                let blob = SignTxCancelOffer::with_params(&keypair, &tx_json, seq).build();
                 println!("cancel offer: {}", blob);
+                if let Ok(command) = LocalSignTx::new(blob).to_string() {
+                    out.send(command).unwrap()
+                }
             } else {
                 if let Ok(command) = OfferCancelTx::new(secret.take(), tx_json).to_string() {
                     out.send(command).unwrap()
@@ -81,6 +106,7 @@ impl CancelOfferI for CancelOffer {
         }).unwrap();
         
         let resp = downcast_to_string(info);
+        println!("resp: {}", &resp);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             let status = x["status"].to_string();
             if status == "\"success\"" {

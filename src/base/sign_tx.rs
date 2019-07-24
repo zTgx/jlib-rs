@@ -20,6 +20,7 @@ use crate::base::constants::{
 use std::rc::Rc;
 use crate::base::*;
 use crate::base::keypair::*;
+use cast_rs::hex_t;
 
 const PRE_FIELDS: [&'static str; 7] = [
                     "Flags", "Fee", "TransactionType", "Account", 
@@ -255,4 +256,36 @@ impl SignTx {
 
         println!("sorted: {:?}", &fields);
     }
+
+    // pub fn get_blob(&self, signed_tx_json: &mut SignedTxJson) -> String {
+    //     let output: Vec<u8> = signed_tx_json.serialize();
+    //     hex_t::encode(&output).to_ascii_uppercase()
+    // }
+
+    // pub fn get_txn_signature(&self, fields: &mut Vec<&str>, signed_tx_json: &mut SignedTxJson) {
+    //     let output: Vec<u8> = signed_tx_json.serialize();
+
+    //     let signature_x = SignatureX::new(&self.keypair);
+    //     let txn_signature = signature_x.sign_txn_signature(&output);
+    //     println!("txn_signature: {}", txn_signature);
+
+    //     SignTx::update("TxnSignature");
+
+    //     let mut index = 0;
+    //     for x in &fields {
+    //         if *x == "TxnSignature" {
+    //             break;
+    //         }
+
+    //         index += 1;
+    //     }
+
+    //     let txn_signature = TxJsonTxnSignatureBuilder::new(txn_signature).build();
+    //     signed_tx_json.insert(index, txn_signature);
+    // }
+
+    // pub fn update(fields: &mut Vec<&str>, field: &str) {
+    //     fields.push(field);
+    //     SignTx::sort_fields(&fields);
+    // }
 }
