@@ -18,12 +18,13 @@ pub mod types_map;
 pub mod serialized_type;
 
 pub mod amount;
-pub mod sign_tx;
 pub mod type_obj;
 pub mod signed_obj;
 
 
 //sign
+pub mod sign_tx;
+pub mod sign_pay;
 pub mod sign_cancel_offer;
 
 

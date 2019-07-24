@@ -11,7 +11,7 @@ use crate::misc::config::*;
 use crate::message::transaction::transaction::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::memo::*;
-use crate::base::sign_tx::*;
+use crate::base::sign_pay::*;
 use crate::message::common::amount::Amount;
 use crate::base::util::{downcast_to_usize, downcast_to_string};
 use crate::api::query::account_info::*;

@@ -6,10 +6,9 @@ use std::rc::Rc;
 use crate::base::sign_tx::{SignTx};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 
-//    TxJson,
 use crate::base::signed_obj::{
     SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, TxJsonOfferSequenceBuilder, 
-    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder, TxJsonTxnSignatureBuilder,
+    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder, 
 };
 
 use crate::base::constants::{
@@ -17,15 +16,13 @@ use crate::base::constants::{
 };
 
 use crate::base::keypair::*;
-use crate::base::sign::{SignatureX};
-use cast_rs::hex_t;
+
+use crate::base::sign_tx::{PRE_FIELDS};
 
 pub trait FormatSignTxJson {
-    fn prepare(&mut self);
+    fn prepare(&mut self, sign_tx: &SignTx);
     fn format(&mut self, tx: &mut SignedTxJson);
 }
-
-static PRE_FIELDS: [&'static str; 5] = ["Flags", "Fee", "TransactionType", "Account", "SigningPubKey"];
 
 pub struct SignTxCancelOffer <'a> {
     pub fields : Vec<&'a str>,
@@ -39,6 +36,7 @@ impl <'a> SignTxCancelOffer <'a> {
     pub fn with_params(keypair: &'a Keypair, tx_json: &'a OfferCancelTxJson, sequence: u32) -> Self {
         let mut pre = vec![];
         pre.extend_from_slice(&PRE_FIELDS);
+
         SignTxCancelOffer {
             fields : pre,
             keypair: keypair,
@@ -49,61 +47,26 @@ impl <'a> SignTxCancelOffer <'a> {
     }
 
     //output blob which is signed.
-    pub fn build(&mut self) -> String {
+    pub fn build(&mut self, sign_tx: &SignTx) -> String {
 
         //Step 1
-        self.prepare();
+        self.prepare(&sign_tx);
 
         //Step 2
         let mut output: SignedTxJson = SignedTxJson::new();
         self.format(&mut output);
 
         //Step 3
-        self.update_txn_signature(&mut output);
-        // SignTx::get_txn_signature(&mut self.fields, &mut output);
+        sign_tx.get_txn_signature(&mut self.fields, &mut output);
 
         //Step 4
-        SignTxCancelOffer::calc_blob(&mut output)
-        // SignTx::get_blob(&mut output)
-    }
-
-    pub fn update_txn_signature(&mut self, signed_tx_json: &mut SignedTxJson) {
-        let output: Vec<u8> = signed_tx_json.serialize();
-
-        let signature_x = SignatureX::new(&self.keypair);
-        let txn_signature= signature_x.sign_txn_signature(&output);
-        println!("txn_signature: {}", txn_signature);
-
-        self.update("TxnSignature");
-
-        let mut index = 0;
-        for x in &self.fields {
-            if *x == "TxnSignature" {
-                break;
-            }
-
-            index += 1;
-        }
-
-        let txn_signature = TxJsonTxnSignatureBuilder::new(txn_signature).build();
-        signed_tx_json.insert(index, txn_signature);
-    }
-
-    pub fn calc_blob(signed_tx_json: &mut SignedTxJson) -> String {
-        let output: Vec<u8> = signed_tx_json.serialize();
-        hex::encode(&output).to_ascii_uppercase()
-    }
-
-    pub fn update(&mut self, field: &'a str) {
-        self.fields.push(field);
-        SignTx::sort_fields(&mut self.fields);
+        sign_tx.get_blob(&mut output)
     }
 }
 
 impl <'a> FormatSignTxJson for SignTxCancelOffer <'a> {
-    fn prepare(&mut self) {
-        self.update(TX_SEQUENCE);
-        self.update(TX_OFFER_SEQUENCE)
+    fn prepare(&mut self, sign_tx: &SignTx) {
+        sign_tx.update(&mut self.fields, TX_OFFER_SEQUENCE)
     }
 
     fn format(&mut self, output: &mut SignedTxJson) {

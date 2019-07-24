@@ -11,9 +11,10 @@ use crate::misc::config::*;
 use crate::message::transaction::offer_cancel::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::api::query::account_info::*;
-use crate::base::sign_cancel_offer::*;
 use crate::message::transaction::local_sign_tx::LocalSignTx;
 use crate::base::util::{downcast_to_string,downcast_to_usize};
+
+use crate::base::sign_tx::{SignTx};
 
 pub trait CancelOfferI {
     fn cancel_offer<F>(&self, offer_sequence: u64, op: F) 
@@ -67,26 +68,14 @@ impl CancelOfferI for CancelOffer {
             let account        = account_rc.clone();
             let secret         = secret_rc.clone();
             let offer_sequence = offer_sequence_rc.clone();
-
-            //Get Account Seq
-            let seq = 105;//self.get_account_seq();
-            // let sequence_rc = Rc::new(Cell::new(seq));
             
             let tx_json = OfferCancelTxJson::new(account.take(),  offer_sequence.take());
-            //local sign
             if self.config.local_sign {
-                //Keypair对象的生成不合理，待重构!!!
-                use crate::base::keypair::*;
-                use crate::base::seed::*;
-                let seed_property = SeedProperty::new(&secret.take(), 16);
-                let seed = SeedBuilder::new(seed_property).build();
+                //Get Account Seq
+                let seq = 105;//self.get_account_seq();
+                // let sequence_rc = Rc::new(Cell::new(seq));
 
-                //keypair
-                let keypair = KeypairBuilder::new(&seed).build();
-                println!("keypair: {:?}", keypair);
-
-                let blob = SignTxCancelOffer::with_params(&keypair, &tx_json, seq).build();
-                println!("cancel offer: {}", blob);
+                let blob = SignTx::with_params(seq, &secret.take()).cancel_offer(&tx_json);
                 if let Ok(command) = LocalSignTx::new(blob).to_string() {
                     out.send(command).unwrap()
                 }
@@ -106,7 +95,6 @@ impl CancelOfferI for CancelOffer {
         }).unwrap();
         
         let resp = downcast_to_string(info);
-        println!("resp: {}", &resp);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             let status = x["status"].to_string();
             if status == "\"success\"" {
@@ -120,6 +108,5 @@ impl CancelOfferI for CancelOffer {
                 } 
             }
         }         
-
     }
 }
