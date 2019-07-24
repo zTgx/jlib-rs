@@ -72,9 +72,7 @@ impl CancelOfferI for CancelOffer {
             let tx_json = OfferCancelTxJson::new(account.take(),  offer_sequence.take());
             if self.config.local_sign {
                 //Get Account Seq
-                let seq = 105;//self.get_account_seq();
-                // let sequence_rc = Rc::new(Cell::new(seq));
-
+                let seq = self.get_account_seq();
                 let blob = SignTx::with_params(seq, &secret.take()).cancel_offer(&tx_json);
                 if let Ok(command) = LocalSignTx::new(blob).to_string() {
                     out.send(command).unwrap()
