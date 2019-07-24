@@ -10,7 +10,7 @@ use crate::base::type_obj::*;
 use crate::base::constants::{
     TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
     TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, TX_MEMO, TX_MEMODATA, SignStreamType,
-    TX_OFFER_SEQUENCE,
+    TX_OFFER_SEQUENCE, TX_LIMIT_AMOUNT, TX_TARGET, TX_RELATION_TYPE,
 };
 use crate::base::serialized_type::*;
 use crate::base::amount::*;
@@ -292,6 +292,72 @@ impl TxJsonBuilder for TxJsonOfferSequenceBuilder {
     }
 }
 
+//RelationType
+pub struct TxJsonRelationType {
+    pub name    : String,
+    pub type_obj: Option<TypeObj>,
+    pub value   : u32,
+
+    //output
+    pub output: SignStreamType,
+}
+
+impl TxJsonRelationType {
+    pub fn new(value: u32) -> Self {
+        TxJsonRelationType {
+            name    : TX_RELATION_TYPE.to_string(),
+            type_obj : TypeObjBuilder::new(TX_RELATION_TYPE).build(),
+            value   : value,
+
+            output: None,
+        }
+    }
+}
+impl TxJsonSerializer for TxJsonRelationType {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        let mut s = STInt32::serialize(self.value);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+
+        println!("TxJsonRelationType so : {:?}", &so);
+    }
+}
+pub struct TxJsonRelationTypeBuilder {
+    pub value: u32,
+}
+impl TxJsonRelationTypeBuilder {
+    pub fn new(value: u32) -> Self {
+        TxJsonRelationTypeBuilder {
+            value: value,
+        }
+    }
+}
+impl TxJsonBuilder for TxJsonRelationTypeBuilder {
+    fn build(&self) -> Box<dyn TxJsonSerializer> {
+        Box::new( TxJsonRelationType::new(self.value) )
+    }
+}
+
 //Amount
 pub struct TxJsonAmount {
     pub name    : String,
@@ -355,6 +421,72 @@ impl TxJsonAmountBuilder {
 impl TxJsonBuilder for TxJsonAmountBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonAmount::new(String::from(self.value.as_str()) ))
+    }
+}
+
+//Limit_Amount
+pub struct TxJsonLimitAmount {
+    pub name    : String,
+    pub type_obj: Option<TypeObj>,
+    pub value   : String,
+
+    pub output: SignStreamType,
+}
+
+impl TxJsonLimitAmount {
+    pub fn new(value: String) -> Self {
+        TxJsonLimitAmount {
+            name    : TX_LIMIT_AMOUNT.to_string(),
+            type_obj: TypeObjBuilder::new(TX_LIMIT_AMOUNT).build(),
+            value   : value,
+
+            output: None,
+        }
+    }
+}
+impl TxJsonSerializer for TxJsonLimitAmount {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8>= vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        let amount = Amount::from_json(String::from(self.value.as_str()));
+        let mut s = STAmount::serialize(amount);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+
+        println!("TxJsonLimitAmount so : {:?}", &so);
+    }
+}
+pub struct TxJsonLimitAmountBuilder {
+    pub value   : String,
+}
+impl TxJsonLimitAmountBuilder {
+    pub fn new(value: String) -> Self {
+        TxJsonLimitAmountBuilder {
+            value: value,
+        }
+    }
+}
+impl TxJsonBuilder for TxJsonLimitAmountBuilder {
+    fn build(&self) -> Box<dyn TxJsonSerializer> {
+        Box::new( TxJsonLimitAmount::new( String::from( self.value.as_str() ) ))
     }
 }
 
@@ -551,6 +683,70 @@ impl TxJsonAccountBuilder {
 impl TxJsonBuilder for TxJsonAccountBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonAccount::new(String::from(self.value.as_str())) )
+    }
+}
+
+//Account
+pub struct TxJsonTarget {
+    pub name    : String,
+    pub type_obj: Option<TypeObj>,
+    pub value   : String,
+
+    pub output: SignStreamType,
+}
+
+impl TxJsonTarget {
+    pub fn new(value: String) -> Self {
+        TxJsonTarget {
+            name    : TX_TARGET.to_string(),
+            type_obj: TypeObjBuilder::new(TX_TARGET).build(),
+            value   : value,
+
+            output: None,
+        }
+    }
+}
+impl TxJsonSerializer for TxJsonTarget {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        let mut s = STAccount::serialize(String::from(self.value.as_str()));
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+
+        println!("TxJsonTarget so : {:?}", &so);
+    }
+}
+pub struct TxJsonTargetBuilder {
+    pub value   : String,
+}
+impl TxJsonTargetBuilder {
+    pub fn new(value: String) -> Self {
+        TxJsonTargetBuilder {
+            value: value,
+        }
+    }
+}
+impl TxJsonBuilder for TxJsonTargetBuilder {
+    fn build(&self) -> Box<dyn TxJsonSerializer> {
+        Box::new( TxJsonTarget::new( String::from( self.value.as_str() )) )
     }
 }
 

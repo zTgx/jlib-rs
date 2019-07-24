@@ -30,7 +30,7 @@ pub enum RelationType {
     FREEZE    = 3,
 }
 impl RelationType {
-    pub fn get(&self) -> u64 {
+    pub fn get(&self) -> u32 {
         match *self {
             RelationType::TRUST     => { 0 },
             RelationType::AUTHORIZE => { 1 },

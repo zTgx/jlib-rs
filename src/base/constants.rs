@@ -12,6 +12,9 @@ pub const CURVE_ORDER: &[u8] = &[
 
 pub const CURVE_ZERO: &[u8] = &[ 0x0, 0x0, 0x0, 0x0 ];
 
+
+pub type SignStreamType = Option<Vec<u8>>;
+
 //Obj type
 pub const  TX_SIGNATURE         : &'static str = "TxnSignature";
 pub const  TX_DESTINATION       : &'static str = "Destination";
@@ -26,6 +29,7 @@ pub const  TX_MEMOS             : &'static str = "Memos";
 pub const  TX_MEMO              : &'static str = "Memo";
 pub const  TX_MEMODATA          : &'static str = "MemoData";
 pub const  TX_OFFER_SEQUENCE    : &'static str = "OfferSequence";
-
-pub type SignStreamType = Option<Vec<u8>>;
+pub const  TX_LIMIT_AMOUNT      : &'static str = "LimitAmount";
+pub const  TX_TARGET            : &'static str = "Target";
+pub const  TX_RELATION_TYPE     : &'static str = "RelationType";
 

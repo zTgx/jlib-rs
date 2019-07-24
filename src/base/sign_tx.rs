@@ -1,5 +1,4 @@
 
-use crate::base::sign_cancel_offer::*;
 
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 use crate::base::keypair::*;
@@ -8,14 +7,15 @@ use crate::base::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBui
 use cast_rs::hex_t;
 use crate::base::sign::SignatureX;
 use crate::base::inverse_fields_map::INVERSE_FIELDS_MAP;
-
 use crate::message::transaction::transaction::{TxJson};
-
+use crate::message::transaction::relation::{RelationTxJson};
 use crate::base::constants::{
     TX_SIGNATURE, 
 };
-use crate::base::sign_pay::{SignTxPay};
 
+use crate::base::sign_pay::{SignTxPay};
+use crate::base::sign_relate::{SignTxRelate};
+use crate::base::sign_cancel_offer::{SignTxCancelOffer};
 
 pub const PRE_FIELDS: [&'static str; 6] = ["Flags", "Fee", "TransactionType", "Account", "SigningPubKey", "Sequence"];
 
@@ -36,6 +36,10 @@ impl SignTx {
 impl SignTx {
     pub fn pay(&self, tx_json: &TxJson) -> String {
         SignTxPay::with_params(&self.keypair, &tx_json, self.sequence).build(self)
+    }
+
+    pub fn relate(&self, tx_json: &RelationTxJson) -> String {
+        SignTxRelate::with_params(&self.keypair, &tx_json, self.sequence).build(self)
     }
 
     pub fn cancel_offer(&self, tx_json: &OfferCancelTxJson) -> String {

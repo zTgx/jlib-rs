@@ -24,7 +24,7 @@ pub struct RelationTxJson {
     pub flags: u32,
 
     #[serde(rename="Fee")]
-    pub fee: u64,
+    pub fee: f64,
 
     //交易类型：TrustSet信任;RelationDel解冻；RelationSet授权/冻结
     #[serde(rename="TransactionType")]
@@ -38,7 +38,7 @@ pub struct RelationTxJson {
 
     //关系类型：0信任；1授权；3冻结/解冻；
     #[serde(rename="RelationType")]
-    pub relation_type: u64,
+    pub relation_type: u32,
 
     #[serde(rename="LimitAmount")]
     #[serde(deserialize_with = "string_or_struct")]
@@ -46,12 +46,12 @@ pub struct RelationTxJson {
 }
 
 impl RelationTxJson {
-    pub fn new(account: String, target: String, rtype: u64, amount: Amount) -> Self {
+    pub fn new(account: String, target: String, rtype: u32, amount: Amount) -> Self {
         let flag = Flags::Other;
 
         RelationTxJson {
             flags: flag.get(),
-            fee: 10000,
+            fee: 0.01,
             transaction_type: "RelationSet".to_string(),
             account: account,
             target: target,
