@@ -535,12 +535,7 @@ impl <'a> TxJsonSerializer for TxJsonTaker <'a> {
             raw.serialize_header(&mut tmp);
         }
 
-        // if let Ok(x) = serde_json::from_str(&tx_json.limit_amount.to_string().unwrap().as_str()) as Result<Amount, serde_json::error::Error> {
-        //     println!("x: {:?}", x.to_string());
-        // }
-
-        //String::from(self.value.as_str())
-        let amount = Amount::from_json("xxx".to_string());
+        let amount = Amount::from_ramount(self.value);
         println!("swt: {:?}", amount);
 
         let mut s = STAmount::serialize(amount);

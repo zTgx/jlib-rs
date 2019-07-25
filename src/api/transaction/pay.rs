@@ -105,7 +105,7 @@ impl PaymentI for Payment {
             let memo   = memo_rc.clone();
 
             //Get Account Seq
-            let sequence = 105;//self.get_account_seq();
+            let sequence = self.get_account_seq();
             let tx_json = TxJson::new(from.take(), to.take(), amount.take(), sequence, memo.take());
             if self.config.local_sign {
                 let blob = SignTx::with_params(sequence, &secret.take()).pay(&tx_json);

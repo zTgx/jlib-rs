@@ -256,6 +256,8 @@ impl SerializedSTAmount for STAmount {
                 return value_bytes.to_vec();
 
             // }
+        } else {
+          
         }
 
         vec![]

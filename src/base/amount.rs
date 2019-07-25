@@ -1,8 +1,9 @@
 #![allow(unused)]
-
+use std::str::FromStr;
 extern crate num;
 use num::bigint::{BigInt};
-use std::str::FromStr;
+use num::{Zero, One};
+
 use crate::message::common::amount::Amount as RAmount;
 
 const CURRENCY_XNS: u8 = 0;
@@ -30,12 +31,36 @@ impl Amount {
                is_negative: bool, currency: Option<String>, issuer: Option<String>) -> Self {
         
         Amount {
-            value: value,
-            offset: offset,
-            is_native: is_native,
-            is_negative: is_negative,
-            currency: currency,
-            issuer: issuer,
+            value       : value,
+            offset      : offset,
+            is_native   : is_native,
+            is_negative : is_negative,
+            currency    : currency,
+            issuer      : issuer,
+        }
+    }
+
+    pub fn from_ramount(ramount: &RAmount) -> Amount {
+        if ramount.is_native() {
+            let mut value: BigInt = BigInt::from_str(ramount.value.as_str()).unwrap();
+            let base: BigInt = BigInt::from_str("1000000").unwrap();
+            let mut evalue = value.checked_mul(&base).unwrap();
+            let max: BigInt = BigInt::from_str(BI_XNS_MAX).unwrap();
+            if evalue > max {
+                evalue = Zero::zero();
+            }
+            
+            let neg = value.is_zero();
+            Amount {
+                value       : Some(evalue),
+                offset      : 0,
+                is_native   : true,
+                is_negative : neg, 
+                currency    : Some("SWT".to_string()),
+                issuer      : None,
+            }
+        } else {
+            Amount::default()
         }
     }
 
