@@ -23,8 +23,8 @@ pub trait TxJsonSerializer {
 }
 
 //builder接口
-pub trait TxJsonBuilder {
-    fn build(&self) -> Box<dyn TxJsonSerializer>;
+pub trait TxJsonBuilder <'c> {
+    fn build(&self) -> Box<dyn TxJsonSerializer + 'c>;
 }
 
 
@@ -88,7 +88,7 @@ impl TxJsonFlagsBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonFlagsBuilder {
+impl TxJsonBuilder <'_> for TxJsonFlagsBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonFlags::new(self.value) )
     }
@@ -156,7 +156,7 @@ impl TxJsonTransactionTypeBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonTransactionTypeBuilder {
+impl TxJsonBuilder <'_> for TxJsonTransactionTypeBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonTransactionType::new(self.value) )
     }
@@ -222,7 +222,7 @@ impl TxJsonSequenceBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonSequenceBuilder {
+impl TxJsonBuilder <'_> for TxJsonSequenceBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonSequence::new(self.value) )
     }
@@ -288,7 +288,7 @@ impl TxJsonOfferSequenceBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonOfferSequenceBuilder {
+impl TxJsonBuilder <'_> for TxJsonOfferSequenceBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonOfferSequence::new(self.value) )
     }
@@ -354,7 +354,7 @@ impl TxJsonRelationTypeBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonRelationTypeBuilder {
+impl TxJsonBuilder <'_> for TxJsonRelationTypeBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonRelationType::new(self.value) )
     }
@@ -420,7 +420,7 @@ impl TxJsonAmountBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonAmountBuilder {
+impl TxJsonBuilder <'_> for TxJsonAmountBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonAmount::new(String::from(self.value.as_str()) ))
     }
@@ -492,7 +492,7 @@ impl TxJsonLimitAmountBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonLimitAmountBuilder {
+impl TxJsonBuilder <'_> for TxJsonLimitAmountBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonLimitAmount::new( String::from( self.value.as_str() ) ))
     }
@@ -508,10 +508,10 @@ pub struct TxJsonTaker <'a> {
 }
 
 impl <'a> TxJsonTaker <'a> {
-    pub fn new(name: TXTakerType, value: &'a RAmount) -> Self {
+    pub fn new(name: &TXTakerType, value: &'a RAmount) -> Self {
         TxJsonTaker {
-            name    : name.get().to_string(),
-            type_obj: TypeObjBuilder::new( &name.get().to_string() ).build(),
+            name    : String::from( name.get() ),
+            type_obj: TypeObjBuilder::new( name.get() ).build(),
             value   : value,
 
             output: None,
@@ -555,21 +555,21 @@ impl <'a> TxJsonSerializer for TxJsonTaker <'a> {
         println!("TxJsonTaker so : {:?}", &so);
     }
 }
-pub struct TxJsonTakerBuilder <'b> {
-    pub name    : TXTakerType,
-    pub value   : &'b RAmount,
+pub struct TxJsonTakerBuilder <'a> {
+    pub name: TXTakerType,
+    pub value: &'a RAmount,
 }
-impl <'b> TxJsonTakerBuilder <'b> {
-    pub fn new(name: TXTakerType, value: &'b RAmount) -> Self {
+impl <'a> TxJsonTakerBuilder <'a> {
+    pub fn new(name: TXTakerType, value: &'a RAmount) -> Self {
         TxJsonTakerBuilder {
             name: name,
             value: value,
         }
     }
 }
-impl <'b> TxJsonBuilder for TxJsonTakerBuilder <'b> {
-    fn build(&self) -> Box<dyn TxJsonSerializer> {
-        Box::new( TxJsonTaker::new( self.name, &self.value) )
+impl <'a> TxJsonBuilder <'a> for TxJsonTakerBuilder <'a> {
+    fn build(&self) -> Box<dyn TxJsonSerializer + 'a> {
+        Box::new( TxJsonTaker::new( &self.name, &self.value) )
     }
 }
 
@@ -633,7 +633,7 @@ impl TxJsonFeeBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonFeeBuilder {
+impl TxJsonBuilder <'_> for TxJsonFeeBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonFee::new(String::from(self.value.as_str()) ))
     }
@@ -698,7 +698,7 @@ impl TxJsonSigningPubKeyBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonSigningPubKeyBuilder {
+impl TxJsonBuilder <'_> for TxJsonSigningPubKeyBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonSigningPubKey::new(String::from(self.value.as_str()) ))
     }
@@ -763,7 +763,7 @@ impl TxJsonAccountBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonAccountBuilder {
+impl TxJsonBuilder <'_> for TxJsonAccountBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonAccount::new(String::from(self.value.as_str())) )
     }
@@ -827,7 +827,7 @@ impl TxJsonTargetBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonTargetBuilder {
+impl TxJsonBuilder <'_> for TxJsonTargetBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonTarget::new( String::from( self.value.as_str() )) )
     }
@@ -891,7 +891,7 @@ impl TxJsonDestinationBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonDestinationBuilder {
+impl TxJsonBuilder <'_> for TxJsonDestinationBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonDestination::new(String::from(self.value.as_str())) )
     }
@@ -956,7 +956,7 @@ impl TxJsonTxnSignatureBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonTxnSignatureBuilder {
+impl TxJsonBuilder <'_> for TxJsonTxnSignatureBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonTxnSignature::new( String::from(self.value.as_str())) )
     }
@@ -1076,7 +1076,7 @@ impl  TxJsonMemoBuilder  {
         }
     }
 }
-impl TxJsonBuilder for TxJsonMemoBuilder {
+impl TxJsonBuilder <'_> for TxJsonMemoBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         let meme_data = TxJsonMemoData::new( String::from( self.value.as_str() ) );
         Box::new( TxJsonMemo::new( meme_data ) )
@@ -1158,7 +1158,7 @@ impl TxJsonMemosBuilder {
         }
     }
 }
-impl TxJsonBuilder for TxJsonMemosBuilder {
+impl TxJsonBuilder <'_> for TxJsonMemosBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         let mut v: Vec<Box<dyn TxJsonSerializer>> = vec![];
         let mut i = 0;
@@ -1176,11 +1176,11 @@ impl TxJsonBuilder for TxJsonMemosBuilder {
 
 ////////////////////////////////////////////////
 //
-pub struct SignedTxJson {
-    pub components: Vec<Box<dyn TxJsonSerializer>>,
+pub struct SignedTxJson <'s> {
+    pub components: Vec<Box<dyn TxJsonSerializer + 's>>,
 }
 
-impl SignedTxJson {
+impl <'s> SignedTxJson <'s> {
     pub fn new() -> Self {
         SignedTxJson {
             components: vec![],
@@ -1196,7 +1196,7 @@ impl SignedTxJson {
         so
     }
 
-    pub fn insert(&mut self, index: usize, item: Box<dyn TxJsonSerializer>) {
+    pub fn insert(&mut self, index: usize, item: Box<dyn TxJsonSerializer + 's>) {
         self.components.insert(index, item);
     }
 }

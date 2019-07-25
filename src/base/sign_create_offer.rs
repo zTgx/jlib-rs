@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use crate::message::transaction::offer_create::{OfferCreateTxJson};
 
 use crate::base::signed_obj::{
@@ -14,12 +12,14 @@ use crate::base::constants::{
 };
 
 use crate::base::keypair::*;
-
+use std::rc::Rc;
 use crate::base::sign_tx::{SignTx, PRE_FIELDS};
+use crate::message::common::amount::Amount;
 
-pub trait FormatSignTxJson {
+pub trait FormatSignTxJson <'c> {
     fn prepare(&mut self, sign_tx: &SignTx);
-    fn format(&mut self, tx: &mut SignedTxJson);
+    // fn format(&mut self, tx: &'c mut SignedTxJson);
+    fn format(&mut self);
 }
 
 pub struct SignTxCreateOffer <'a> {
@@ -28,6 +28,8 @@ pub struct SignTxCreateOffer <'a> {
     pub tx_json: &'a OfferCreateTxJson,
 
     pub sequence: u32,
+
+    pub output: SignedTxJson<'a>,
 }
 
 impl <'a> SignTxCreateOffer <'a> {
@@ -41,6 +43,8 @@ impl <'a> SignTxCreateOffer <'a> {
             tx_json: tx_json,
 
             sequence: sequence,
+
+            output: SignedTxJson::new(),
         }
     }
 
@@ -51,25 +55,26 @@ impl <'a> SignTxCreateOffer <'a> {
         self.prepare(&sign_tx);
 
         //Step 2
-        let mut output: SignedTxJson = SignedTxJson::new();
-        self.format(&mut output);
+        self.format();
 
         //Step 3
-        sign_tx.get_txn_signature(&mut self.fields, &mut output);
+        sign_tx.get_txn_signature(&mut self.fields, &mut self.output);
 
         //Step 4
-        sign_tx.get_blob(&mut output)
+        sign_tx.get_blob(&mut self.output)
     }
 }
 
-impl <'a> FormatSignTxJson for SignTxCreateOffer <'a> {
+impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
     fn prepare(&mut self, sign_tx: &SignTx) {
         sign_tx.update(&mut self.fields, TX_TAKERGETS);
         sign_tx.update(&mut self.fields, TX_TAKERPAYS);
     }
 
-    fn format(&mut self, output: &mut SignedTxJson) {
+    fn format(&mut self) {
+    // fn format(&mut self, output: &'d mut SignedTxJson) {
         let tx_json_rc = Rc::new ( self.tx_json );
+        // let tx_json = self.tx_json;
 
         let mut index = 0;
         for &key in &self.fields {
@@ -79,46 +84,47 @@ impl <'a> FormatSignTxJson for SignTxCreateOffer <'a> {
                 TX_FLAGS => {
                     let value = tx_json.flags;
                     let flags = TxJsonFlagsBuilder::new(value).build();
-                    output.insert(index, flags);
+                    self.output.insert(index, flags);
                 },
                 TX_FEE => {
                     let value = tx_json.fee;
                     let fee = TxJsonFeeBuilder::new(value.to_string()).build();
-                    output.insert(index, fee);
+                    self.output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
                     let value = 8u16;//tx_json.transaction_type;
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
-                    output.insert(index, transaction_type);
+                    self.output.insert(index, transaction_type);
                 },
                 TX_SIGNING_PUB_KEY => {
                     let value = String::from( self.keypair.property.public_key.as_str() );
                     let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
-                    output.insert(index, signing_pub_key);
+                    self.output.insert(index, signing_pub_key);
                 },
                 TX_ACCOUNT => {
                     let value = String::from(tx_json.account.as_str());
                     let account = TxJsonAccountBuilder::new(value).build();
-                    output.insert(index, account);
+                    self.output.insert(index, account);
                 },
                 TX_SEQUENCE => {
                     let value = self.sequence;
                     let amount = TxJsonSequenceBuilder::new(value).build();
-                    output.insert(index, amount);
+                    self.output.insert(index, amount);
                 },
                 TX_TAKERPAYS => {
                     let value = &tx_json.taker_pays;
-                    println!("tker pays amount: {:?}", &value);
+                    println!("tker pays amount: {:?}", value);
 
-                    let amount = TxJsonTakerBuilder::new(TXTakerType::Pays, &value).build();
-                    output.insert(index, amount);
+                    // use crate::base::signed_obj::*;
+                    let amount = TxJsonTakerBuilder::new(TXTakerType::Pays, value).build();
+                    self.output.insert(index, amount);
                 },
                 TX_TAKERGETS => {
-                    let value = &tx_json.taker_gets;
-                    println!("taker gets amount: {:?}", &value);
+                    let value: &'a Amount = &tx_json.taker_gets;
+                    println!("taker gets amount: {:?}", value);
 
-                    let amount = TxJsonTakerBuilder::new(TXTakerType::Gets, &value).build();
-                    output.insert(index, amount);
+                    let amount = TxJsonTakerBuilder::new(TXTakerType::Gets, value).build();
+                    self.output.insert(index, amount);
                 },
 
                 _ => {
