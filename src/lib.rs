@@ -38,3 +38,20 @@ impl RelationType {
         }
     }
 }
+
+//Offer Type
+#[derive(PartialEq)]
+pub enum OfferType {
+    Sell,
+    Buy,
+}
+impl OfferType {
+    pub fn get(&self) -> &'static str {
+        match *self {
+            OfferType::Sell => { "Sell" },
+            OfferType::Buy  => { "Buy"  },
+        }
+    }
+}
+
+

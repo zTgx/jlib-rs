@@ -33,8 +33,8 @@ use std::collections::HashMap;
 
 //针对key和value都是唯一的HashMap方法
 pub trait TWHashMap {
-    fn get_value_from_key(&self, s: &str) -> Option<&i32>;
-    fn get_key_from_value(&self, i: i32) -> Option<&'static str>;
+    fn get_value_from_key(&self, s: &str) -> Option<&u16>;
+    fn get_key_from_value(&self, i: u16) -> Option<&'static str>;
 }
 
 /*
@@ -42,11 +42,11 @@ pub trait TWHashMap {
  * Data defined in the TRANSACTION_TYPES
 */
 pub struct TransactionTypeMap {
-    pub m: HashMap<&'static str, i32>,
+    pub m: HashMap<&'static str, u16>,
 }
 impl TransactionTypeMap {
     pub fn new() -> Self {
-        let map: HashMap<&'static str, i32> =
+        let map: HashMap<&'static str, u16> =
                                 [
                                     ("Payment"         , 0),
                                     ("AccountSet"      , 3),
@@ -70,11 +70,11 @@ impl TransactionTypeMap {
     }
 }
 impl TWHashMap for TransactionTypeMap {
-    fn get_value_from_key(&self, key: &str) -> Option<&i32> {
+    fn get_value_from_key(&self, key: &str) -> Option<&u16> {
         self.m.get(key)
     }
 
-    fn get_key_from_value(&self, value: i32) -> Option<&'static str> {
+    fn get_key_from_value(&self, value: u16) -> Option<&'static str> {
         let mut k = None;
         for (key, val) in self.m.iter() {
 
@@ -123,11 +123,11 @@ impl TWHashMap for TransactionTypeMap {
 */
 #[derive(Debug, Default)]
 pub struct TransactionResultMap {
-    pub m: HashMap<&'static str, i32>,
+    pub m: HashMap<&'static str, u16>,
 }
 impl TransactionResultMap {
     pub fn new() -> Self {
-        let map: HashMap<&'static str, i32> = [
+        let map: HashMap<&'static str, u16> = [
                                         ("tesSUCCESS"                , 0  ),
                                         ("tecCLAIM"                  , 100),
                                         ("tecPATH_PARTIAL"           , 101),
@@ -146,11 +146,11 @@ impl TransactionResultMap {
     }
 }
 impl TWHashMap for TransactionResultMap {
-    fn get_value_from_key(&self, key: &str) -> Option<&i32> {
+    fn get_value_from_key(&self, key: &str) -> Option<&u16> {
         self.m.get(key)
     }
 
-    fn get_key_from_value(&self, value: i32) -> Option<&'static str> {
+    fn get_key_from_value(&self, value: u16) -> Option<&'static str> {
         let mut k = None;
         for (key, val) in self.m.iter() {
             if *val == value {
@@ -183,11 +183,11 @@ impl TWHashMap for TransactionResultMap {
 */
 #[derive(Debug, Default)]
 pub struct LedgerEntryTypeMap {
-    pub m: HashMap<&'static str, i32>,
+    pub m: HashMap<&'static str, u16>,
 }
 impl LedgerEntryTypeMap {
     pub fn new() -> Self {
-        let map: HashMap<&'static str, i32> =
+        let map: HashMap<&'static str, u16> =
                                     [
                                         ("AccountRoot"      , 97),
                                         ("Contract"         , 99),
@@ -208,11 +208,11 @@ impl LedgerEntryTypeMap {
     }
 }
 impl TWHashMap for LedgerEntryTypeMap {
-    fn get_value_from_key(&self, key: &str) -> Option<&i32> {
+    fn get_value_from_key(&self, key: &str) -> Option<&u16> {
         self.m.get(key)
     }
 
-    fn get_key_from_value(&self, value: i32) -> Option<&'static str> {
+    fn get_key_from_value(&self, value: u16) -> Option<&'static str> {
         let mut k = None;
         for (key, val) in self.m.iter() {
             if *val == value {

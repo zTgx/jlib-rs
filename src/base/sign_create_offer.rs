@@ -15,6 +15,7 @@ use crate::base::keypair::*;
 use std::rc::Rc;
 use crate::base::sign_tx::{SignTx, PRE_FIELDS};
 use crate::message::common::amount::Amount;
+use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 
 pub trait FormatSignTxJson <'c> {
     fn prepare(&mut self, sign_tx: &SignTx);
@@ -92,7 +93,8 @@ impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
                     self.output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
-                    let value = 8u16;//tx_json.transaction_type;
+                    ////8u16;//tx_json.transaction_type;
+                    let value = *G_TRANSACTION_TYPE_MAP.get_value_from_key(&tx_json.transaction_type).unwrap();
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
                     self.output.insert(index, transaction_type);
                 },

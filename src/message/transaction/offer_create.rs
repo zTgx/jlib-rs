@@ -20,6 +20,7 @@ use std::cell::Cell;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::*;
 use crate::misc::common::*;
+use crate::OfferType;
 
 /*
 挂单对象
@@ -48,18 +49,26 @@ pub struct OfferCreateTxJson {
 }
 
 impl OfferCreateTxJson {
-    pub fn new(account: String, taker_gets: Amount,  taker_pays: Amount) -> Self {
-        let flag = Flags::Other;
-
+    pub fn new(account: String, offer_type: &'static str, taker_gets: Amount,  taker_pays: Amount) -> Self {
+        let flags = 0;
+        
         OfferCreateTxJson {
-
-            flags: 524288, ///////////////Hard code
+            flags: OfferCreateTxJson::get_flags( offer_type ),
             fee: 10000, 
             transaction_type: "OfferCreate".to_string(),
             account: account,
             taker_pays: taker_pays,
             taker_gets: taker_gets,
         }
+    }
+
+    pub fn get_flags(offer_type: &'static str) -> u32 {
+        if offer_type == "Sell" {
+            let flag = Flags::OfferCreate{ name: OfferCreate::Sell };
+            return flag.get();
+        }
+
+        0u32
     }
 }
 

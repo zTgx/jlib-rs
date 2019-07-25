@@ -16,9 +16,10 @@ use crate::message::transaction::local_sign_tx::LocalSignTx;
 use crate::base::util::{downcast_to_string,downcast_to_usize};
 
 use crate::base::sign_tx::{SignTx};
+use OfferType;
 
 pub trait CreateOfferI {
-    fn create_offer<F>(&self, taker_gets: Amount, taker_pays: Amount, op: F) 
+    fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F) 
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>);
 }
 
@@ -53,7 +54,7 @@ impl CreateOffer {
 }
 
 impl CreateOfferI for CreateOffer { 
-    fn create_offer<F>(&self, taker_gets: Amount, taker_pays: Amount, op: F) 
+    fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F) 
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
@@ -61,6 +62,7 @@ impl CreateOfferI for CreateOffer {
         let account_rc = Rc::new(Cell::new(String::from(self.account.as_str())));
         let secret_rc  = Rc::new(Cell::new(String::from(self.secret.as_str())));
 
+        let offer_type_rc = Rc::new(Cell::new(offer_type.get()));
         let taker_gets_rc = Rc::new(Cell::new(taker_gets));
         let taker_pays_rc = Rc::new(Cell::new(taker_pays));
         
@@ -70,10 +72,11 @@ impl CreateOfferI for CreateOffer {
             let account = account_rc.clone();
             let secret = secret_rc.clone();
 
+            let offer_type = offer_type_rc.clone();
             let taker_gets = taker_gets_rc.clone();
             let taker_pays = taker_pays_rc.clone();
 
-            let tx_json = OfferCreateTxJson::new(account.take(), taker_gets.take(), taker_pays.take());
+            let tx_json = OfferCreateTxJson::new(account.take(), offer_type.take(), taker_gets.take(), taker_pays.take());
             if self.config.local_sign {
                 let seq = self.get_account_seq();
                 let blob = SignTx::with_params(seq, &secret.take()).create_offer(&tx_json);
