@@ -10,8 +10,12 @@ use serde_json::{Value};
 use crate::misc::config::*;
 use crate::message::transaction::offer_create::*;
 use crate::message::common::command_trait::CommandConversion;
-use crate::base::util::downcast_to_string;
 use crate::message::common::amount::Amount;
+use crate::api::query::account_info::*;
+use crate::message::transaction::local_sign_tx::LocalSignTx;
+use crate::base::util::{downcast_to_string,downcast_to_usize};
+
+use crate::base::sign_tx::{SignTx};
 
 pub trait CreateOfferI {
     fn create_offer<F>(&self, taker_gets: Amount, taker_pays: Amount, op: F) 
@@ -30,6 +34,21 @@ impl CreateOffer {
             account : account,
             secret  : secret,
         }
+    }
+
+    pub fn get_account_seq(&self) -> u32 {
+        let seq_rc = Rc::new(Cell::new(0u64));
+
+        let acc = String::from(self.account.as_str());
+        AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
+            Ok(response) => {
+                let seq = seq_rc.clone();
+                seq.set(response.sequence);
+            },
+            Err(_) => { }
+        });
+
+       downcast_to_usize(seq_rc)
     }
 }
 
@@ -54,12 +73,17 @@ impl CreateOfferI for CreateOffer {
             let taker_gets = taker_gets_rc.clone();
             let taker_pays = taker_pays_rc.clone();
 
-            // let xy = OfferCreateTx::new(secret.take(), OfferCreateTxJson::new(account.take(), 
-            //                                                                 taker_gets.take(), taker_pays.take()));
-            // println!("js : {:?}", serde_json::to_string(&xy));
-            if let Ok(command) = OfferCreateTx::new(secret.take(), OfferCreateTxJson::new(account.take(), 
-                                                                            taker_gets.take(), taker_pays.take())).to_string() {
-                out.send(command).unwrap()
+            let tx_json = OfferCreateTxJson::new(account.take(), taker_gets.take(), taker_pays.take());
+            if self.config.local_sign {
+                let seq = self.get_account_seq();
+                let blob = SignTx::with_params(seq, &secret.take()).create_offer(&tx_json);
+                if let Ok(command) = LocalSignTx::new(blob).to_string() {
+                    out.send(command).unwrap()
+                }
+            } else {
+                if let Ok(command) = OfferCreateTx::new(secret.take(), tx_json).to_string() {
+                    out.send(command).unwrap()
+                }
             }
 
             move |msg: ws::Message| {

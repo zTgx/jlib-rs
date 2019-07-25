@@ -10,10 +10,12 @@ use crate::base::type_obj::*;
 use crate::base::constants::{
     TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
     TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, TX_MEMO, TX_MEMODATA, SignStreamType,
-    TX_OFFER_SEQUENCE, TX_LIMIT_AMOUNT, TX_TARGET, TX_RELATION_TYPE,
+    TX_OFFER_SEQUENCE, TX_LIMIT_AMOUNT, TX_TARGET, TX_RELATION_TYPE, TXTakerType,
 };
 use crate::base::serialized_type::*;
 use crate::base::amount::*;
+use crate::message::common::amount::Amount as RAmount;
+
 
 //序列化接口
 pub trait TxJsonSerializer {
@@ -461,6 +463,10 @@ impl TxJsonSerializer for TxJsonLimitAmount {
             raw.serialize_header(&mut tmp);
         }
 
+        // if let Ok(x) = serde_json::from_str(&tx_json.limit_amount.to_string().unwrap().as_str()) as Result<Amount, serde_json::error::Error> {
+        //     println!("x: {:?}", x.to_string());
+        // }
+
         let amount = Amount::from_json(String::from(self.value.as_str()));
         println!("swt: {:?}", amount);
 
@@ -489,6 +495,81 @@ impl TxJsonLimitAmountBuilder {
 impl TxJsonBuilder for TxJsonLimitAmountBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
         Box::new( TxJsonLimitAmount::new( String::from( self.value.as_str() ) ))
+    }
+}
+
+//TxJsonTakerBuilder
+pub struct TxJsonTaker <'a> {
+    pub name    : String,
+    pub type_obj: Option<TypeObj>,
+    pub value   : &'a RAmount,
+
+    pub output: SignStreamType,
+}
+
+impl <'a> TxJsonTaker <'a> {
+    pub fn new(name: TXTakerType, value: &'a RAmount) -> Self {
+        TxJsonTaker {
+            name    : name.get().to_string(),
+            type_obj: TypeObjBuilder::new( &name.get().to_string() ).build(),
+            value   : value,
+
+            output: None,
+        }
+    }
+}
+impl <'a> TxJsonSerializer for TxJsonTaker <'a> {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8>= vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        // if let Ok(x) = serde_json::from_str(&tx_json.limit_amount.to_string().unwrap().as_str()) as Result<Amount, serde_json::error::Error> {
+        //     println!("x: {:?}", x.to_string());
+        // }
+
+        //String::from(self.value.as_str())
+        let amount = Amount::from_json("xxx".to_string());
+        println!("swt: {:?}", amount);
+
+        let mut s = STAmount::serialize(amount);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+
+        println!("TxJsonTaker so : {:?}", &so);
+    }
+}
+pub struct TxJsonTakerBuilder <'b> {
+    pub name    : TXTakerType,
+    pub value   : &'b RAmount,
+}
+impl <'b> TxJsonTakerBuilder <'b> {
+    pub fn new(name: TXTakerType, value: &'b RAmount) -> Self {
+        TxJsonTakerBuilder {
+            name: name,
+            value: value,
+        }
+    }
+}
+impl <'b> TxJsonBuilder for TxJsonTakerBuilder <'b> {
+    fn build(&self) -> Box<dyn TxJsonSerializer> {
+        Box::new( TxJsonTaker::new( self.name, &self.value) )
     }
 }
 

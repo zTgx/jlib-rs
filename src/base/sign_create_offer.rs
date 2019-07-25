@@ -1,45 +1,41 @@
-// use crate::base::sign::*;
-// use ring::{digest};
-
 use std::rc::Rc;
 
-use crate::message::transaction::relation::{RelationTxJson};
+use crate::message::transaction::offer_create::{OfferCreateTxJson};
 
 use crate::base::signed_obj::{
-    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, TxJsonRelationTypeBuilder,
+    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, 
     TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder, 
-    TxJsonTargetBuilder, TxJsonLimitAmountBuilder,
+    TxJsonTakerBuilder,
 };
 
 use crate::base::constants::{
-    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY, 
-    TX_RELATION_TYPE, TX_TARGET, TX_LIMIT_AMOUNT
+    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY, TX_TAKERPAYS, TX_TAKERGETS,
+    TXTakerType,
 };
 
 use crate::base::keypair::*;
+
 use crate::base::sign_tx::{SignTx, PRE_FIELDS};
-use crate::message::common::amount::Amount;
-use crate::message::common::command_trait::CommandConversion;
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
     fn format(&mut self, tx: &mut SignedTxJson);
 }
 
-pub struct SignTxRelate <'a> {
+pub struct SignTxCreateOffer <'a> {
     pub fields : Vec<&'a str>,
     pub keypair: &'a Keypair,
-    pub tx_json: &'a RelationTxJson,
+    pub tx_json: &'a OfferCreateTxJson,
 
     pub sequence: u32,
 }
 
-impl <'a> SignTxRelate <'a> {
-    pub fn with_params(keypair: &'a Keypair, tx_json: &'a RelationTxJson, sequence: u32) -> Self {
+impl <'a> SignTxCreateOffer <'a> {
+    pub fn with_params(keypair: &'a Keypair, tx_json: &'a OfferCreateTxJson, sequence: u32) -> Self {
         let mut pre = vec![];
         pre.extend_from_slice(&PRE_FIELDS);
 
-        SignTxRelate {
+        SignTxCreateOffer {
             fields : pre,
             keypair: keypair,
             tx_json: tx_json,
@@ -66,11 +62,10 @@ impl <'a> SignTxRelate <'a> {
     }
 }
 
-impl <'a> FormatSignTxJson for SignTxRelate <'a> {
+impl <'a> FormatSignTxJson for SignTxCreateOffer <'a> {
     fn prepare(&mut self, sign_tx: &SignTx) {
-        sign_tx.update(&mut self.fields, TX_RELATION_TYPE);
-        sign_tx.update(&mut self.fields, TX_TARGET);
-        sign_tx.update(&mut self.fields, TX_LIMIT_AMOUNT);
+        sign_tx.update(&mut self.fields, TX_TAKERGETS);
+        sign_tx.update(&mut self.fields, TX_TAKERPAYS);
     }
 
     fn format(&mut self, output: &mut SignedTxJson) {
@@ -92,7 +87,7 @@ impl <'a> FormatSignTxJson for SignTxRelate <'a> {
                     output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
-                    let value = 21u16;//tx_json.transaction_type;
+                    let value = 8u16;//tx_json.transaction_type;
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
                     output.insert(index, transaction_type);
                 },
@@ -111,23 +106,19 @@ impl <'a> FormatSignTxJson for SignTxRelate <'a> {
                     let amount = TxJsonSequenceBuilder::new(value).build();
                     output.insert(index, amount);
                 },
-                TX_LIMIT_AMOUNT => {
-                    //在from_json中，要对非native进行分辨处理！！！
-                    let value = String::from( tx_json.limit_amount.to_string().unwrap().as_str() );
-                    println!("limit amount: {:?}", &value);
+                TX_TAKERPAYS => {
+                    let value = &tx_json.taker_pays;
+                    println!("tker pays amount: {:?}", &value);
 
-                    let amount = TxJsonLimitAmountBuilder::new(value).build();
+                    let amount = TxJsonTakerBuilder::new(TXTakerType::Pays, &value).build();
                     output.insert(index, amount);
                 },
-                TX_TARGET => {
-                    let value = String::from( tx_json.target.as_str() );
-                    let account = TxJsonTargetBuilder::new(value).build();
-                    output.insert(index, account);
-                },
-                TX_RELATION_TYPE => {
-                    let value = tx_json.relation_type;
-                    let account = TxJsonRelationTypeBuilder::new(value).build();
-                    output.insert(index, account);
+                TX_TAKERGETS => {
+                    let value = &tx_json.taker_gets;
+                    println!("taker gets amount: {:?}", &value);
+
+                    let amount = TxJsonTakerBuilder::new(TXTakerType::Gets, &value).build();
+                    output.insert(index, amount);
                 },
 
                 _ => {

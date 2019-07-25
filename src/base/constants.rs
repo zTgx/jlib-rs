@@ -32,4 +32,18 @@ pub const  TX_OFFER_SEQUENCE    : &'static str = "OfferSequence";
 pub const  TX_LIMIT_AMOUNT      : &'static str = "LimitAmount";
 pub const  TX_TARGET            : &'static str = "Target";
 pub const  TX_RELATION_TYPE     : &'static str = "RelationType";
+pub const  TX_TAKERPAYS         : &'static str = "TakerPays";
+pub const  TX_TAKERGETS         : &'static str = "TakerGets";
 
+pub enum TXTakerType {
+    Gets,
+    Pays,
+}
+impl TXTakerType {
+    pub fn get(&self) -> &'static str {
+        match *self {
+            TXTakerType::Gets  => { TX_TAKERGETS },
+            TXTakerType::Pays  => { TX_TAKERPAYS },
+        }
+    }
+}

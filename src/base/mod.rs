@@ -21,13 +21,12 @@ pub mod amount;
 pub mod type_obj;
 pub mod signed_obj;
 
-
 //sign
 pub mod sign_tx;
 pub mod sign_pay;
-pub mod sign_cancel_offer;
 pub mod sign_relate;
-
+pub mod sign_create_offer;
+pub mod sign_cancel_offer;
 
 //Serialize
 use std::collections::HashMap;

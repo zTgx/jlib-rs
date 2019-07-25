@@ -1,12 +1,14 @@
 use std::marker::PhantomData;
 use std::str::FromStr;
-use serde_json::{Value};
+// use serde_json::{Value};
 use serde::{Deserialize, Serialize, Deserializer};
 use serde::de::{self, Visitor, MapAccess};
 
 extern crate void;
 use void::Void;
 use std::fmt; 
+use crate::message::common::command_trait::CommandConversion;
+use std::any::Any;
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Amount {
@@ -80,11 +82,10 @@ impl FromStr for Amount {
     type Err = Void;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        println!("s: {}", &s);
         Ok(
             Amount {
                 value: s.to_string(),
-                currency: Some("SWT".to_string()),//None,
+                currency: None,
                 issuer: None,
             }
         )
@@ -123,6 +124,37 @@ where
     }
 
     deserializer.deserialize_any(StringOrStruct(PhantomData))
+}
+
+impl CommandConversion for Amount {
+    type T = Amount;
+    fn to_string(&self) -> Result<String, serde_json::error::Error> {
+        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
+        // let compact = format!("{}", json);
+
+        //https://crates.io/crates/serde_json
+        // Serialize it to a JSON string.
+        let j = serde_json::to_string(&self)?;
+
+        // Print, write to a file, or send to an HTTP server.
+        println!("{}", j);
+
+        Ok(j)
+    }
+    
+    fn box_to_raw(&self) -> &dyn Any {
+        self
+    }
+
+    // fn to_concrete<T>(&self) -> T {
+    //     let def: Box<dyn CommandConversion> = self;
+    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
+    //         Some(b) => b,
+    //         None => panic!("&a isn't a B!"),
+    //     };
+        
+    //     b
+    // }
 }
 //End Amount
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
