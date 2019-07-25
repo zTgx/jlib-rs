@@ -1,5 +1,9 @@
-Example使用说明：  
-n开头的文件，是查询接口。  
-t开头的文件，是交易接口。  
+examples directory's explaination：  
 
-` cargo run --example n01_server_info `
+File which starts with letter 'n' is query api.  
+File which starts with letter 't' is transaction api.  
+
+Example :  
+```
+cargo run --example n01_server_info
+```
