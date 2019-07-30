@@ -3,10 +3,9 @@ use crate::base::*; //util
 use typename::TypeName;
 
 extern crate num;
-use num::bigint::{BigInt, BigUint, ToBigInt, Sign};
-use std::ops::{BitAndAssign, BitOrAssign, BitOr, BitAnd, Shr, Mul,Add,MulAssign, BitXor};
-use std::str::FromStr;
-use num::{Zero, One};
+use num::bigint::{BigInt, ToBigInt, Sign};
+use std::ops::{BitAndAssign, BitOrAssign, BitOr, BitAnd, Shr, Mul};
+use num::{Zero};
 
 use crate::base::util::{decode_j_address};
 
@@ -270,7 +269,6 @@ impl SerializedSTAmount for STAmount {
             //1. Serialize the currency value with offset
             //Put offset
             let mut hi = 0;
-            let mut lo = 0;
 
             let mut big_hi = Zero::zero();
             let mut big_lo = Zero::zero();
@@ -299,11 +297,11 @@ impl SerializedSTAmount for STAmount {
 
                 /////////lo
                 //words1 * 0x4ffffff
-                let mut words1 = amount.value.clone();
-                let mut sign = &words1.sign();
+                let words1 = amount.value.clone();
+                let sign = &words1.sign();
 
                 let ff4 = BigInt::parse_bytes(b"4ffffff", 16).unwrap();
-                let mut ret = words1.mul(&ff4);
+                let ret = words1.mul(&ff4);
                 big_lo = ret.to_bigint().unwrap().bitand(BigInt::parse_bytes(b"ffffffff", 16).unwrap());
                 if *sign != Sign::Minus {
                     big_lo = -1 * big_lo;
@@ -311,12 +309,8 @@ impl SerializedSTAmount for STAmount {
             }
 
             let arr = vec![big_hi, big_lo];
-            println!("arr: {:?}", &arr);
-
             let l = arr.len();
-
             let mut bl: BigInt = Zero::zero();
-            let mut x: BigInt = Zero::zero();
             if l != 0 {
                 let index = l - 1 as usize;
                 if let Some(x) = arr.get(index) {
@@ -371,8 +365,6 @@ impl SerializedSTAmount for STAmount {
             println!("so: {:?}", &so);
             return so;
         }
-
-        vec![]
     }
 
     fn parse() {}

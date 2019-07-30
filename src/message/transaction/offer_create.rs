@@ -63,11 +63,8 @@ impl OfferCreateTxJson {
     }
 
     pub fn get_flags(offer_type: &'static str) -> u32 {
-        println!("offer type: {:?}", &offer_type);
         if offer_type == "Sell" {
             let flag = Flags::OfferCreate{ name: OfferCreate::Sell };
-            println!("flag: {:?} / get: {}", &flag, &flag.get());
-
             return flag.get();
         }
 

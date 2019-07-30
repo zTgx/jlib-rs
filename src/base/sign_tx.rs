@@ -13,7 +13,7 @@ use crate::message::transaction::offer_create::{OfferCreateTxJson};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 
 use crate::base::constants::{
-    TX_SIGNATURE, 
+    TX_SIGNATURE,
 };
 
 use crate::base::sign_pay::{SignTxPay};
@@ -25,7 +25,7 @@ pub const PRE_FIELDS: [&'static str; 6] = ["Flags", "Fee", "TransactionType", "A
 
 pub struct SignTx {
     pub sequence: u32, //account seq
-    pub keypair: Keypair, 
+    pub keypair: Keypair,
 }
 impl SignTx {
     pub fn with_params(sequence: u32, secret: &str) -> Self {

@@ -77,7 +77,6 @@ impl CreateOfferI for CreateOffer {
             let taker_pays = taker_pays_rc.clone();
 
             let tx_json = OfferCreateTxJson::new(account.take(), offer_type.take(), taker_gets.take(), taker_pays.take());
-            println!("createjson: {:?}", &tx_json);
             if self.config.local_sign {
                 let seq = self.get_account_seq();
                 let blob = SignTx::with_params(seq, &secret.take()).create_offer(&tx_json);
