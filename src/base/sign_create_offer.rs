@@ -1,8 +1,8 @@
 use crate::message::transaction::offer_create::{OfferCreateTxJson};
 
 use crate::base::signed_obj::{
-    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, 
-    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder, 
+    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder,
+    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder,
     TxJsonTakerBuilder,
 };
 
@@ -84,6 +84,7 @@ impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
             match key {
                 TX_FLAGS => {
                     let value = tx_json.flags;
+                    println!("flagss: {}", value);
                     let flags = TxJsonFlagsBuilder::new(value).build();
                     self.output.insert(index, flags);
                 },

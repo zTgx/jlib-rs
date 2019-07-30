@@ -19,7 +19,7 @@ use crate::base::sign_tx::{SignTx};
 use OfferType;
 
 pub trait CreateOfferI {
-    fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F) 
+    fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F)
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>);
 }
 
@@ -53,8 +53,8 @@ impl CreateOffer {
     }
 }
 
-impl CreateOfferI for CreateOffer { 
-    fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F) 
+impl CreateOfferI for CreateOffer {
+    fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F)
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
@@ -65,8 +65,8 @@ impl CreateOfferI for CreateOffer {
         let offer_type_rc = Rc::new(Cell::new(offer_type.get()));
         let taker_gets_rc = Rc::new(Cell::new(taker_gets));
         let taker_pays_rc = Rc::new(Cell::new(taker_pays));
-        
-        connect(self.config.addr, |out| { 
+
+        connect(self.config.addr, |out| {
             let copy = info.clone();
 
             let account = account_rc.clone();
@@ -77,6 +77,7 @@ impl CreateOfferI for CreateOffer {
             let taker_pays = taker_pays_rc.clone();
 
             let tx_json = OfferCreateTxJson::new(account.take(), offer_type.take(), taker_gets.take(), taker_pays.take());
+            println!("createjson: {:?}", &tx_json);
             if self.config.local_sign {
                 let seq = self.get_account_seq();
                 let blob = SignTx::with_params(seq, &secret.take()).create_offer(&tx_json);
@@ -92,12 +93,12 @@ impl CreateOfferI for CreateOffer {
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());
-                
-                out.close(CloseCode::Normal) 
+
+                out.close(CloseCode::Normal)
             }
-        
+
         }).unwrap();
-        
+
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             let status = x["status"].to_string();
@@ -109,9 +110,9 @@ impl CreateOfferI for CreateOffer {
             } else {
                 if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<OfferCreateSideKick, serde_json::error::Error> {
                     op(Err(v))
-                } 
+                }
             }
-        }         
+        }
 
     }
 }

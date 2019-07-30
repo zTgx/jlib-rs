@@ -32,7 +32,7 @@ pub enum TrustSet {
 
     // NoSkywell       =  0x00020000,
     // SetNoSkywell    =  0x00020000,
-    
+
     NoSkywell,
     SetNoSkywell,
 }
@@ -59,7 +59,7 @@ pub enum RelationSet {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-pub enum Flags { 
+pub enum Flags {
     Universal  { name: Universal   },
     AccountSet { name: AccountSet  },
     TrustSet   { name: TrustSet    },
@@ -82,63 +82,65 @@ impl Flags {
     pub fn get(&self) -> u32 {
         match *self {
             //Universal
-            Flags::Universal { ref name } => { match name {
-                FullyCanonicalSig => { Universal::FullyCanonicalSig as u32 }
-                _ => 0,
+            Flags::Universal { ref name } => {
+                 match name {
+                     &Universal::FullyCanonicalSig => { Universal::FullyCanonicalSig as u32
+                }
             }}
 
             //AccountSet
-            Flags::AccountSet { ref name } => { match name {
-                RequireDestTag  => { AccountSet::RequireDestTag   as u32 },
-                OptionalDestTag => { AccountSet::OptionalDestTag  as u32 },
-                RequireAuth     => { AccountSet::RequireAuth      as u32 },
-                OptionalAuth    => { AccountSet::OptionalAuth     as u32 },
-                DisallowSWT     => { AccountSet::DisallowSWT      as u32 },
-                AllowSWT        => { AccountSet::AllowSWT         as u32 },
-                _ => 0,
-            }}
+            Flags::AccountSet { ref name } => {
+                match name {
+                    &AccountSet::RequireDestTag  => { AccountSet::RequireDestTag   as u32 },
+                    &AccountSet::OptionalDestTag => { AccountSet::OptionalDestTag  as u32 },
+                    &AccountSet::RequireAuth     => { AccountSet::RequireAuth      as u32 },
+                    &AccountSet::OptionalAuth    => { AccountSet::OptionalAuth     as u32 },
+                    &AccountSet::DisallowSWT     => { AccountSet::DisallowSWT      as u32 },
+                    &AccountSet::AllowSWT        => { AccountSet::AllowSWT         as u32 },
+                }
+            }
 
             //TrustSet
-            Flags::TrustSet { ref name } => { match name {
-                SetAuth         =>  { TrustSet::SetAuth         as u32 },
-                ClearNoSkywell  =>  { TrustSet::ClearNoSkywell  as u32 },
-                SetFreeze       =>  { TrustSet::SetFreeze       as u32 },
-                ClearFreeze     =>  { TrustSet::ClearFreeze     as u32 },
+            Flags::TrustSet { ref name } => {
+                match name {
+                    &TrustSet::SetAuth         =>  { TrustSet::SetAuth         as u32 },
+                    &TrustSet::ClearNoSkywell  =>  { TrustSet::ClearNoSkywell  as u32 },
+                    &TrustSet::SetFreeze       =>  { TrustSet::SetFreeze       as u32 },
+                    &TrustSet::ClearFreeze     =>  { TrustSet::ClearFreeze     as u32 },
 
-                // NoSkywell       =>  { TrustSet::NoSkywell       as i32 },
-                // SetNoSkywell    =>  { TrustSet::SetNoSkywell    as i32 },
-                NoSkywell       =>  { 0x00020000    as u32 },
-                SetNoSkywell    =>  { 0x00020000    as u32 },
-
-                _ => 0,
-            }}
+                    // NoSkywell       =>  { TrustSet::NoSkywell       as i32 },
+                    // SetNoSkywell    =>  { TrustSet::SetNoSkywell    as i32 },
+                    &TrustSet::NoSkywell       =>  { 0x00020000    as u32 },
+                    &TrustSet::SetNoSkywell    =>  { 0x00020000    as u32 },
+                }
+            }
 
             //OfferCreate
-            Flags::OfferCreate { ref name } => { match name {
-                Passive             =>  { OfferCreate::Passive              as u32 },
-                ImmediateOrCancel   =>  { OfferCreate::ImmediateOrCancel    as u32 },
-                FillOrKill          =>  { OfferCreate::FillOrKill           as u32 },
-                Sell                =>  { OfferCreate::Sell                 as u32 },
-
-                _ => 0,
-            }}
+            Flags::OfferCreate { ref name } => {
+                match name {
+                    &OfferCreate::Passive             =>  { OfferCreate::Passive              as u32 },
+                    &OfferCreate::ImmediateOrCancel   =>  { OfferCreate::ImmediateOrCancel    as u32 },
+                    &OfferCreate::FillOrKill          =>  { OfferCreate::FillOrKill           as u32 },
+                    &OfferCreate::Sell                =>  { OfferCreate::Sell                 as u32 },
+                }
+            }
 
             //Payment
-            Flags::Payment { ref name } => { match name {
-                NoSkywellDirect  =>  { Payment::NoSkywellDirect      as u32 },
-                PartialPayment   =>  { Payment::PartialPayment       as u32 },
-                LimitQuality     =>  { Payment::LimitQuality         as u32 },
-
-                _ => 0,
-            }}
+            Flags::Payment { ref name } => {
+                match name {
+                    &Payment::NoSkywellDirect  =>  { Payment::NoSkywellDirect      as u32 },
+                    &Payment::PartialPayment   =>  { Payment::PartialPayment       as u32 },
+                    &Payment::LimitQuality     =>  { Payment::LimitQuality         as u32 },
+                }
+            }
 
             //RelationSet
-            Flags::RelationSet { ref name } => { match name {
-                Authorize   =>  { RelationSet::Authorize      as u32 },
-                Freeze      =>  { RelationSet::Freeze         as u32 },
-
-                _ => 0,
-            }}
+            Flags::RelationSet { ref name } => {
+                match name {
+                    &RelationSet::Authorize   =>  { RelationSet::Authorize      as u32 },
+                    &RelationSet::Freeze      =>  { RelationSet::Freeze         as u32 },
+                }
+            }
 
             Flags::Other => { 0 as u32 },
 

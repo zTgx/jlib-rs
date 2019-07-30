@@ -28,7 +28,7 @@ use crate::OfferType;
 #[derive(Deserialize, Debug)]
 pub struct OfferCreateTxJson {
     #[serde(rename="Flags")]
-    pub flags: u32, 
+    pub flags: u32,
 
     #[serde(rename="Fee")]
     pub fee: u64,
@@ -41,7 +41,7 @@ pub struct OfferCreateTxJson {
 
     #[serde(rename="TakerPays")]
     #[serde(deserialize_with = "string_or_struct")]
-    pub taker_pays: Amount, 
+    pub taker_pays: Amount,
 
     #[serde(rename="TakerGets")]
     #[serde(deserialize_with = "string_or_struct")]
@@ -51,10 +51,10 @@ pub struct OfferCreateTxJson {
 impl OfferCreateTxJson {
     pub fn new(account: String, offer_type: &'static str, taker_gets: Amount,  taker_pays: Amount) -> Self {
         let flags = 0;
-        
+
         OfferCreateTxJson {
             flags: OfferCreateTxJson::get_flags( offer_type ),
-            fee: 10000, 
+            fee: 10000,
             transaction_type: "OfferCreate".to_string(),
             account: account,
             taker_pays: taker_pays,
@@ -63,8 +63,11 @@ impl OfferCreateTxJson {
     }
 
     pub fn get_flags(offer_type: &'static str) -> u32 {
+        println!("offer type: {:?}", &offer_type);
         if offer_type == "Sell" {
             let flag = Flags::OfferCreate{ name: OfferCreate::Sell };
+            println!("flag: {:?} / get: {}", &flag, &flag.get());
+
             return flag.get();
         }
 
@@ -79,7 +82,7 @@ impl Serialize for OfferCreateTxJson {
     {
         // 3 is the number of fields in the struct.
         let mut state = serializer.serialize_struct("OfferCreateTxJson", 6)?;
-        
+
         state.serialize_field("Flags", &self.flags)?;
         state.serialize_field("Fee", &self.fee)?;
         state.serialize_field("TransactionType", &self.transaction_type)?;
@@ -103,7 +106,7 @@ impl Serialize for OfferCreateTxJson {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OfferCreateTx {
     #[serde(rename="id")]
-    pub id: u64, 
+    pub id: u64,
 
     #[serde(rename="command")]
     pub command: String, //Submit
@@ -142,7 +145,7 @@ impl CommandConversion for OfferCreateTx {
 
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -153,7 +156,7 @@ impl CommandConversion for OfferCreateTx {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -225,7 +228,7 @@ pub struct OfferCreateSideKick {
     pub id              : u32,
     pub request         : OfferCreateTx,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }
