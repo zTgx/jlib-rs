@@ -9,6 +9,8 @@ use crate::base::wallet::seed::*;
 use crate::base::wallet::keypair::*;
 use crate::base::wallet::address::*;
 
+use crate::WalletType;
+
 // 钱包生成器
 #[derive(Debug)]
 pub struct WalletBuilder <'a> {
@@ -70,14 +72,15 @@ impl <'a> WalletBuilder <'a> {
 
 #[derive(Debug)]
 pub struct Wallet {
-    pub key_type: KeyType,
+    pub key_type: WalletType,
     pub address : WalletAddress,  //j开头的钱包地址
     pub secret  : Seed,  //secret seed
     pub keypair : Option<Keypair>, //公钥私钥对
 }
 
 impl Wallet {
-    pub fn new(config: &WalletConfig) -> Self {
-        WalletBuilder::new(config).build()
+    pub fn new(wtype: WalletType) -> Self {
+        let config = WalletConfig::new(wtype);
+        WalletBuilder::new(&config).build()
     }
 }

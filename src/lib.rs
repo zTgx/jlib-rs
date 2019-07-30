@@ -18,8 +18,6 @@ pub mod api;
 pub mod contracts;
 
 //Wallet
-pub use crate::base::wallet::config::KeyType as WalletType;
-pub use crate::base::wallet::config::WalletConfig as WalletConfig;
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,7 +65,14 @@ pub struct Wallet {
     pub keypair : Option<Keypair>, //public key & private key
 }
 */
+
+//key的加密算法：ed25519 / secp256k1
+#[derive(Debug, Copy, Clone)]
+pub enum WalletType {
+    SECP256K1,
+    ED25519,
+}
+
 pub fn generate_wallet(wtype: WalletType) -> Wallet {
-    let config = WalletConfig::new(wtype);
-    Wallet::new(&config)
+    Wallet::new(wtype)
 }

@@ -1,21 +1,15 @@
 /*
 base config
 */
-
-#[derive(Debug, Copy, Clone)]
-//key的加密算法：ed25519 / secp256k1
-pub enum KeyType {
-    SECP256K1,
-    ED25519,
-}
+use crate::WalletType;
 
 //钱包属性：地址长度，加密算法等
 #[derive(Debug, Copy, Clone)]
 pub struct WalletConfig {
-    pub key_type: KeyType,
+    pub key_type: WalletType,
 }
 impl WalletConfig {
-    pub fn new(key_type: KeyType) -> Self {
+    pub fn new(key_type: WalletType) -> Self {
         WalletConfig {
             key_type: key_type,
         }
@@ -24,8 +18,8 @@ impl WalletConfig {
 //实现default方法
 impl Default for WalletConfig {
     fn default() -> Self {
-        WalletConfig { 
-            key_type: KeyType::SECP256K1,
+        WalletConfig {
+            key_type: WalletType::SECP256K1,
         }
     }
 }
