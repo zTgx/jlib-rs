@@ -1,17 +1,8 @@
 
+use crate::base::ring::{digest};
 
-use ring::{digest};
-
-// extern crate secp256k1;
-// use secp256k1::key::{ SecretKey};
-// use secp256k1::key::PublicKey;
-// use secp256k1::Secp256k1;
-// use secp256k1::key::ONE_KEY;
-// use secp256k1::constants::*;
-
-extern crate crypto;
-use crypto::ripemd160::Ripemd160 ;
-use crypto::digest::Digest;
+use crate::base::crypto::ripemd160::Ripemd160 ;
+use crate::base::crypto::digest::Digest;
 
 use crate::base::misc::util::*;
 use crate::base::wallet::keypair::*;

@@ -2,10 +2,10 @@
 extern crate lazy_static;
 
 extern crate typename;
-extern crate secp256k1;
+// extern crate secp256k1;
 extern crate rand;
-extern crate crypto;
-extern crate ring;
+// extern crate crypto;
+// extern crate ring;
 extern crate serde_json;
 extern crate serde;
 extern crate num;
@@ -53,5 +53,3 @@ impl OfferType {
         }
     }
 }
-
-

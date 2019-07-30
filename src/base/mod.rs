@@ -1,3 +1,6 @@
+extern crate secp256k1;
+extern crate crypto;
+extern crate ring;
 
 pub mod data;
 pub mod local_sign;

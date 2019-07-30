@@ -1,6 +1,3 @@
-// use crate::base::sign::*;
-// use ring::{digest};
-
 use std::rc::Rc;
 
 use crate::message::transaction::relation::{RelationTxJson};

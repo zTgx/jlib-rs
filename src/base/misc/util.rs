@@ -1,6 +1,6 @@
 
 use crate::base::data::constants::{CURVE_ORDER, CURVE_ZERO};
-use ring::{digest};
+use crate::base::ring::{digest};
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;

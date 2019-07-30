@@ -1,4 +1,4 @@
-#[macro_use] 
+#[macro_use]
 extern crate typename;
 
 extern crate jlib;
@@ -46,20 +46,20 @@ pub struct TxJson {
     pub txn_signature: String,
 
     #[serde(rename="Memos")]
-    pub memo: Option<Vec<String>>,  
+    pub memo: Option<Vec<String>>,
 }
 
 fn main() {
 
     let from_json = r#"
-    { 
-      "Flags": 0, 
-      "Fee": 0.01, 
-      "TransactionType": "Payment", 
-      "Account": "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh", 
+    {
+      "Flags": 0,
+      "Fee": 0.01,
+      "TransactionType": "Payment",
+      "Account": "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh",
       "Amount": 0.5,
-      "Destination": "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c", 
-      "Sequence": 59, 
+      "Destination": "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c",
+      "Sequence": 59,
       "SigningPubKey":"0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020",
       "TxnSignature": ""
       }"#;
@@ -84,7 +84,7 @@ fn main() {
 
         use mylib::base::inverse_fields_map::INVERSE_FIELDS_MAP;
         keys.sort_by( |a, b| {
-                                
+
             let a_field_coordinates = INVERSE_FIELDS_MAP.get(a.as_str()).unwrap();
             let a_type_bits = a_field_coordinates[0];
             let a_field_bits = a_field_coordinates[1];
@@ -95,14 +95,14 @@ fn main() {
 
             // Sort by type id first, then by field id
             if a_type_bits != b_type_bits {
-              //  a_type_bits - b_type_bits 
+              //  a_type_bits - b_type_bits
               a_type_bits.cmp(&b_type_bits)
             } else {
               // a_field_bits - b_field_bits
               a_field_bits.cmp(&b_field_bits)
             }
 
-            
+
         });
         // println!("sorted : {:?}", keys);
 
@@ -112,17 +112,17 @@ fn main() {
 
 
     let from_json = r#"
-    { 
-      "Flags": 0, 
-      "Fee": 0.01, 
-      "TransactionType": "Payment", 
-      "Account": "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh", 
+    {
+      "Flags": 0,
+      "Fee": 0.01,
+      "TransactionType": "Payment",
+      "Account": "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh",
       "Amount": 0.5,
-      "Destination": "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c", 
-      "Sequence": 59, 
+      "Destination": "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c",
+      "Sequence": 59,
       "SigningPubKey":"0330E7FC9D56BB25D6893BA3F317AE5BCF33B3291BD63DB32654A313222F7FD020",
-      "TxnSignature": "3045022100C634CAD1D970BD72D39B1701FEDEA23EBF271E0C8D21003158F9F6B20B734F2D02200318C76350E48F9829A668DCC6ACDC4726871BD45A076D2C86947C52E9034B93" 
-      
+      "TxnSignature": "3045022100C634CAD1D970BD72D39B1701FEDEA23EBF271E0C8D21003158F9F6B20B734F2D02200318C76350E48F9829A668DCC6ACDC4726871BD45A076D2C86947C52E9034B93"
+
     }"#;
 
     let mut srot_key = vec![
@@ -138,7 +138,7 @@ fn main() {
     ];
 
       srot_key.sort_by( |a, b| {
-                                
+
             let a_field_coordinates = INVERSE_FIELDS_MAP.get(a.as_str()).unwrap();
             let a_type_bits = a_field_coordinates[0];
             let a_field_bits = a_field_coordinates[1];
@@ -149,14 +149,14 @@ fn main() {
 
             // Sort by type id first, then by field id
             if a_type_bits != b_type_bits {
-              //  a_type_bits - b_type_bits 
+              //  a_type_bits - b_type_bits
               a_type_bits.cmp(&b_type_bits)
             } else {
               // a_field_bits - b_field_bits
               a_field_bits.cmp(&b_field_bits)
             }
 
-            
+
         });
         if let Ok(x) = serde_json::from_str(&from_json) as Result<TxJson> {
 
@@ -186,7 +186,7 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
       let left = if type_bits < 16 { type_bits << 4 } else { 0 };
       let right = if field_bits < 16 { field_bits } else { 0 };
       let tag_byte: u8 = left | right;
-      
+
       println!("type_name: {} / type_bits : {} / tag_byte: {}", key, type_bits, tag_byte);
 
       // if ('string' === typeof value) {
@@ -272,7 +272,7 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
             let value = tx_json.fee;
             serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
             if serialized_object_type.as_str() == "Amount" {
-            
+
                 println!("raw value : {}", value);
                 let amount = Amount::from_json(value.to_string());
                 let mut s = STAmount::serialize(amount);
@@ -287,7 +287,7 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
 
             serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
             if serialized_object_type.as_str() == "VL" {
-            
+
                 let mut s = STVL::serialize(value);
                 so.append(&mut s);
                 println!("so : {:?}", &so);
@@ -300,7 +300,7 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
 
             serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
             if serialized_object_type.as_str() == "Account" {
-            
+
                 let mut s = STAccount::serialize(value);
                 so.append(&mut s);
                 println!("Account : {:?}", &so);
@@ -317,7 +317,7 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
 
             serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
             if serialized_object_type.as_str() == "Account" {
-            
+
                 let mut s = STAccount::serialize(value);
                 so.append(&mut s);
                 println!("Account : {:?}", &so);
@@ -341,7 +341,7 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
 
                 //tx_sign
                 use mylib::base::sign::*;
-                
+
                 let message = raw;//"FC3018D3233B53A18BE2C1A9A447D580DD3708BE0B1F8BAEE72C93CE45F32ABB";
                 let key = [26, 202, 174, 222, 206, 64, 91, 42, 149, 130, 18, 98, 158, 22, 242, 235, 70, 177, 83, 238, 233, 76, 221, 53, 15, 222, 255, 82, 121, 85, 37, 183];
 
@@ -354,8 +354,8 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
                         println!("bytes : {:?}", bytes);
                     }
                 }
-                
-                
+
+
 
 
 
@@ -368,7 +368,7 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
 
             serialized_object_type = TYPES_MAP[type_bits as usize].to_string();
             if serialized_object_type.as_str() == "VL" {
-            
+
                 let mut s = STVL::serialize(value);
                 so.append(&mut s);
                 println!("TxnSignature : {:?}", &so);
@@ -377,6 +377,6 @@ fn serialize(tx_json: TxJson, keys: &Vec<String>) {
         },
 
         _ => {}
-      }      
+      }
     }
 }

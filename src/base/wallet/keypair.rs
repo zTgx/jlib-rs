@@ -1,18 +1,8 @@
-
-
-// extern crate bs58;
-
-// use crate::base::constants::ALPHABET;
-use crate::base::misc::util::*;
-
-extern crate secp256k1;
-use secp256k1::key::{ SecretKey};
-use secp256k1::key::PublicKey;
-use secp256k1::Secp256k1;
-// use secp256k1::key::ONE_KEY;
-// use secp256k1::constants::*;
+use crate::base::secp256k1::key::{ SecretKey, PublicKey };
+use crate::base::secp256k1::Secp256k1;
 
 use crate::base::wallet::seed::*;
+use crate::base::misc::util::*;
 
 #[derive(Debug)]
 pub struct KeypairProperty {

@@ -1,11 +1,7 @@
+use crate::base::secp256k1::key::{SecretKey, PublicKey};
+use crate::base::secp256k1::{Secp256k1, Message};
 
-
-extern crate secp256k1;
-
-use secp256k1::key::{SecretKey, PublicKey};
-use secp256k1::{Secp256k1, Message};
-
-use ring::{digest};
+use crate::base::ring::{digest};
 use cast_rs::hex_t;
 use crate::base::wallet::keypair::*;
 
