@@ -3,7 +3,7 @@
 // extern crate bs58;
 
 // use crate::base::constants::ALPHABET;
-use crate::base::*;
+use crate::base::misc::util::*;
 
 extern crate secp256k1;
 use secp256k1::key::{ SecretKey};
@@ -12,7 +12,7 @@ use secp256k1::Secp256k1;
 // use secp256k1::key::ONE_KEY;
 // use secp256k1::constants::*;
 
-use crate::base::seed::*;
+use crate::base::wallet::seed::*;
 
 #[derive(Debug)]
 pub struct KeypairProperty {
@@ -82,16 +82,16 @@ impl <'a> KeypairBuilder <'a> {
     }
 
     fn generate(&self, seed: &String) -> KeypairProperty {
-        let seed = util::entropy(seed);
+        let seed = entropy(seed);
         // println!("seed: {:?}", seed);
-        let private_gen = util::scalar_multiple(&seed, None);
+        let private_gen = scalar_multiple(&seed, None);
         let secp = Secp256k1::new();
         let secret_key = SecretKey::from_slice(&private_gen).expect("32 bytes, within curve order");
         // println!("secret_key: {:?}", secret_key);
         let public_gen = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
         // println!("public_gen: {:?}", public_gen);
 
-        let public_gen_output = util::scalar_multiple(public_gen.as_slice(), Some(0));
+        let public_gen_output = scalar_multiple(public_gen.as_slice(), Some(0));
         // println!("before add : {:?}", public_gen_output);
         let mut secret_key2 = SecretKey::from_slice(&public_gen_output).expect("32 bytes, within curve order");
         secret_key2.add_assign(&secret_key[..]).unwrap();

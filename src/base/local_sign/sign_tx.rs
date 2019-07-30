@@ -1,25 +1,25 @@
 
 
-use crate::base::keypair::*;
-use crate::base::util::{get_keypair_from_secret};
-use crate::base::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBuilder};
+use crate::base::wallet::keypair::*;
+use crate::base::misc::util::{get_keypair_from_secret};
+use crate::base::serialize::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBuilder};
 use cast_rs::hex_t;
-use crate::base::sign::SignatureX;
-use crate::base::inverse_fields_map::INVERSE_FIELDS_MAP;
+use crate::base::local_sign::sign::SignatureX;
+use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
 
 use crate::message::transaction::transaction::{TxJson};
 use crate::message::transaction::relation::{RelationTxJson};
 use crate::message::transaction::offer_create::{OfferCreateTxJson};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 
-use crate::base::constants::{
+use crate::base::data::constants::{
     TX_SIGNATURE,
 };
 
-use crate::base::sign_pay::{SignTxPay};
-use crate::base::sign_relate::{SignTxRelate};
-use crate::base::sign_cancel_offer::{SignTxCancelOffer};
-use crate::base::sign_create_offer::{SignTxCreateOffer};
+use crate::base::local_sign::sign_pay::{SignTxPay};
+use crate::base::local_sign::sign_relate::{SignTxRelate};
+use crate::base::local_sign::sign_cancel_offer::{SignTxCancelOffer};
+use crate::base::local_sign::sign_create_offer::{SignTxCreateOffer};
 
 pub const PRE_FIELDS: [&'static str; 6] = ["Flags", "Fee", "TransactionType", "Account", "SigningPubKey", "Sequence"];
 

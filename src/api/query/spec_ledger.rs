@@ -10,10 +10,10 @@ use serde_json::{Value};
 use crate::misc::config::*;
 use crate::message::query::spec_ledger::*;
 use crate::message::common::command_trait::CommandConversion;
-use crate::base::util::downcast_to_string;
+use crate::base::misc::util::downcast_to_string;
 
 pub trait SpecLedgerI {
-    fn request_ledger<F>(&self, config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F) 
+    fn request_ledger<F>(&self, config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F)
     where F: Fn(Result<RequestLedgerResponse, SpecLedgerSideKick>);
 }
 
@@ -25,8 +25,8 @@ impl SpecLedger {
     }
 }
 
-impl SpecLedgerI for SpecLedger { 
-        fn request_ledger<F>(&self, config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F) 
+impl SpecLedgerI for SpecLedger {
+        fn request_ledger<F>(&self, config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F)
         where F: Fn(Result<RequestLedgerResponse, SpecLedgerSideKick>) {
 
             let info = Rc::new(Cell::new("".to_string()));
@@ -41,7 +41,7 @@ impl SpecLedgerI for SpecLedger {
             }
             let transactions_rc = Rc::new(Cell::new(transactions));
 
-            connect(config.addr, |out| { 
+            connect(config.addr, |out| {
                 let copy = info.clone();
 
                 let index = ledger_index_rc.clone();
@@ -54,12 +54,12 @@ impl SpecLedgerI for SpecLedger {
                 move |msg: ws::Message| {
                     let c = msg.as_text()?;
                     copy.set(c.to_string());
-                    
-                    out.close(CloseCode::Normal) 
+
+                    out.close(CloseCode::Normal)
                 }
-            
+
             }).unwrap();
-            
+
             let resp = downcast_to_string(info);
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
                 let status = x["status"].to_string();
@@ -76,6 +76,6 @@ impl SpecLedgerI for SpecLedger {
                         op(Err(v))
                     }
                 }
-            }         
+            }
     }
 }

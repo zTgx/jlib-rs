@@ -12,13 +12,13 @@ use crate::message::transaction::transaction::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::memo::*;
 use crate::message::common::amount::Amount;
-use crate::base::util::{downcast_to_usize, downcast_to_string};
+use crate::base::misc::util::{downcast_to_usize, downcast_to_string};
 use crate::api::query::account_info::*;
 
 use cast_rs::hex_t;
 
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
-use crate::base::sign_tx::{SignTx};
+use crate::base::local_sign::sign_tx::{SignTx};
 
 pub trait PaymentI {
     fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F)
@@ -84,7 +84,7 @@ impl PaymentI for Payment {
 
         let from_rc   = Rc::new(Cell::new(String::from(self.account.as_str())));
         let secret_rc = Rc::new(Cell::new(String::from(self.secret.as_str())));
-        
+
         let to_rc     = Rc::new(Cell::new(to));
         let amount_rc = Rc::new(Cell::new(amount));
         let memo_rc   = Rc::new(Cell::new(None));
@@ -93,7 +93,7 @@ impl PaymentI for Payment {
             let memos = MemosBuilder::new( upper_hex_memo ).build();
             memo_rc.set(Some(vec![memos]));
         }
-        
+
         connect(self.config.addr, |out| {
             let copy = info.clone();
 

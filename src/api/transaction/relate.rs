@@ -14,8 +14,8 @@ use crate::message::common::amount::Amount;
 use RelationType;
 use crate::api::query::account_info::*;
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
-use crate::base::sign_tx::{SignTx};
-use crate::base::util::{downcast_to_usize, downcast_to_string};
+use crate::base::local_sign::sign_tx::{SignTx};
+use crate::base::misc::util::{downcast_to_usize, downcast_to_string};
 
 pub trait RelateI {
     fn set_relation<F>(&self, relation_type: RelationType, target: String, amount: Amount, op: F)
@@ -52,8 +52,8 @@ impl Relate {
     }
 }
 
-impl RelateI for Relate { 
-    fn set_relation<F>(&self, rtype: RelationType, target: String, amount: Amount, op: F) 
+impl RelateI for Relate {
+    fn set_relation<F>(&self, rtype: RelationType, target: String, amount: Amount, op: F)
     where F: Fn(Result<RelationTxResponse, RelationSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
@@ -65,8 +65,8 @@ impl RelateI for Relate {
         let target_rc = Rc::new(Cell::new(target));
 
         let amount_rc = Rc::new(Cell::new(amount));
-        
-        connect(self.config.addr, |out| { 
+
+        connect(self.config.addr, |out| {
             let copy = info.clone();
 
             let account = account_rc.clone();
@@ -88,16 +88,16 @@ impl RelateI for Relate {
                     out.send(command).unwrap()
                 }
             }
-            
+
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());
-                
-                out.close(CloseCode::Normal) 
+
+                out.close(CloseCode::Normal)
             }
-        
+
         }).unwrap();
-        
+
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             let status = x["status"].to_string();
@@ -109,8 +109,8 @@ impl RelateI for Relate {
             } else {
                 if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<RelationSideKick, serde_json::error::Error> {
                     op(Err(v))
-                } 
-            }            
-        }         
+                }
+            }
+        }
     }
 }

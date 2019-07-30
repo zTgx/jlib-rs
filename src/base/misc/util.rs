@@ -1,12 +1,12 @@
 
-use super::constants::{CURVE_ORDER, CURVE_ZERO};
+use crate::base::data::constants::{CURVE_ORDER, CURVE_ZERO};
 use ring::{digest};
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 use basex_rs::BaseX;
-use crate::base::keypair::{Keypair, KeypairBuilder};
-use crate::base::seed::*;
+use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
+use crate::base::wallet::seed::*;
 
 pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
     //append vs.extend

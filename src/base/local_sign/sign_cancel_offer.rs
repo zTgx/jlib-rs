@@ -5,18 +5,18 @@ use std::rc::Rc;
 
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 
-use crate::base::signed_obj::{
-    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, TxJsonOfferSequenceBuilder, 
-    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder, 
+use crate::base::serialize::signed_obj::{
+    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, TxJsonOfferSequenceBuilder,
+    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder,
 };
 
-use crate::base::constants::{
-    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY, TX_OFFER_SEQUENCE, 
+use crate::base::data::constants::{
+    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY, TX_OFFER_SEQUENCE,
 };
 
-use crate::base::keypair::*;
+use crate::base::wallet::keypair::*;
 
-use crate::base::sign_tx::{SignTx, PRE_FIELDS};
+use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 
 pub trait FormatSignTxJson {

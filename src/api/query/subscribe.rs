@@ -10,10 +10,10 @@ use serde_json::{Value};
 use crate::misc::config::*;
 use crate::message::query::subscribe::*;
 use crate::message::common::command_trait::CommandConversion;
-use crate::base::util::downcast_to_string;
+use crate::base::misc::util::downcast_to_string;
 
 pub trait SubscribeI {
-    fn with_config<F>(&self, config: Box<Rc<Config>>, op: F) 
+    fn with_config<F>(&self, config: Box<Rc<Config>>, op: F)
     where F: Fn(Result<SubscribeResponse, serde_json::error::Error>);
 }
 
@@ -25,14 +25,14 @@ impl Subscribe {
     }
 }
 
-impl SubscribeI for Subscribe { 
-    fn with_config<F>(&self, config: Box<Rc<Config>>, op: F) 
+impl SubscribeI for Subscribe {
+    fn with_config<F>(&self, config: Box<Rc<Config>>, op: F)
     where F: Fn(Result<SubscribeResponse, serde_json::error::Error>) {
 
         let ws_message = Rc::new(Cell::new("".to_string()));
 
         connect(config.addr, |out| {
-            
+
             let cloned_ws_message = ws_message.clone();
 
             if let Ok(command) = SubscribeCommand::default().to_string() {
@@ -56,5 +56,5 @@ impl SubscribeI for Subscribe {
                 op(Ok(x))
             }
         }
-    } 
+    }
 }

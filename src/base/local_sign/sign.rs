@@ -1,5 +1,5 @@
-    
-    
+
+
 extern crate secp256k1;
 
 use secp256k1::key::{SecretKey, PublicKey};
@@ -7,7 +7,7 @@ use secp256k1::{Secp256k1, Message};
 
 use ring::{digest};
 use cast_rs::hex_t;
-use crate::base::keypair::*;
+use crate::base::wallet::keypair::*;
 
 pub struct SignatureX <'a> {
     pub keypair: &'a Keypair,
@@ -33,11 +33,11 @@ impl <'a> SignatureX <'a> {
         let message = Message::from_slice(message).unwrap();
         let secret_key = SecretKey::from_slice(key).expect("32 bytes, within curve order");
         let signature = sign.sign(&message, &secret_key);
-        // println!("tx_json signed : {:?}", signature.to_string().to_ascii_uppercase());   
+        // println!("tx_json signed : {:?}", signature.to_string().to_ascii_uppercase());
 
-        signature.to_string().to_ascii_uppercase()    
+        signature.to_string().to_ascii_uppercase()
     }
-    
+
     /*
     @verify
     message  : [u8]    /  raw message bytes.
@@ -78,4 +78,3 @@ impl <'a> SignatureX <'a> {
         return signed_hex_string;
     }
 }
-

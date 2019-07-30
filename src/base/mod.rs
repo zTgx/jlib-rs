@@ -1,32 +1,9 @@
 
-// #[macro_use]
-// extern crate typename;
-
-pub mod sign;
-pub mod brorand;
-pub mod util;
-pub mod constants;
-pub mod base_data;
+pub mod data;
+pub mod local_sign;
+pub mod misc;
+pub mod serialize;
 pub mod wallet;
-pub mod config;
-pub mod seed;
-pub mod keypair;
-pub mod address;
-
-pub mod inverse_fields_map;
-pub mod types_map;
-pub mod serialized_type;
-
-pub mod amount;
-pub mod type_obj;
-pub mod signed_obj;
-
-//sign
-pub mod sign_tx;
-pub mod sign_pay;
-pub mod sign_relate;
-pub mod sign_create_offer;
-pub mod sign_cancel_offer;
 
 //Serialize
 use std::collections::HashMap;
@@ -35,6 +12,23 @@ use std::collections::HashMap;
 pub trait TWHashMap {
     fn get_value_from_key(&self, s: &str) -> Option<&u16>;
     fn get_key_from_value(&self, i: u16) -> Option<&'static str>;
+}
+
+lazy_static! {
+    pub static ref G_TRANSACTION_TYPE_MAP: TransactionTypeMap = {
+        let map = TransactionTypeMap::new();
+        map
+    };
+
+    pub static ref G_TRANSACTION_RESULT_MAP: TransactionResultMap = {
+        let map = TransactionResultMap::new();
+        map
+    };
+
+    pub static ref G_LEDGER_ENTRY_TYPE_MAP: LedgerEntryTypeMap = {
+        let map = LedgerEntryTypeMap::new();
+        map
+    };
 }
 
 /*
@@ -164,23 +158,6 @@ impl TWHashMap for TransactionResultMap {
     }
 }
 
-
-/*
- * return the transaction type in string
- * Data defined in the ledger entry:
-  AccountRoot: [97].concat(sleBase,[
-  Contract: [99].concat(sleBase,[
-  DirectoryNode: [100].concat(sleBase,[
-  EnabledFeatures: [102].concat(sleBase,[
-  FeeSettings: [115].concat(sleBase,[
-  GeneratorMap: [103].concat(sleBase,[
-  LedgerHashes: [104].concat(sleBase,[
-  Nickname: [110].concat(sleBase,[
-  Offer: [111].concat(sleBase,[
-  SkywellState: [114].concat(sleBase,[
-
-  TODO: add string input handles
-*/
 #[derive(Debug, Default)]
 pub struct LedgerEntryTypeMap {
     pub m: HashMap<&'static str, u16>,
@@ -224,21 +201,4 @@ impl TWHashMap for LedgerEntryTypeMap {
 
         k
     }
-}
-
-lazy_static! {
-    pub static ref G_TRANSACTION_TYPE_MAP: TransactionTypeMap = {
-        let map = TransactionTypeMap::new();
-        map
-    };
-
-    pub static ref G_TRANSACTION_RESULT_MAP: TransactionResultMap = {
-        let map = TransactionResultMap::new();
-        map
-    };
-
-    pub static ref G_LEDGER_ENTRY_TYPE_MAP: LedgerEntryTypeMap = {
-        let map = LedgerEntryTypeMap::new();
-        map
-    };
 }

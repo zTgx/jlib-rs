@@ -12,12 +12,12 @@ use crate::message::transaction::offer_cancel::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::api::query::account_info::*;
 use crate::message::transaction::local_sign_tx::LocalSignTx;
-use crate::base::util::{downcast_to_string,downcast_to_usize};
+use crate::base::misc::util::{downcast_to_string,downcast_to_usize};
 
-use crate::base::sign_tx::{SignTx};
+use crate::base::local_sign::sign_tx::{SignTx};
 
 pub trait CancelOfferI {
-    fn cancel_offer<F>(&self, offer_sequence: u64, op: F) 
+    fn cancel_offer<F>(&self, offer_sequence: u64, op: F)
     where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>);
 }
 
@@ -51,8 +51,8 @@ impl CancelOffer {
     }
 }
 
-impl CancelOfferI for CancelOffer { 
-    fn cancel_offer<F>(&self, offer_sequence: u64, op: F) 
+impl CancelOfferI for CancelOffer {
+    fn cancel_offer<F>(&self, offer_sequence: u64, op: F)
     where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
@@ -61,14 +61,14 @@ impl CancelOfferI for CancelOffer {
         let secret_rc  = Rc::new(Cell::new(String::from(self.secret.as_str())));
 
         let offer_sequence_rc = Rc::new(Cell::new(offer_sequence));
-        
-        connect(self.config.addr, |out| { 
+
+        connect(self.config.addr, |out| {
             let copy = info.clone();
 
             let account        = account_rc.clone();
             let secret         = secret_rc.clone();
             let offer_sequence = offer_sequence_rc.clone();
-            
+
             let tx_json = OfferCancelTxJson::new(account.take(),  offer_sequence.take());
             if self.config.local_sign {
                 //Get Account Seq
@@ -86,12 +86,12 @@ impl CancelOfferI for CancelOffer {
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());
-                
-                out.close(CloseCode::Normal) 
+
+                out.close(CloseCode::Normal)
             }
-        
+
         }).unwrap();
-        
+
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             let status = x["status"].to_string();
@@ -103,8 +103,8 @@ impl CancelOfferI for CancelOffer {
             } else {
                 if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<OfferCancelSideKick, serde_json::error::Error> {
                     op(Err(v))
-                } 
+                }
             }
-        }         
+        }
     }
 }

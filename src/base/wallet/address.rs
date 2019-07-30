@@ -7,14 +7,14 @@ use ring::{digest};
 // use secp256k1::key::PublicKey;
 // use secp256k1::Secp256k1;
 // use secp256k1::key::ONE_KEY;
-// use secp256k1::constants::*;    
+// use secp256k1::constants::*;
 
 extern crate crypto;
 use crypto::ripemd160::Ripemd160 ;
 use crypto::digest::Digest;
 
-use crate::base::*;
-use crate::base::keypair::*;
+use crate::base::misc::util::*;
+use crate::base::wallet::keypair::*;
 
 #[derive(Debug)]
 pub struct WalletAddressProperty {
@@ -77,7 +77,7 @@ impl <'a> WalletAddressBuilder <'a> {
 
         let ret: &mut [u8] = &mut [0u8;20];
         ripemd160x.result(ret);
-        
+
         let ripemd160x= ripemd160x.result_str();
 
         let mut xy = "".to_string();
@@ -86,15 +86,15 @@ impl <'a> WalletAddressBuilder <'a> {
             let mut version: Vec<u8> = [0].to_vec();
 
             //4. concat args
-            util::concat_args(&mut version, &ret.to_vec());
+            concat_args(&mut version, &ret.to_vec());
 
             //5. encodechecked.
-            let checked: Vec<u8> = util::encode_checked(&mut version);
+            let checked: Vec<u8> = encode_checked(&mut version);
 
             //6. concat args
-            util::concat_args(&mut version, &checked);
+            concat_args(&mut version, &checked);
 
-            let address = util::encode_raw(&mut version);
+            let address = encode_raw(&mut version);
 
             xy = address;
         }

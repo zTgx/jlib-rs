@@ -10,10 +10,10 @@ use serde_json::{Value};
 use crate::misc::config::*;
 use crate::message::query::brokerage::*;
 use crate::message::common::command_trait::CommandConversion;
-use crate::base::util::downcast_to_string;
+use crate::base::misc::util::downcast_to_string;
 
 pub trait BrokerageI {
-    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F) 
+    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F)
     where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) ;
 }
 
@@ -25,8 +25,8 @@ impl Brokerage {
     }
 }
 
-impl BrokerageI for Brokerage { 
-    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F) 
+impl BrokerageI for Brokerage {
+    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F)
     where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
@@ -34,8 +34,8 @@ impl BrokerageI for Brokerage {
         let issuer_rc = Rc::new(Cell::new(issuer));
         let app_rc = Rc::new(Cell::new(app));
         let currency_rc = Rc::new(Cell::new(currency));
-        
-        connect(config.addr, |out| { 
+
+        connect(config.addr, |out| {
             let copy = info.clone();
 
             let issuer = issuer_rc.clone();
@@ -50,12 +50,12 @@ impl BrokerageI for Brokerage {
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());
-                
-                out.close(CloseCode::Normal) 
+
+                out.close(CloseCode::Normal)
             }
-        
+
         }).unwrap();
-        
+
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             let status = x["status"].to_string();
@@ -69,6 +69,6 @@ impl BrokerageI for Brokerage {
                     op(Err(v))
                 }
             }
-        }        
+        }
     }
 }

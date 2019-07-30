@@ -5,19 +5,19 @@ use std::rc::Rc;
 
 use crate::message::transaction::relation::{RelationTxJson};
 
-use crate::base::signed_obj::{
+use crate::base::serialize::signed_obj::{
     SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, TxJsonRelationTypeBuilder,
     TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder,
     TxJsonTargetBuilder, TxJsonLimitAmountBuilder,
 };
 
-use crate::base::constants::{
+use crate::base::data::constants::{
     TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY,
     TX_RELATION_TYPE, TX_TARGET, TX_LIMIT_AMOUNT
 };
 
-use crate::base::keypair::*;
-use crate::base::sign_tx::{SignTx, PRE_FIELDS};
+use crate::base::wallet::keypair::*;
+use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 

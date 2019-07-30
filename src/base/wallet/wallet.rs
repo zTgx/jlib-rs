@@ -1,13 +1,13 @@
 
-use crate::base::brorand::*;
-use crate::base::*;
+use crate::base::misc::brorand::*;
+use crate::base::misc::util::*;
 
-use crate::base::config::*;
-use crate::base::constants::PASSWORD_LEN;
+use crate::base::wallet::config::*;
+use crate::base::data::constants::PASSWORD_LEN;
 
-use crate::base::seed::*;
-use crate::base::keypair::*;
-use crate::base::address::*;
+use crate::base::wallet::seed::*;
+use crate::base::wallet::keypair::*;
+use crate::base::wallet::address::*;
 
 // 钱包生成器
 #[derive(Debug)]
@@ -55,22 +55,22 @@ impl <'a> WalletBuilder <'a> {
         let mut version: Vec<u8> = [33].to_vec();
 
         //4. concat args
-        util::concat_args(&mut version, &u);
+        concat_args(&mut version, &u);
 
         //5. encodechecked.
-        let checked: Vec<u8> = util::encode_checked(&mut version);
+        let checked: Vec<u8> = encode_checked(&mut version);
 
         //6. concat args
-        util::concat_args(&mut version, &checked);
+        concat_args(&mut version, &checked);
 
-        util::encode_raw(&mut version)
+        encode_raw(&mut version)
     }
 }
 
 
 #[derive(Debug)]
 pub struct Wallet {
-    pub key_type: KeyType, 
+    pub key_type: KeyType,
     pub address : WalletAddress,  //j开头的钱包地址
     pub secret  : Seed,  //secret seed
     pub keypair : Option<Keypair>, //公钥私钥对

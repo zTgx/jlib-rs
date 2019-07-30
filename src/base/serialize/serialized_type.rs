@@ -1,5 +1,5 @@
-use crate::base::amount::*;
-use crate::base::*; //util
+use crate::base::misc::amount::*;
+use crate::base::misc::*; //util
 use typename::TypeName;
 
 extern crate num;
@@ -7,7 +7,7 @@ use num::bigint::{BigInt, ToBigInt, Sign};
 use std::ops::{BitAndAssign, BitOrAssign, BitOr, BitAnd, Shr, Mul};
 use num::{Zero};
 
-use crate::base::util::{decode_j_address};
+use crate::base::misc::util::{decode_j_address};
 
 pub trait SerializedType {
   fn serialize(&self) -> Vec<u8>;

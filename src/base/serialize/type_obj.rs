@@ -1,12 +1,12 @@
-use crate::base::inverse_fields_map::INVERSE_FIELDS_MAP;
-use crate::base::serialized_type::*;    
+use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
+use crate::base::serialize::serialized_type::*;    
 
 //TypeObjBulder usage.
 //TypeObj: 通过TxJson中任意字段来计算在序列化过程中的【坐标】
 //let type_obj = TypeObjBuilder::new("key").build();
 //println!("type_obj: {:?}", type_obj);
 
-//header 
+//header
 pub trait SerializeHeader {
     fn serialize_header(&self, so: &mut Vec<u8>);
 }

@@ -13,9 +13,9 @@ use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::Amount;
 use crate::api::query::account_info::*;
 use crate::message::transaction::local_sign_tx::LocalSignTx;
-use crate::base::util::{downcast_to_string,downcast_to_usize};
+use crate::base::misc::util::{downcast_to_string,downcast_to_usize};
 
-use crate::base::sign_tx::{SignTx};
+use crate::base::local_sign::sign_tx::{SignTx};
 use OfferType;
 
 pub trait CreateOfferI {

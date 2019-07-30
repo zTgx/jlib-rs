@@ -1,13 +1,13 @@
 use crate::message::transaction::transaction::{TxJson};
-use crate::base::signed_obj::*;
+use crate::base::serialize::signed_obj::*;
 
-use crate::base::constants::{
+use crate::base::data::constants::{
     TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
     TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE, TX_FLAGS, TX_MEMOS,
 };
 use std::rc::Rc;
-use crate::base::keypair::{Keypair};
-use crate::base::sign_tx::{SignTx, PRE_FIELDS};
+use crate::base::wallet::keypair::{Keypair};
+use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 
 pub trait FormatSignTxJson {

@@ -51,7 +51,7 @@ use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use serde_json::{Value};
-use crate::base::util::{downcast_to_string, check};
+use crate::base::misc::util::{downcast_to_string, check};
 
 use cast_rs::hex_t;
 
@@ -151,7 +151,7 @@ impl CommandConversion for SolidityInitMessage {
 
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -162,7 +162,7 @@ impl CommandConversion for SolidityInitMessage {
 // #[serde(rename_all = "camelCase")]
 pub struct SolidityInvokeTxJson {
     #[serde(rename="Flags")]
-    pub flags: i32,                                                                                                                                                 
+    pub flags: i32,
 
     #[serde(rename="Fee")]
     pub fee: u64,
@@ -184,7 +184,7 @@ pub struct SolidityInvokeTxJson {
 
     #[serde(rename="ContractMethod")]
     contract_method: String,
- 
+
     #[serde(rename="Args")]
     pub args: Vec<Args>,
 }
@@ -199,7 +199,7 @@ impl Args {
         Args {
             arg: arg,
         }
-    } 
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
@@ -217,7 +217,7 @@ impl Arg {
             contract_params_type: contract_params_type,
         }
     }
-}                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+}
 
 impl SolidityInvokeTxJson {
     pub fn new(account: String, destination: String, contract_method: String, args: Vec<Args>) -> Self {
@@ -301,7 +301,7 @@ impl CommandConversion for SolidityInvokeMessage {
 
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -339,7 +339,7 @@ impl ContractAPI for Solidity {
     fn deploy(&self) {
         let info = Rc::new(Cell::new("".to_string()));
 
-        connect(self.config.addr, |out| { 
+        connect(self.config.addr, |out| {
             let copy = info.clone();
 
             if let Ok(command) = self.init_message.to_string() {
@@ -350,10 +350,10 @@ impl ContractAPI for Solidity {
                 let c = msg.as_text()?;
 
                 copy.set(c.to_string());
-                
-                out.close(CloseCode::Normal) 
+
+                out.close(CloseCode::Normal)
             }
-        
+
         }).unwrap();
 
         let resp = downcast_to_string(info);
@@ -373,7 +373,7 @@ impl ContractAPI for Solidity {
     fn invoke(&self) {
         let info = Rc::new(Cell::new("".to_string()));
 
-        connect(self.config.addr, |out| { 
+        connect(self.config.addr, |out| {
             let copy = info.clone();
 
             if let Ok(command) = self.invoke_message.to_string() {
@@ -384,10 +384,10 @@ impl ContractAPI for Solidity {
                 let c = msg.as_text()?;
 
                 copy.set(c.to_string());
-                
-                out.close(CloseCode::Normal) 
+
+                out.close(CloseCode::Normal)
             }
-        
+
         }).unwrap();
 
         let resp = downcast_to_string(info);

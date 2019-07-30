@@ -6,16 +6,15 @@
 //
 //
 
-use crate::base::type_obj::*;
-use crate::base::constants::{
-    TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE, 
+use crate::base::serialize::type_obj::*;
+use crate::base::data::constants::{
+    TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
     TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, TX_MEMO, TX_MEMODATA, SignStreamType,
     TX_OFFER_SEQUENCE, TX_LIMIT_AMOUNT, TX_TARGET, TX_RELATION_TYPE, TXTakerType,
 };
-use crate::base::serialized_type::*;
-use crate::base::amount::*;
+use crate::base::serialize::serialized_type::*;
+use crate::base::misc::amount::*;
 use crate::message::common::amount::Amount as RAmount;
-
 
 //序列化接口
 pub trait TxJsonSerializer {
@@ -74,7 +73,7 @@ impl TxJsonSerializer for TxJsonFlags {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-        
+
         println!("TxJsonFlags so : {:?}", &so);
     }
 }
@@ -1120,7 +1119,7 @@ impl TxJsonSerializer for TxJsonMemos {
 
         let mut i = 0;
         while i < self.value.len() {
-            //get memo, not memos~~~~~~            
+            //get memo, not memos~~~~~~
             // let mut s = TxJsonMemo::new(String::from( self.value[i].as_str() ));
             let s = &mut self.value[i];
             s.serialize_obj(&mut tmp);

@@ -1,19 +1,19 @@
 use crate::message::transaction::offer_create::{OfferCreateTxJson};
 
-use crate::base::signed_obj::{
+use crate::base::serialize::signed_obj::{
     SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder,
     TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder,
     TxJsonTakerBuilder,
 };
 
-use crate::base::constants::{
+use crate::base::data::constants::{
     TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY, TX_TAKERPAYS, TX_TAKERGETS,
     TXTakerType,
 };
 
-use crate::base::keypair::*;
+use crate::base::wallet::keypair::*;
 use std::rc::Rc;
-use crate::base::sign_tx::{SignTx, PRE_FIELDS};
+use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::message::common::amount::Amount;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 
