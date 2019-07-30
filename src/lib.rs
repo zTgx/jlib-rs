@@ -2,10 +2,7 @@
 extern crate lazy_static;
 
 extern crate typename;
-// extern crate secp256k1;
 extern crate rand;
-// extern crate crypto;
-// extern crate ring;
 extern crate serde_json;
 extern crate serde;
 extern crate num;
@@ -19,6 +16,11 @@ pub mod message;
 pub mod misc;
 pub mod api;
 pub mod contracts;
+
+//Wallet
+pub use crate::base::wallet::config::KeyType as WalletType;
+pub use crate::base::wallet::config::WalletConfig as WalletConfig;
+pub use crate::base::wallet::wallet::Wallet as Wallet;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
 //0信任；1授权；3冻结/解冻；
@@ -52,4 +54,20 @@ impl OfferType {
             OfferType::Buy  => { "Buy"  },
         }
     }
+}
+
+//Generate Wallet
+/*
+Wallet DataStruct:
+#[derive(Debug)]
+pub struct Wallet {
+    pub key_type: KeyType,
+    pub address : WalletAddress,   //starts with 'j'
+    pub secret  : Seed,            //secret seed
+    pub keypair : Option<Keypair>, //public key & private key
+}
+*/
+pub fn generate_wallet(wtype: WalletType) -> Wallet {
+    let config = WalletConfig::new(wtype);
+    Wallet::new(&config)
 }
