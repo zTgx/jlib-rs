@@ -15,12 +15,15 @@ fn main() {
     // println!("ryu: {}", printed);
 
 
-    use std::str::FromStr;
-    let big = BigInt::parse_bytes(b"12340000000000000000000000000000000000000000", 10);
-    // println!("big: {:?}", big.unwrap().to_string());
-    let raw = BigInt::from_str(big.unwrap().to_string().as_str());
-    println!("raw : {:?}", raw);
+    // use std::str::FromStr;
+    // let big = BigInt::parse_bytes(b"12340000000000000000000000000000000000000000", 10);
+    // // println!("big: {:?}", big.unwrap().to_string());
+    // let raw = BigInt::from_str(big.unwrap().to_string().as_str());
+    // println!("raw : {:?}", raw);
 
 
+    let v: &[u8] =  &[1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+     let big = BigInt::parse_bytes(b"111111100000000000000000000000", 10).unwrap();
+    println!("arrrrrr: {}", big);
 
 }

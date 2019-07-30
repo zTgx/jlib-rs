@@ -2,6 +2,14 @@ use crate::base::amount::*;
 use crate::base::*; //util
 use typename::TypeName;
 
+extern crate num;
+use num::bigint::{BigInt, BigUint, ToBigInt, Sign};
+use std::ops::{BitAndAssign, BitOrAssign, BitOr, BitAnd, Shr, Mul,Add,MulAssign, BitXor};
+use std::str::FromStr;
+use num::{Zero, One};
+
+use crate::base::util::{decode_j_address};
+
 pub trait SerializedType {
   fn serialize(&self) -> Vec<u8>;
   fn parse(&self);
@@ -192,7 +200,7 @@ impl SerializedType for STHash160 {
 // impl STCurrency {
 //     pub fn new() -> Self {
 //         STCurrency {
-//             id: 
+//             id:
 //         }
 //     }
 // }
@@ -217,14 +225,11 @@ impl STAmount {
 }
 impl SerializedSTAmount for STAmount {
     fn serialize(amount: Amount) -> Vec<u8> {
-
-        // var valueBytes = arraySet(8, 0);
-
         //SWTC
         if amount.is_native {
             // var bn = new BN(amount._value, 10);
             // var valueHex = bn.toString(16);
-            let mut value_hex = amount.value.unwrap().to_str_radix(16);
+            let mut value_hex = amount.value.to_str_radix(16);
             println!("value_hex : {}", value_hex);
 
             // Enforce correct length (64 bits)
@@ -257,7 +262,114 @@ impl SerializedSTAmount for STAmount {
 
             // }
         } else {
-          
+
+            println!("nnnnnnnnnnnnnnnnnnnon native.");
+            let mut so: Vec<u8> = vec![];
+
+            //For other non-native currency
+            //1. Serialize the currency value with offset
+            //Put offset
+            let mut hi = 0;
+            let mut lo = 0;
+
+            let mut big_hi = Zero::zero();
+            let mut big_lo = Zero::zero();
+
+            // First bit: non-native
+            hi |= 1 << 31;
+
+            if !amount.is_zero() {
+                // Second bit: non-negative?
+                if !amount.is_negative() {
+                    hi |= 1 << 30;
+                }
+
+                // Next eight bits: offset/exponent
+                hi |= ((97 + amount.offset) & 0xff) << 22;
+
+                // Remaining 54 bits: mantissa
+                let mut mantissa = amount.value.clone();
+                mantissa = mantissa.shr(32usize);
+
+                let ff = BigInt::parse_bytes(b"3fffff", 16).unwrap();
+                mantissa.bitand_assign(ff);
+
+                big_hi = BigInt::from(hi);
+                big_hi.bitor_assign(mantissa);
+
+                /////////lo
+                //words1 * 0x4ffffff
+                let mut words1 = amount.value.clone();
+                let mut sign = &words1.sign();
+
+                let ff4 = BigInt::parse_bytes(b"4ffffff", 16).unwrap();
+                let mut ret = words1.mul(&ff4);
+                big_lo = ret.to_bigint().unwrap().bitand(BigInt::parse_bytes(b"ffffffff", 16).unwrap());
+                if *sign != Sign::Minus {
+                    big_lo = -1 * big_lo;
+                }
+            }
+
+            let arr = vec![big_hi, big_lo];
+            println!("arr: {:?}", &arr);
+
+            let l = arr.len();
+
+            let mut bl: BigInt = Zero::zero();
+            let mut x: BigInt = Zero::zero();
+            if l != 0 {
+                let index = l - 1 as usize;
+                if let Some(x) = arr.get(index) {
+                    let base32 = BigInt::from(32);
+                    let base16 = BigInt::parse_bytes(b"10000000000", 16);
+                    bl = (l - BigInt::from(1)).checked_mul(&base32).unwrap() + x.checked_div(&base16.unwrap()).unwrap().bitor(&base32);
+
+                    println!("bl: {}", bl);
+                }
+            }
+
+            let mut tmp: BigInt = Zero::zero();
+            let mut tmparray = vec![];
+            let mut i = 0;
+            let bl = format!("{}", bl);
+            let bl = bl.parse::<usize>().unwrap(); //64
+            while i < bl / 8 {
+                if i & 3 == 0 {
+                    tmp = arr[i / 4].clone();
+                    println!("tmp: {}", &tmp);
+
+                }
+
+                let x = tmp.clone().shr(24usize);
+                let b_mask = BigInt::parse_bytes(b"ff", 16).unwrap();
+
+                tmparray.push(x.bitand(b_mask).to_str_radix(10).parse::<u8>().unwrap());
+
+                tmp <<= 8;
+
+                i += 1;
+            }
+            if tmparray.len() > 8 {
+                panic!("Invalid byte array length in AMOUNT value representation");
+            }
+            println!("tmparray: {:?}", tmparray);
+
+            //
+            so.extend_from_slice(&tmparray.as_slice());
+
+            //2. Serialize the currency info with currency code and issuer
+            // Currency (160-bit hash)
+            let tum_bytes = amount.tum_to_bytes();
+            so.extend_from_slice(&tum_bytes);
+            println!("tum_bytes: {:?}", &tum_bytes);
+
+            // Issuer (160-bit hash)
+            let issuer = amount.issuer();
+            println!("issuer: {:?}", &issuer);
+            so.extend_from_slice(&decode_j_address(issuer.to_string()).unwrap());
+            println!("lllllllllllllllast: {:?}",&decode_j_address(issuer.to_string()).unwrap() );
+            println!("so: {:?}", &so);
+            return so;
         }
 
         vec![]
@@ -285,7 +397,7 @@ pub fn serialize_varint(byte_data: &mut Vec<u8>) -> Vec<u8> {
 
         let mut t = [(241 + (val >> 16)) as u8, (val >> 8 & 0xff) as u8, (val & 0xff) as u8].to_vec();
         v.append(&mut t);
-    } 
+    }
 
     v.append(byte_data);
 
@@ -315,7 +427,7 @@ impl SerializedSTVL for STVL {
         let mut v: Vec<u8> = vec![];
         if let Ok(mut data) = hex::decode(value) {
             v = serialize_varint(&mut data);
-        }          
+        }
 
         v
     }
@@ -431,7 +543,7 @@ impl SerializedSTArray for STArray {
 // lazy_static! {
 
 //     pub struct TransactionTypes {
-//         // pub map: HashMap<&'static str, i32> 
+//         // pub map: HashMap<&'static str, i32>
 //     }
 //     impl TransactionTypes {
 //         pub fn get() {
@@ -517,7 +629,7 @@ impl SerializedSTArray for STArray {
 //         "tecDIR_FULL"               => { return 121; },
 //         "tecINSUF_RESERVE_LINE"     => { return 122; },
 //         "tecINSUFFICIENT_RESERVE"   => { return 141; },
-        
+
 //         //Invalid transaction result
 //         _ => { return -1; },
 //     }
@@ -555,7 +667,5 @@ impl SerializedSTArray for STArray {
 
 //         //Invalid input type for ransaction result!
 //         _ => { return "Invalid"; },
-//     }   
+//     }
 // }
-
-

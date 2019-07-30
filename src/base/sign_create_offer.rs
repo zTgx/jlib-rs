@@ -114,6 +114,7 @@ impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
                     self.output.insert(index, amount);
                 },
                 TX_TAKERPAYS => {
+                    println!("TX_TAKERPAYS");
                     let value = &tx_json.taker_pays;
                     println!("tker pays amount: {:?}", value);
 
@@ -122,6 +123,7 @@ impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
                     self.output.insert(index, amount);
                 },
                 TX_TAKERGETS => {
+                    println!("TX_TAKERGETS");
                     let value: &'a Amount = &tx_json.taker_gets;
                     println!("taker gets amount: {:?}", value);
 

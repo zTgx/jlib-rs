@@ -521,6 +521,8 @@ impl <'a> TxJsonTaker <'a> {
 impl <'a> TxJsonSerializer for TxJsonTaker <'a> {
     fn serialize_obj(&mut self, so: &mut Vec<u8>) {
 
+        println!("-------------------serialize name: {}", &self.name);
+
         if self.output.is_some() {
             if let Some(x) = &self.output {
                 so.extend_from_slice(&x);
