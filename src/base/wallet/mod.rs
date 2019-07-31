@@ -25,12 +25,12 @@ pub fn generate_str(version: &mut Vec<u8>, so: &Vec<u8>) -> String {
     BaseX::encode(version.as_mut_slice())
 }
 
-pub fn check_address(address: &String) -> bool {
+pub fn check_address(_address: &String) -> bool {
 
     true
 }
 
-pub fn check_secret(secret: &String) -> bool {
+pub fn check_secret(_secret: &String) -> bool {
 
     true
 }

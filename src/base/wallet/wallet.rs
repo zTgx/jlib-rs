@@ -24,7 +24,7 @@ impl <'a> WalletBuilder <'a> {
         let seed = Seed::build(&self.config.key_type);
 
         //keypair
-        let key_pair = KeypairBuilder::new(&seed).build();
+        let key_pair = KeypairBuilder::new(&seed, &self.config.key_type).build();
 
         //address
         let address = WalletAddress::build(&key_pair);
