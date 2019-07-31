@@ -19,10 +19,10 @@ streams: Vec<String>
 #[derive(Serialize, Deserialize)]
 pub struct SubscribeCommand {
     #[serde(rename="id")]
-    id: u64, 
+    id: u64,
 
     #[serde(rename="command")]
-    command: String, 
+    command: String,
 
     #[serde(rename="streams")]
     streams: Vec<String>,
@@ -69,7 +69,7 @@ impl CommandConversion for SubscribeCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -77,7 +77,7 @@ impl CommandConversion for SubscribeCommand {
 //实现default方法
 impl Default for SubscribeCommand {
     fn default() -> Self {
-        SubscribeCommand { 
+        SubscribeCommand {
             id: 0,
             command: "subscribe".to_string(),
             streams: vec!["ledger".to_string(),"server".to_string(),"transactions".to_string()],
@@ -94,31 +94,31 @@ pub struct SubscribeResponse {
     pub fee_base: u64,
 
     #[serde(rename="fee_ref")]
-    fee_ref: u64, 
+    fee_ref: u64,
 
     #[serde(rename="hostid")]
-    hostid: String,
+    hostid: Option<String>,
 
-    #[serde(rename="ledger_hash")] 
+    #[serde(rename="ledger_hash")]
     ledger_hash: String,
 
     #[serde(rename="ledger_index")]
     ledger_index: u64,
 
     #[serde(rename="ledger_time")]
-    ledger_time: u64, 
+    ledger_time: u64,
 
     #[serde(rename="load_base")]
-    load_base: u64, 
+    load_base: Option<u64>,
 
     #[serde(rename="load_factor")]
-    load_factor: u64,
-    
+    load_factor: Option<u64>,
+
     #[serde(rename="pubkey_node")]
-    pubkey_node: String, 
+    pubkey_node: Option<String>,
 
     #[serde(rename="random")]
-    random: String,
+    random: Option<String>,
 
     #[serde(rename="reserve_base")]
     reserve_base: u64,
@@ -127,31 +127,38 @@ pub struct SubscribeResponse {
     reserve_inc: u64,
 
     #[serde(rename="server_status")]
-    server_status: String,
+    server_status: Option<String>,
 
     #[serde(rename="validated_ledgers")]
-    validated_ledgers: String, 
+    validated_ledgers: String,
+
+    #[serde(rename="txn_count")]
+    txn_count: Option<u64>,
+
+    #[serde(rename="type")]
+    ttype: Option<String>,
+
 }
-impl SubscribeResponse {
-    pub fn with_params(fee_base: u64, fee_ref: u64, hostid: String, ledger_hash: String, ledger_index: u64, ledger_time: u64,
-                       load_base: u64, load_factor: u64, pubkey_node: String, random: String, reserve_base: u64, reserve_inc: u64,
-                       server_status: String, validated_ledgers: String) -> Box<Self> {
-        
-        Box::new( SubscribeResponse {
-            fee_base: fee_base,
-            fee_ref: fee_ref,
-            hostid: hostid,
-            ledger_hash: ledger_hash,
-            ledger_index: ledger_index,
-            ledger_time: ledger_time,
-            load_base: load_base,
-            load_factor: load_factor,
-            pubkey_node: pubkey_node,
-            random: random,
-            reserve_base: reserve_base,
-            reserve_inc: reserve_inc,
-            server_status: server_status,
-            validated_ledgers: validated_ledgers,
-        })
-    }
-}
+// impl SubscribeResponse {
+//     pub fn with_params(fee_base: u64, fee_ref: u64, hostid: String, ledger_hash: String, ledger_index: u64, ledger_time: u64,
+//                        load_base: u64, load_factor: u64, pubkey_node: String, random: String, reserve_base: u64, reserve_inc: u64,
+//                        server_status: String, validated_ledgers: String) -> Box<Self> {
+//
+//         Box::new( SubscribeResponse {
+//             fee_base: fee_base,
+//             fee_ref: fee_ref,
+//             hostid: hostid,
+//             ledger_hash: ledger_hash,
+//             ledger_index: ledger_index,
+//             ledger_time: ledger_time,
+//             load_base: load_base,
+//             load_factor: load_factor,
+//             pubkey_node: pubkey_node,
+//             random: random,
+//             reserve_base: reserve_base,
+//             reserve_inc: reserve_inc,
+//             server_status: server_status,
+//             validated_ledgers: validated_ledgers,
+//         })
+//     }
+// }

@@ -79,3 +79,12 @@ pub enum WalletType {
 pub fn generate_wallet(wtype: WalletType) -> Wallet {
     Wallet::new(wtype)
 }
+
+//Subscribe
+mod AAA {
+    pub fn test() {
+        println!("...");
+    }
+}
+
+pub use AAA::test;
