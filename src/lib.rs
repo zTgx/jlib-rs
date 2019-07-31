@@ -21,7 +21,6 @@ pub mod contracts;
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-//0信任；1授权；3冻结/解冻；
 //Default` cannot be derived for enums, only structs
 #[derive(Debug)]
 pub enum RelationType {
@@ -60,9 +59,16 @@ Wallet DataStruct:
 #[derive(Debug)]
 pub struct Wallet {
     pub key_type: WalletType,
-    pub address : WalletAddress,   //starts with 'j'
-    pub secret  : String,          //secret seed
-    pub keypair : Option<Keypair>, //public key & private key
+    pub address : String,    //starts with 'j'
+    pub secret  : String,    //secret seed
+    pub keypair : Keypair,   //public key & private key
+}
+
+Keypair DataStruct:
+#[derive(Debug, Clone)]
+pub struct Keypair {
+    pub private_key: String, //hex string
+    pub public_key: String,  //hex string
 }
 */
 
