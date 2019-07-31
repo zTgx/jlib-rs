@@ -1,8 +1,10 @@
 
 use crate::base::ring::{digest};
 
-use crate::base::crypto::ripemd160::Ripemd160 ;
-use crate::base::crypto::digest::Digest;
+// use crate::base::crypto::ripemd160::Ripemd160 ;
+// use crate::base::crypto::digest::Digest;
+
+use crate::base::curve::ripemd160::JRipemd160;
 
 use crate::base::misc::util::*;
 use crate::base::wallet::keypair::*;
@@ -42,13 +44,11 @@ impl <'a> WalletAddressBuilder <'a> {
 
         let input = key;
 
-        let mut ripemd160x = Ripemd160::new();
-        ripemd160x.input(&input);
-
+        let mut ripemd160 = JRipemd160::new();
+        ripemd160.input(&input);
         let ret: &mut [u8] = &mut [0u8;20];
-        ripemd160x.result(ret);
-
-        let ripemd160x= ripemd160x.result_str();
+        ripemd160.result(ret);
+        let ripemd160x= ripemd160.result_str();
 
         let mut xy = "".to_string();
         if let Ok(_args) = hex::decode(ripemd160x) {
