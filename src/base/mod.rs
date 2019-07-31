@@ -7,6 +7,7 @@ pub mod local_sign;
 pub mod misc;
 pub mod serialize;
 pub mod wallet;
+pub mod curve;
 
 //Serialize
 use std::collections::HashMap;

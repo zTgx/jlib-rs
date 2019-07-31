@@ -1,16 +1,12 @@
 
-use crate::base::misc::brorand::*;
-use crate::base::misc::util::*;
-
 use crate::base::wallet::config::*;
-use crate::base::data::constants::PASSWORD_LEN;
-
 use crate::base::wallet::keypair::*;
 use crate::base::wallet::address::WalletAddress;
+use crate::base::wallet::seed::Seed;
 
 use crate::WalletType;
 
-// 钱包生成器
+//WalletBuilder
 #[derive(Debug)]
 pub struct WalletBuilder <'a> {
     pub config: &'a WalletConfig,
@@ -24,9 +20,8 @@ impl <'a> WalletBuilder <'a> {
     }
 
     pub fn build(&self) -> Wallet {
-
         //seed
-        let seed = self.generate();
+        let seed = Seed::build(&self.config.key_type);
 
         //keypair
         let key_pair = KeypairBuilder::new(&seed).build();
@@ -41,38 +36,14 @@ impl <'a> WalletBuilder <'a> {
             keypair : key_pair,
         }
     }
-
-    //private method
-    fn generate(&self) -> String {
-        //1. Generete 16 random data
-        let u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
-
-        //2. add secp256k1
-        let _opt = "secp256k1";
-
-        //3. encodeSeed function
-        let mut version: Vec<u8> = [33].to_vec();
-
-        //4. concat args
-        concat_args(&mut version, &u);
-
-        //5. encodechecked.
-        let checked: Vec<u8> = encode_checked(&mut version);
-
-        //6. concat args
-        concat_args(&mut version, &checked);
-
-        encode_raw(&mut version)
-    }
 }
-
 
 #[derive(Debug)]
 pub struct Wallet {
     pub key_type: WalletType,
-    pub address : String,          //j开头的钱包地址
-    pub secret  : String,          //secret seed
-    pub keypair : Keypair,         //公钥私钥对
+    pub address : String,
+    pub secret  : String,
+    pub keypair : Keypair,
 }
 
 impl Wallet {

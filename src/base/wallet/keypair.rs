@@ -1,13 +1,11 @@
 use crate::base::secp256k1::key::{ SecretKey, PublicKey };
 use crate::base::secp256k1::Secp256k1;
-
-// use crate::base::wallet::seed::*;
 use crate::base::misc::util::*;
 
 #[derive(Debug, Clone)]
 pub struct Keypair {
-    pub private_key: String, //hex string 私钥
-    pub public_key: String,  //hex string 公钥
+    pub private_key: String, //hex string
+    pub public_key: String,  //hex string
 }
 
 impl Keypair {
