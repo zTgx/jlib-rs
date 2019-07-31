@@ -1,36 +1,10 @@
 
-use crate::base::ring::{digest};
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 use basex_rs::BaseX;
 use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
 use crate::WalletType;
-
-pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
-    //append vs.extend
-    left.extend(right);
-}
-
-pub fn encode_checked(x: &mut Vec<u8>) -> Vec<u8> {
-    let vv: &[u8] = x.as_slice();
-
-    let ac = digest::digest(&digest::SHA256, vv);
-    let checked = digest::digest(&digest::SHA256, &ac.as_ref());
-    let xx: Vec<u8> = checked.as_ref().iter().map(|c| {
-        let x = format!("{:x}", c);
-        x.as_str().chars().nth(0).unwrap() as u8
-    }).collect::<Vec<u8>>();
-
-    xx.get(..4).unwrap().to_vec()
-}
-
-pub fn encode_raw(x: &mut Vec<u8>) -> String {
-    BaseX::encode(x.as_mut_slice())
-}
-
-
-
 
 pub fn get_keypair_from_secret(secret: &String) -> Keypair {
     let wtype = fetch_wtype_from_secret(&secret);

@@ -20,7 +20,7 @@ impl Seed {
         //     private_key: "00CB0838815F8E735262EEDC4C111D1940370F1C412F98A237BAD68C2FAC623662",
         //     public_key: "020769117B8AC2C88921143E834659C2D7492DF65610610A80F0EB5859D80A0A65"
         // }
-        
+
         //2. dependen on type decide which curve to use secp256k1/de255119
         //3. encodeSeed function
         let mut version: Vec<u8>; //default secp256k1
