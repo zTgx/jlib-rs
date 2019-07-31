@@ -69,8 +69,8 @@ impl Amount {
                 // if (base_wallet.isValidAddress(in_json.issuer)) {
                 //TODO, need to find a better way for extracting the exponent and digits
                 // let vpow = Amount::calc_exponential();
-                let vpow = 0;//str_t::to_expo(ramount.value.as_str()).unwrap();
-                let vpow = -2;//str_t::get_exponent(&vpow);
+                let vpow = str_t::to_expo(ramount.value.as_str()).unwrap();
+                let vpow = str_t::get_exponent(&vpow);
                 println!("vpow : {}", vpow);
 
                 let offset = 15 - vpow;
