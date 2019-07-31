@@ -17,10 +17,8 @@ pub mod misc;
 pub mod api;
 pub mod contracts;
 
-//Wallet
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Default` cannot be derived for enums, only structs
 #[derive(Debug)]
 pub enum RelationType {
@@ -72,7 +70,6 @@ pub struct Keypair {
 }
 */
 
-//key的加密算法：ed25519 / secp256k1
 #[derive(Debug, Copy, Clone)]
 pub enum WalletType {
     SECP256K1,

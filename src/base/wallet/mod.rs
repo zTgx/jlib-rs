@@ -32,5 +32,6 @@ pub fn check_address(_address: &String) -> bool {
 
 pub fn check_secret(_secret: &String) -> bool {
 
+
     true
 }
