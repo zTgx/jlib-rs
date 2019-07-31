@@ -7,27 +7,23 @@ use crate::base::crypto::digest::Digest;
 use crate::base::misc::util::*;
 use crate::base::wallet::keypair::*;
 
-#[derive(Debug)]
-pub struct WalletAddressProperty {
-    pub address: String,
-}
-impl WalletAddressProperty {
-    pub fn new(address: String) -> Self {
-        WalletAddressProperty {
-            address: address,
-        }
-    }
-}
+// #[derive(Debug)]
+// pub struct WalletAddressProperty {
+//     pub address: String,
+// }
+// impl WalletAddressProperty {
+//     pub fn new(address: String) -> Self {
+//         WalletAddressProperty {
+//             address: address,
+//         }
+//     }
+// }
 
 #[derive(Debug)]
-pub struct WalletAddress {
-    pub property: WalletAddressProperty,
-}
+pub struct WalletAddress {}
 impl WalletAddress {
-    pub fn new(property: WalletAddressProperty) -> Self {
-        WalletAddress {
-            property: property,
-        }
+    pub fn build(key_pair: &Keypair) -> String {
+        WalletAddressBuilder::new(&key_pair).build()
     }
 }
 
@@ -42,15 +38,11 @@ impl <'a> WalletAddressBuilder <'a> {
         }
     }
 
-    pub fn build(&self) -> WalletAddress {
-        let property = self.generate();
-
-        WalletAddress {
-            property: property,
-        }
+    pub fn build(&self) -> String {
+        self.generate()
     }
 
-    pub fn generate(&self) -> WalletAddressProperty {
+    pub fn generate(&self) -> String {
         let mut key: Vec<u8> = vec![0];
         if let Ok(x) = hex::decode(&self.key_pair.public_key) {
             // println!("address key : {:?}", key);
@@ -90,9 +82,7 @@ impl <'a> WalletAddressBuilder <'a> {
             xy = address;
         }
 
-        WalletAddressProperty {
-            address: xy,
-        }
+        xy
     }
 
     // pub fn get(&self) -> String {
