@@ -6,7 +6,6 @@ use std::any::Any;
 use std::cell::Cell;
 use basex_rs::BaseX;
 use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
-use crate::base::wallet::seed::*;
 
 pub fn concat_args(left: &mut Vec<u8>, right: &Vec<u8>) {
     //append vs.extend
@@ -67,8 +66,8 @@ pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
 pub fn get_keypair_from_secret(secret: &String) -> Keypair {
     //seed
     let seed = secret;
-    let seed_property = SeedProperty::new(&seed, 16);
-    let seed = SeedBuilder::new(seed_property).build();
+    // let seed_property = SeedProperty::new(&seed, 16);
+    // let seed = SeedBuilder::new(seed_property).build();
 
     //keypair
     let key_pair = KeypairBuilder::new(&seed).build();

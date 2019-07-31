@@ -52,7 +52,7 @@ impl <'a> WalletAddressBuilder <'a> {
 
     pub fn generate(&self) -> WalletAddressProperty {
         let mut key: Vec<u8> = vec![0];
-        if let Ok(x) = hex::decode(&self.key_pair.property.public_key) {
+        if let Ok(x) = hex::decode(&self.key_pair.public_key) {
             // println!("address key : {:?}", key);
             key = x;
         }

@@ -90,7 +90,7 @@ impl <'a> FormatSignTxJson for SignTxCancelOffer <'a> {
                     output.insert(index, transaction_type);
                 },
                 TX_SIGNING_PUB_KEY => {
-                    let value = String::from( self.keypair.property.public_key.as_str() );
+                    let value = String::from( self.keypair.public_key.as_str() );
                     let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
                     output.insert(index, signing_pub_key);
                 },

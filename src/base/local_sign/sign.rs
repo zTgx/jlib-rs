@@ -64,7 +64,7 @@ impl <'a> SignatureX <'a> {
         println!("hash : {}", hash);
         let message = hash.get(0..64).unwrap().to_ascii_uppercase();
         println!("message: {:?}", message);
-        let private_key = &self.keypair.property.secret_key;
+        let private_key = &self.keypair.private_key;
 //        let private_key = util::get_keypair_from_secret(&self.secret).property.secret_key;
         let key = &hex_t::decode(private_key).unwrap()[1..];
 

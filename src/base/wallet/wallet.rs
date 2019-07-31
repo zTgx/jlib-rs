@@ -5,7 +5,6 @@ use crate::base::misc::util::*;
 use crate::base::wallet::config::*;
 use crate::base::data::constants::PASSWORD_LEN;
 
-use crate::base::wallet::seed::*;
 use crate::base::wallet::keypair::*;
 use crate::base::wallet::address::*;
 
@@ -27,10 +26,8 @@ impl <'a> WalletBuilder <'a> {
     pub fn build(&self) -> Wallet {
 
         //seed
-        let seed = self.generate();//"sn37nYrQ6KPJvTFmaBYokS3FjXUWd";
-        let seed_property = SeedProperty::new(&seed, 16);
-        let seed = SeedBuilder::new(seed_property).build();
-
+        let seed = self.generate();
+        
         //keypair
         let key_pair = KeypairBuilder::new(&seed).build();
 
@@ -39,9 +36,9 @@ impl <'a> WalletBuilder <'a> {
 
         Wallet {
             key_type: self.config.key_type,
-            address : address,//"jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string(), //test
+            address : address,
             secret  : seed,
-            keypair : Some(key_pair),
+            keypair : key_pair,
         }
     }
 
@@ -73,9 +70,9 @@ impl <'a> WalletBuilder <'a> {
 #[derive(Debug)]
 pub struct Wallet {
     pub key_type: WalletType,
-    pub address : WalletAddress,  //j开头的钱包地址
-    pub secret  : Seed,  //secret seed
-    pub keypair : Option<Keypair>, //公钥私钥对
+    pub address : WalletAddress,   //j开头的钱包地址
+    pub secret  : String,          //secret seed
+    pub keypair : Keypair,         //公钥私钥对
 }
 
 impl Wallet {

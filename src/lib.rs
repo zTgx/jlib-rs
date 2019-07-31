@@ -59,9 +59,9 @@ impl OfferType {
 Wallet DataStruct:
 #[derive(Debug)]
 pub struct Wallet {
-    pub key_type: KeyType,
+    pub key_type: WalletType,
     pub address : WalletAddress,   //starts with 'j'
-    pub secret  : Seed,            //secret seed
+    pub secret  : String,          //secret seed
     pub keypair : Option<Keypair>, //public key & private key
 }
 */

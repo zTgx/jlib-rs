@@ -1,77 +1,41 @@
 use crate::base::secp256k1::key::{ SecretKey, PublicKey };
 use crate::base::secp256k1::Secp256k1;
 
-use crate::base::wallet::seed::*;
+// use crate::base::wallet::seed::*;
 use crate::base::misc::util::*;
-
-#[derive(Debug)]
-pub struct KeypairProperty {
-    pub secret_key: String, //hex string 私钥
-    pub public_key: String, //hex string 公钥
-}
-
-impl KeypairProperty {
-    pub fn new(secret_key: String, public_key: String) -> Self {
-        KeypairProperty {
-            secret_key: secret_key,
-            public_key: public_key,
-        }
-    }
-
-    //to hex
-    // pub fn to_bytes() -> Vec<u8>
-}
-impl Clone for KeypairProperty {
-    fn clone(&self) -> KeypairProperty {
-        match self {
-            _ =>
-            KeypairProperty {
-                secret_key: self.secret_key.to_owned(),
-
-                public_key: self.public_key.to_owned(),
-            },
-        }
-    }
-}
 
 #[derive(Debug, Clone)]
 pub struct Keypair {
-    pub property: KeypairProperty,
+    pub private_key: String, //hex string 私钥
+    pub public_key: String,  //hex string 公钥
 }
 
 impl Keypair {
-    pub fn new(property: KeypairProperty) -> Self {
+    pub fn new(private_key: String, public_key: String) -> Self {
         Keypair {
-            property: property,
+            private_key: private_key,
+            public_key: public_key,
         }
     }
-
-    //some util method.
 }
 
 #[derive(Debug, Clone)]
 pub struct KeypairBuilder <'a> {
-    pub seed: &'a Seed,
+    pub seed: &'a String,
 }
 
 impl <'a> KeypairBuilder <'a> {
-    pub fn new(seed: &'a Seed) -> Self {
+    pub fn new(seed: &'a String) -> Self {
         KeypairBuilder {
             seed: seed,
         }
     }
 
     pub fn build(&self) -> Keypair {
-        // let seed = "sh7xcXLQmWYk2eV5M3nSGVU8KqX9i".to_string();
-        let seed = &self.seed.seed_property.seed;
-        let x = self.generate(seed);
-
-        Keypair {
-            property: x,
-        }
+        self.generate(self.seed)
     }
 
-    fn generate(&self, seed: &String) -> KeypairProperty {
+    fn generate(&self, seed: &String) -> Keypair {
         let seed = entropy(seed);
         // println!("seed: {:?}", seed);
         let private_gen = scalar_multiple(&seed, None);
@@ -97,8 +61,8 @@ impl <'a> KeypairBuilder <'a> {
             xy = public_key;
         }
 
-        KeypairProperty {
-            secret_key: private_key.to_ascii_uppercase(),
+        Keypair {
+            private_key: private_key.to_ascii_uppercase(),
             public_key: xy.to_ascii_uppercase(),
         }
     }
