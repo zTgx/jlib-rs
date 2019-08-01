@@ -39,7 +39,7 @@ pub struct RequestAccountOfferCommand {
 
 impl RequestAccountOfferCommand {
     pub fn with_params(account: String) -> Box<Self> {
-        Box::new( 
+        Box::new(
             RequestAccountOfferCommand {
                 id: 1,
                 command: "account_offers".to_string(),
@@ -62,11 +62,9 @@ impl CommandConversion for RequestAccountOfferCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -77,7 +75,7 @@ impl CommandConversion for RequestAccountOfferCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -85,7 +83,7 @@ impl CommandConversion for RequestAccountOfferCommand {
 //实现default方法, 此command不提供default方法~
 // impl Default for RequestLedgerCommand {
 //     fn default() -> Self {
-//         RequestLedgerCommand { 
+//         RequestLedgerCommand {
 //             id: 1,
 //             command: "ledger".to_string(),
 //         }
@@ -139,7 +137,7 @@ pub struct Offers {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestAccountOfferResponse {
     #[serde(rename="account")]
-    pub account: String,   
+    pub account: String,
 
     #[serde(rename="ledger_hash")]
     pub ledger_hash: String,
@@ -162,7 +160,7 @@ pub struct AccountOffersSideKick {
     pub id              : u32,
     pub request         : RequestAccountOfferCommand,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

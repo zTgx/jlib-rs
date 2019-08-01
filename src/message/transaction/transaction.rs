@@ -76,7 +76,7 @@ impl TxJson {
             transaction_type: "Payment".to_string(),
             account: from,
             destination: to,
-            amount: amount.value,//(amount.value.parse::<f64>().unwrap() * 1000000f64).to_string(), 
+            amount: amount.value,//(amount.value.parse::<f64>().unwrap() * 1000000f64).to_string(),
             sequence: sequence,
             memo: memo,
         }
@@ -90,8 +90,6 @@ impl CommandConversion for TxJson {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
 
@@ -138,8 +136,6 @@ impl CommandConversion for TransactionTx {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
 

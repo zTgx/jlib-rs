@@ -27,7 +27,7 @@ pub struct ServerInfoCommand {
 
 impl ServerInfoCommand {
     pub fn with_params(id: u64, command: String) -> Box<Self> {
-        Box::new( 
+        Box::new(
             ServerInfoCommand {
                 id: id,
                 command: command,
@@ -47,11 +47,9 @@ impl CommandConversion for ServerInfoCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         // if let Ok(x) = value.downcast::<T>() {
         //     x
@@ -66,7 +64,7 @@ impl CommandConversion for ServerInfoCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -74,7 +72,7 @@ impl CommandConversion for ServerInfoCommand {
 //实现default方法
 impl Default for ServerInfoCommand {
     fn default() -> Self {
-        ServerInfoCommand { 
+        ServerInfoCommand {
             id: 1,
             command: "server_info".to_string(),
         }

@@ -5,9 +5,8 @@ use jlib::api::query::account_info::*;
 use jlib::message::query::account_info::{RequestAccountInfoResponse, AccounInfoSideKick};
 
 use std::rc::Rc;
-use std::any::Any;
 use std::cell::Cell;
-use jlib::base::util::{downcast_to_usize};
+use jlib::base::misc::util::{downcast_to_usize};
 
 
 fn main() {
@@ -33,4 +32,3 @@ fn main() {
     let x = downcast_to_usize(seq_rc);
     println!("x : {}", x);
 }
-

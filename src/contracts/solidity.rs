@@ -146,9 +146,6 @@ impl CommandConversion for SolidityInitMessage {
         // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
 
-        // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
 
@@ -297,8 +294,6 @@ impl CommandConversion for SolidityInvokeMessage {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
 
@@ -357,7 +352,6 @@ impl ContractAPI for Solidity {
         }).unwrap();
 
         let resp = downcast_to_string(info);
-        println!("resp : {:?}", resp);
 
         // if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
         //     let x: String = x["result"].to_string();
@@ -391,6 +385,5 @@ impl ContractAPI for Solidity {
         }).unwrap();
 
         let resp = downcast_to_string(info);
-        println!("resp : {:?}", resp);
     }
 }

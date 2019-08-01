@@ -80,7 +80,6 @@ impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
         let mut index = 0;
         for &key in &self.fields {
             let tx_json = tx_json_rc.clone();
-            println!("key : {} ", key);
             match key {
                 TX_FLAGS => {
                     let value = tx_json.flags;
@@ -114,16 +113,12 @@ impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
                     self.output.insert(index, amount);
                 },
                 TX_TAKERPAYS => {
-                    println!("TX_TAKERPAYS");
                     let value = &tx_json.taker_pays;
-
                     let amount = TxJsonTakerBuilder::new(TXTakerType::Pays, value).build();
                     self.output.insert(index, amount);
                 },
                 TX_TAKERGETS => {
-                    println!("TX_TAKERGETS");
                     let value: &'a Amount = &tx_json.taker_gets;
-
                     let amount = TxJsonTakerBuilder::new(TXTakerType::Gets, value).build();
                     self.output.insert(index, amount);
                 },

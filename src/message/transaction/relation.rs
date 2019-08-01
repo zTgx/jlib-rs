@@ -68,7 +68,7 @@ impl Serialize for RelationTxJson {
     {
         // 3 is the number of fields in the struct.
         let mut state = serializer.serialize_struct("RelationTxJson", 7)?;
-        
+
         state.serialize_field("Flags", &self.flags)?;
         state.serialize_field("Fee", &self.fee)?;
         state.serialize_field("TransactionType", &self.transaction_type)?;
@@ -90,7 +90,7 @@ impl Serialize for RelationTxJson {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RelationTx {
     #[serde(rename="id")]
-    id: u64, 
+    id: u64,
 
     #[serde(rename="command")]
     pub command: String, //Submit
@@ -125,11 +125,9 @@ impl CommandConversion for RelationTx {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -140,7 +138,7 @@ impl CommandConversion for RelationTx {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -162,7 +160,7 @@ pub struct RelationTxJsonResponse {
     #[serde(rename="LimitAmount")]
     #[serde(deserialize_with = "string_or_struct")]
     pub limit_amount: Amount,
-    
+
     #[serde(rename="RelationType")]
     pub relation_type: u64,
 
@@ -214,7 +212,7 @@ pub struct RelationSideKick {
     pub id              : u32,
     pub request         : RelationTx,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

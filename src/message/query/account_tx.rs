@@ -13,7 +13,7 @@ use std::error::Error;
 use std::fmt;
 
 /*
-@4.12获得账号交易列表 
+@4.12获得账号交易列表
 RequestAccountTxCommand 请求格式
 id: u64,              //(固定值): 1
 command: String,      //(固定值): account_tx
@@ -50,7 +50,7 @@ impl RequestAccountTxCommand {
             n = limit;
         }
 
-        Box::new( 
+        Box::new(
             RequestAccountTxCommand {
                 id: 1,
                 command: "account_tx".to_string(),
@@ -74,11 +74,9 @@ impl CommandConversion for RequestAccountTxCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -89,7 +87,7 @@ impl CommandConversion for RequestAccountTxCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -97,7 +95,7 @@ impl CommandConversion for RequestAccountTxCommand {
 //实现default方法, 此command不提供default方法~
 // impl Default for RequestLedgerCommand {
 //     fn default() -> Self {
-//         RequestLedgerCommand { 
+//         RequestLedgerCommand {
 //             id: 1,
 //             command: "ledger".to_string(),
 //         }
@@ -145,7 +143,7 @@ pub struct Tx {
 
     #[serde(rename="date")]
     pub date: u64,
-    
+
     #[serde(rename="hash")]
     pub hash: String,
 
@@ -171,7 +169,7 @@ pub struct Transaction {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestAccountTxResponse {
     #[serde(rename="account")]
-    pub account: String,   
+    pub account: String,
 
     #[serde(rename="ledger_index_max")]
     pub ledger_index_max: u64,
@@ -180,10 +178,10 @@ pub struct RequestAccountTxResponse {
     pub ledger_index_min: u64,
 
     #[serde(rename="marker")]
-    pub marker: Marker, 
+    pub marker: Marker,
 
     #[serde(rename="limit")]
-    pub limit: u64, 
+    pub limit: u64,
 
     #[serde(rename="transactions")]
     pub transactions: Vec<Transaction>,
@@ -198,7 +196,7 @@ pub struct AccounTxSideKick {
     pub id              : u32,
     pub request         : RequestAccountTxCommand,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

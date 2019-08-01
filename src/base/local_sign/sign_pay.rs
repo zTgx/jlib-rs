@@ -66,7 +66,6 @@ impl <'a> SignTxPay <'a> {
         let mut index = 0;
         for &key in &self.fields {
             let tx_json = tx_json_rc.clone();
-            println!("key : {} ", key);
             match key {
                 TX_FLAGS => {
                     let value = tx_json.flags;

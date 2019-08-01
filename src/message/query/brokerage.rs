@@ -42,7 +42,7 @@ pub struct RequestBrokerageCommand {
 
 impl RequestBrokerageCommand {
     pub fn with_params(issuer: String, app_type: u64, currency: String) -> Box<Self> {
-        Box::new( 
+        Box::new(
             RequestBrokerageCommand {
                 id: 1,
                 command: "Fee_Info".to_string(),
@@ -66,11 +66,9 @@ impl CommandConversion for RequestBrokerageCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -81,7 +79,7 @@ impl CommandConversion for RequestBrokerageCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -89,7 +87,7 @@ impl CommandConversion for RequestBrokerageCommand {
 //实现default方法, 此command不提供default方法~
 // impl Default for RequestLedgerCommand {
 //     fn default() -> Self {
-//         RequestLedgerCommand { 
+//         RequestLedgerCommand {
 //             id: 1,
 //             command: "ledger".to_string(),
 //         }
@@ -135,7 +133,7 @@ pub struct BrokerageSideKick {
     pub id              : u32,
     pub request         : RequestBrokerageCommand,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

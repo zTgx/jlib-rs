@@ -71,20 +71,16 @@ impl Amount {
                 // let vpow = Amount::calc_exponential();
                 let vpow = str_t::to_expo(ramount.value.as_str()).unwrap();
                 let vpow = str_t::get_exponent(&vpow);
-                println!("vpow : {}", vpow);
 
                 let offset = 15 - vpow;
                 let base10 = BigInt::from(10 as usize);
-                println!("base10: {}", base10);
 
                 let mut base_offset = BigInt::from(offset);
                 if vpow < 0 {
                     base_offset = BigInt::from(offset + vpow);
                 }
 
-                println!("base_offert: {}", base_offset);
                 let factor = base10.modpow(&base_offset, &BigInt::from_str("10000000000000000000").unwrap());
-                println!("factor: {}", factor);
 
                 //0.01
                 let mut rv = String::from(ramount.value.as_str());
@@ -108,13 +104,11 @@ impl Amount {
 
                     index += 1;
                 }
-                println!("rv: {}", rv);
 
                 let mut value: BigInt = BigInt::from_str(rv.as_str()).unwrap();
 
                 let base: BigInt = BigInt::from(factor);
                 let mut evalue = value.checked_mul(&base).unwrap();
-                println!("value: {}", evalue);
 
                 let offset: i32 = -1 * offset as i32;
 
@@ -145,7 +139,6 @@ impl Amount {
 
 
     pub fn from_json(j: String) -> Self {
-        println!("j: {:?}", &j);
         // let mut ret: Amount = Amount::default();
                 Amount {
                     value: BigInt::from_str("10000").unwrap(),

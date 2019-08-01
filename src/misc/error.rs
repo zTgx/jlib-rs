@@ -35,7 +35,7 @@ impl Error for SuperError {
 //     pub id              : u32,
 //     pub request         : ServerInfoCommand,
 //     pub status          : String,
-    
+
 //     #[serde(rename="type")]
 //     pub rtype           : String,
 // }
@@ -82,6 +82,3 @@ impl Error for SuperError {
     // let e = SuperError { side: y };
     // println!("Error: {}", e.description());
     // println!("caused by : {}", e.source().unwrap());
-
-
-

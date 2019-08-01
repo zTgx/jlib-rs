@@ -226,10 +226,7 @@ impl SerializedSTAmount for STAmount {
     fn serialize(amount: Amount) -> Vec<u8> {
         //SWTC
         if amount.is_native {
-            // var bn = new BN(amount._value, 10);
-            // var valueHex = bn.toString(16);
             let mut value_hex = amount.value.to_str_radix(16);
-            println!("value_hex : {}", value_hex);
 
             // Enforce correct length (64 bits)
             if value_hex.len() > 16 {
@@ -237,32 +234,24 @@ impl SerializedSTAmount for STAmount {
             }
 
             while value_hex.len() < 16 {
-                // valueHex = '0' + valueHex;
                 value_hex.insert(0, '0');
             }
 
-            //Convert the HEX value to bytes array
-            // valueBytes = convertHexToByteArray(valueHex);//bytes.fromBits(hex.toBits(valueHex));
-            // unsafe {
+            let mut value_bytes = hex::decode(value_hex).unwrap();
 
-                let mut value_bytes = hex::decode(value_hex).unwrap();
+            // Clear most significant two bits - these bits should already be 0 if
+            // Amount enforces the range correctly, but we'll clear them anyway just
+            // so this code can make certain guarantees about the encoded value.
+            value_bytes[0] &= 0x3f;
 
+            if !amount.is_negative {
+                value_bytes[0] |= 0x40;
+            }
 
-                // Clear most significant two bits - these bits should already be 0 if
-                // Amount enforces the range correctly, but we'll clear them anyway just
-                // so this code can make certain guarantees about the encoded value.
-                value_bytes[0] &= 0x3f;
+            return value_bytes.to_vec();
 
-                if !amount.is_negative {
-                    value_bytes[0] |= 0x40;
-                }
-
-                return value_bytes.to_vec();
-
-            // }
         } else {
 
-            println!("nnnnnnnnnnnnnnnnnnnon native.");
             let mut so: Vec<u8> = vec![];
 
             //For other non-native currency
@@ -317,8 +306,6 @@ impl SerializedSTAmount for STAmount {
                     let base32 = BigInt::from(32);
                     let base16 = BigInt::parse_bytes(b"10000000000", 16);
                     bl = (l - BigInt::from(1)).checked_mul(&base32).unwrap() + x.checked_div(&base16.unwrap()).unwrap().bitor(&base32);
-
-                    println!("bl: {}", bl);
                 }
             }
 
@@ -330,8 +317,6 @@ impl SerializedSTAmount for STAmount {
             while i < bl / 8 {
                 if i & 3 == 0 {
                     tmp = arr[i / 4].clone();
-                    println!("tmp: {}", &tmp);
-
                 }
 
                 let x = tmp.clone().shr(24usize);
@@ -346,23 +331,18 @@ impl SerializedSTAmount for STAmount {
             if tmparray.len() > 8 {
                 panic!("Invalid byte array length in AMOUNT value representation");
             }
-            println!("tmparray: {:?}", tmparray);
 
-            //
             so.extend_from_slice(&tmparray.as_slice());
 
             //2. Serialize the currency info with currency code and issuer
             // Currency (160-bit hash)
             let tum_bytes = amount.tum_to_bytes();
             so.extend_from_slice(&tum_bytes);
-            println!("tum_bytes: {:?}", &tum_bytes);
 
             // Issuer (160-bit hash)
             let issuer = amount.issuer();
-            println!("issuer: {:?}", &issuer);
             so.extend_from_slice(&decode_j_address(issuer.to_string()).unwrap());
-            println!("lllllllllllllllast: {:?}",&decode_j_address(issuer.to_string()).unwrap() );
-            println!("so: {:?}", &so);
+
             return so;
         }
     }
@@ -410,11 +390,8 @@ impl STVL {
 }
 impl SerializedSTVL for STVL {
     fn serialize(value: &String) -> Vec<u8> {
-        println!("input: {:?}", &value);
-
         let value = value.trim_start_matches("\"");
         let value = value.trim_end_matches("\"");
-                println!("after trim value: {:?}", &value);
 
         let mut v: Vec<u8> = vec![];
         if let Ok(mut data) = hex::decode(value) {
@@ -448,7 +425,7 @@ impl STAccount {
 impl SerializedSTAccount for STAccount {
   fn serialize(value: String) -> Vec<u8> {
       let mut byte_data = util::decode_j_address(value).unwrap();
-      println!("STAccount : {:?}", byte_data);
+
       serialize_varint(&mut byte_data)
   }
 

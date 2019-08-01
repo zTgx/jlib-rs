@@ -67,7 +67,6 @@ impl SignTx {
 
         let signature_x = SignatureX::new(&self.keypair);
         let txn_signature = signature_x.sign_txn_signature(&output);
-        println!("txn_signature: {}", txn_signature);
 
         self.update(fields, TX_SIGNATURE);
 
@@ -112,7 +111,5 @@ impl SignTx {
 
             }
         });
-
-        println!("sorted: {:?}", &fields);
     }
 }

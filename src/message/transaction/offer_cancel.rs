@@ -22,7 +22,7 @@ pub struct OfferCancelTxJson {
 
     #[serde(rename="Fee")]
     pub fee: f64,
-    
+
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
 
@@ -48,7 +48,7 @@ impl OfferCancelTxJson {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OfferCancelTx {
     #[serde(rename="id")]
-    id: u64, 
+    id: u64,
 
     #[serde(rename="command")]
     pub command: String,
@@ -82,11 +82,9 @@ impl CommandConversion for OfferCancelTx {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -97,7 +95,7 @@ impl CommandConversion for OfferCancelTx {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -161,7 +159,7 @@ pub struct OfferCancelSideKick {
     pub id              : u32,
     pub request         : OfferCancelTx,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

@@ -1,5 +1,5 @@
 use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
-use crate::base::serialize::serialized_type::*;    
+use crate::base::serialize::serialized_type::*;
 
 //TypeObjBulder usage.
 //TypeObj: 通过TxJson中任意字段来计算在序列化过程中的【坐标】
@@ -28,7 +28,6 @@ impl TypeObj {
 }
 impl SerializeHeader for TypeObj {
     fn serialize_header(&self, so: &mut Vec<u8>) {
-        println!("tag: {} / type: {} / field: {}", self.type_tag, self.type_bits, self.field_bits);
         let mut s8 = STInt8::serialize(self.type_tag);
         so.append(&mut s8);
 

@@ -44,7 +44,7 @@ pub struct RequestTxCommand {
 
 impl RequestTxCommand {
     pub fn with_params(hash: String) -> Box<Self> {
-        Box::new( 
+        Box::new(
             RequestTxCommand {
                 id: 1,
                 command: "tx".to_string(),
@@ -65,11 +65,9 @@ impl CommandConversion for RequestTxCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         // if let Ok(x) = value.downcast::<T>() {
         //     x
@@ -84,7 +82,7 @@ impl CommandConversion for RequestTxCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -92,7 +90,7 @@ impl CommandConversion for RequestTxCommand {
 //实现default方法
 // impl Default for RequestTxCommand {
 //     fn default() -> Self {
-//         ServerInfoCommand { 
+//         ServerInfoCommand {
 //             id: 1,
 //             command: "server_info".to_string(),
 //         }
@@ -153,7 +151,7 @@ pub struct RequestTxResponse {
 
     #[serde(rename="TakerPays")]
     #[serde(deserialize_with = "string_or_struct")]
-    pub taker_pays: Amount,                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+    pub taker_pays: Amount,
 
     #[serde(rename="Memos")]
     pub memos: Option<Vec<String>>,
@@ -167,7 +165,7 @@ pub struct SpecTxSideKick {
     pub id              : u32,
     pub request         : RequestTxCommand,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }
@@ -183,5 +181,3 @@ impl Error for SpecTxSideKick  {
         "I'm SpecTxSideKick side kick"
     }
 }
-
-

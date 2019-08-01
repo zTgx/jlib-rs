@@ -38,7 +38,7 @@ pub struct RequestAccountInfoCommand {
 
 impl RequestAccountInfoCommand {
     pub fn with_params(account: String) -> Box<Self> {
-        Box::new( 
+        Box::new(
             RequestAccountInfoCommand {
                 id: 1,
                 command: "account_info".to_string(),
@@ -61,11 +61,9 @@ impl CommandConversion for RequestAccountInfoCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -76,7 +74,7 @@ impl CommandConversion for RequestAccountInfoCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -84,7 +82,7 @@ impl CommandConversion for RequestAccountInfoCommand {
 //实现default方法, 此command不提供default方法~
 // impl Default for RequestLedgerCommand {
 //     fn default() -> Self {
-//         RequestLedgerCommand { 
+//         RequestLedgerCommand {
 //             id: 1,
 //             command: "ledger".to_string(),
 //         }
@@ -133,7 +131,7 @@ pub struct AccounInfoSideKick {
     pub id              : u32,
     pub request         : RequestAccountInfoCommand,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

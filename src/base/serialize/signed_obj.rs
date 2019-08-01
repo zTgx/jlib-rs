@@ -62,7 +62,6 @@ impl TxJsonSerializer for TxJsonFlags {
         //serialize header
         if let Some(raw) = &self.type_obj {
             raw.serialize_header(&mut tmp);
-            println!("header: {:?}", tmp);
         }
 
         let mut s = STInt32::serialize(self.value);
@@ -73,8 +72,6 @@ impl TxJsonSerializer for TxJsonFlags {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonFlags so : {:?}", &so);
     }
 }
 pub struct TxJsonFlagsBuilder {
@@ -139,8 +136,6 @@ impl TxJsonSerializer for TxJsonTransactionType {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonTransactionType so : {:?}", &so);
     }
 }
 
@@ -207,8 +202,6 @@ impl TxJsonSerializer for TxJsonSequence {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonSequence so : {:?}", &so);
     }
 }
 pub struct TxJsonSequenceBuilder {
@@ -273,8 +266,6 @@ impl TxJsonSerializer for TxJsonOfferSequence {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonOfferSequence so : {:?}", &so);
     }
 }
 pub struct TxJsonOfferSequenceBuilder {
@@ -339,8 +330,6 @@ impl TxJsonSerializer for TxJsonRelationType {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonRelationType so : {:?}", &so);
     }
 }
 pub struct TxJsonRelationTypeBuilder {
@@ -405,8 +394,6 @@ impl TxJsonSerializer for TxJsonAmount {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonAmount so : {:?}", &so);
     }
 }
 pub struct TxJsonAmountBuilder {
@@ -462,12 +449,7 @@ impl TxJsonSerializer for TxJsonLimitAmount {
             raw.serialize_header(&mut tmp);
         }
 
-        // if let Ok(x) = serde_json::from_str(&tx_json.limit_amount.to_string().unwrap().as_str()) as Result<Amount, serde_json::error::Error> {
-        //     println!("x: {:?}", x.to_string());
-        // }
-
         let amount = Amount::from_json(String::from(self.value.as_str()));
-        println!("swt: {:?}", amount);
 
         let mut s = STAmount::serialize(amount);
         tmp.append(&mut s);
@@ -477,8 +459,6 @@ impl TxJsonSerializer for TxJsonLimitAmount {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonLimitAmount so : {:?}", &so);
     }
 }
 pub struct TxJsonLimitAmountBuilder {
@@ -519,9 +499,6 @@ impl <'a> TxJsonTaker <'a> {
 }
 impl <'a> TxJsonSerializer for TxJsonTaker <'a> {
     fn serialize_obj(&mut self, so: &mut Vec<u8>) {
-
-        println!("-------------------serialize name: {}", &self.name);
-
         if self.output.is_some() {
             if let Some(x) = &self.output {
                 so.extend_from_slice(&x);
@@ -537,7 +514,6 @@ impl <'a> TxJsonSerializer for TxJsonTaker <'a> {
         }
 
         let amount = Amount::from_ramount(self.value);
-        println!("swt: {:?}", amount);
 
         let mut s = STAmount::serialize(amount);
         tmp.append(&mut s);
@@ -547,8 +523,6 @@ impl <'a> TxJsonSerializer for TxJsonTaker <'a> {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonTaker so : {:?}", &so);
     }
 }
 pub struct TxJsonTakerBuilder <'a> {
@@ -614,9 +588,6 @@ impl TxJsonSerializer for TxJsonFee {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-
-        println!("TxJsonFee so : {:?}", &so);
     }
 }
 pub struct TxJsonFeeBuilder {
@@ -680,8 +651,6 @@ impl TxJsonSerializer for TxJsonSigningPubKey {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonSigningPubKey so : {:?}", &so);
     }
 }
 pub struct TxJsonSigningPubKeyBuilder {
@@ -745,8 +714,6 @@ impl TxJsonSerializer for TxJsonAccount {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonAccount so : {:?}", &so);
     }
 }
 pub struct TxJsonAccountBuilder {
@@ -809,8 +776,6 @@ impl TxJsonSerializer for TxJsonTarget {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonTarget so : {:?}", &so);
     }
 }
 pub struct TxJsonTargetBuilder {
@@ -873,8 +838,6 @@ impl TxJsonSerializer for TxJsonDestination {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonDestination so : {:?}", &so);
     }
 }
 pub struct TxJsonDestinationBuilder {
@@ -938,8 +901,6 @@ impl TxJsonSerializer for TxJsonTxnSignature {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonTxnSignature so : {:?}", &so);
     }
 }
 pub struct TxJsonTxnSignatureBuilder {
@@ -1002,8 +963,6 @@ impl TxJsonSerializer for TxJsonMemoData {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonMemo so : {:?}", &so);
     }
 }
 
@@ -1057,8 +1016,6 @@ impl TxJsonSerializer for TxJsonMemo {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonMemos so : {:?}", &so);
     }
 }
 
@@ -1119,16 +1076,11 @@ impl TxJsonSerializer for TxJsonMemos {
 
         let mut i = 0;
         while i < self.value.len() {
-            //get memo, not memos~~~~~~
-            // let mut s = TxJsonMemo::new(String::from( self.value[i].as_str() ));
             let s = &mut self.value[i];
             s.serialize_obj(&mut tmp);
 
             i += 1;
         }
-        // let mut s = STArray::serialize(&self.value);
-        // println!("array value hex : {:?}", &s);
-        // tmp.append(&mut s);
 
         //Array ending marker
         let mut end_mark = STInt8::serialize(0xf1);
@@ -1139,8 +1091,6 @@ impl TxJsonSerializer for TxJsonMemos {
         if let Some(x) = &self.output {
             so.extend_from_slice(&x);
         }
-
-        println!("TxJsonArray so : {:?}", &so);
     }
 }
 

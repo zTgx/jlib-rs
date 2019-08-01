@@ -6,7 +6,7 @@ use serde::de::{self, Visitor, MapAccess};
 
 extern crate void;
 use void::Void;
-use std::fmt; 
+use std::fmt;
 use crate::message::common::command_trait::CommandConversion;
 use std::any::Any;
 
@@ -41,7 +41,7 @@ impl Amount {
                 }
             }
         }
-        
+
         ret
     }
 
@@ -68,7 +68,7 @@ impl Amount {
     // pub fn decorate(&mut self) -> Self {
     //     if self.is_string() {
     //         self.value = Amount::mul_million(&self.value);
-    //     } 
+    //     }
 
     //     Amount {
     //         value: String::from( self.value.as_str() ),
@@ -137,11 +137,9 @@ impl CommandConversion for Amount {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -152,7 +150,7 @@ impl CommandConversion for Amount {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }

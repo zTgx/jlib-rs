@@ -76,7 +76,6 @@ impl <'a> FormatSignTxJson for SignTxRelate <'a> {
         let mut index = 0;
         for &key in &self.fields {
             let tx_json = tx_json_rc.clone();
-            println!("key : {} ", key);
             match key {
                 TX_FLAGS => {
                     let value = tx_json.flags;
@@ -109,10 +108,7 @@ impl <'a> FormatSignTxJson for SignTxRelate <'a> {
                     output.insert(index, amount);
                 },
                 TX_LIMIT_AMOUNT => {
-                    //在from_json中，要对非native进行分辨处理！！！
                     let value = String::from( tx_json.limit_amount.to_string().unwrap().as_str() );
-                    println!("limit amount: {:?}", &value);
-
                     let amount = TxJsonLimitAmountBuilder::new(value).build();
                     output.insert(index, amount);
                 },

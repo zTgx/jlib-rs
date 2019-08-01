@@ -10,7 +10,7 @@ use std::error::Error;
 use std::fmt;
 
 /*
-@4.10 获得账号关系 
+@4.10 获得账号关系
 RequestAccountRelationsCommand 请求格式
 id: u64,         //(固定值): 1
 command: String, //(固定值): account_lines
@@ -38,7 +38,7 @@ pub struct RequestAccountRelationsCommand {
 
 impl RequestAccountRelationsCommand {
     pub fn with_params(account: String, relation_type: Option<String>) -> Box<Self> {
-        Box::new( 
+        Box::new(
             RequestAccountRelationsCommand {
                 id: 1,
                 command: "account_lines".to_string(),
@@ -61,11 +61,9 @@ impl CommandConversion for RequestAccountRelationsCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -76,7 +74,7 @@ impl CommandConversion for RequestAccountRelationsCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -84,7 +82,7 @@ impl CommandConversion for RequestAccountRelationsCommand {
 //实现default方法, 此command不提供default方法~
 // impl Default for RequestLedgerCommand {
 //     fn default() -> Self {
-//         RequestLedgerCommand { 
+//         RequestLedgerCommand {
 //             id: 1,
 //             command: "ledger".to_string(),
 //         }
@@ -98,7 +96,7 @@ RequestAccountRelationsResponse 数据返回格式
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestAccountRelationsResponse {
     #[serde(rename="account")]
-    pub account: String,   
+    pub account: String,
 
     #[serde(rename="ledger_hash")]
     pub ledger_hash: String,
@@ -147,7 +145,7 @@ pub struct RelationsSideKick {
     pub id              : u32,
     pub request         : RequestAccountRelationsCommand,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

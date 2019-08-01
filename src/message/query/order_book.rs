@@ -59,7 +59,7 @@ pub struct RequestOrderBookCommand {
 
 impl RequestOrderBookCommand {
     pub fn with_params(gets: OrderBookItem, pays: OrderBookItem) -> Box<Self> {
-        Box::new( 
+        Box::new(
             RequestOrderBookCommand {
                 id: 1,
                 command: "book_offers".to_string(),
@@ -82,11 +82,9 @@ impl CommandConversion for RequestOrderBookCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -97,7 +95,7 @@ impl CommandConversion for RequestOrderBookCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -105,7 +103,7 @@ impl CommandConversion for RequestOrderBookCommand {
 //实现default方法, 此command不提供default方法~
 // impl Default for RequestLedgerCommand {
 //     fn default() -> Self {
-//         RequestLedgerCommand { 
+//         RequestLedgerCommand {
 //             id: 1,
 //             command: "ledger".to_string(),
 //         }
@@ -147,7 +145,7 @@ pub struct Offer {
 
     #[serde(rename="TakerGets")]
     #[serde(deserialize_with = "string_or_struct")]
-    pub taker_gets: Amount, 
+    pub taker_gets: Amount,
 
     #[serde(rename="TakerPays")]
     #[serde(deserialize_with = "string_or_struct")]
@@ -166,10 +164,10 @@ pub struct Offer {
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestOrderBookResponse {
     #[serde(rename="ledger_current_index")]
-    pub ledger_current_index: u64, 
+    pub ledger_current_index: u64,
 
     #[serde(rename="offers")]
-    pub offers: Vec<Offer>, 
+    pub offers: Vec<Offer>,
 
     #[serde(rename="validated")]
     pub validated: bool,
@@ -184,7 +182,7 @@ pub struct OrderBookSideKick {
     pub id              : u32,
     pub request         : RequestOrderBookCommand,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

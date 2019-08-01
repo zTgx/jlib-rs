@@ -15,7 +15,7 @@ RequestLedgerCommand 请求格式
 id: u64
 command: String
 ledger_index: Option<String>
-ledger_hash: Option<String> 
+ledger_hash: Option<String>
 transactions: bool
 值分别为(固定值): 1, "ledger", ledger_index/ledger_hash 二选一， transactions 为bool类型必需.
 */
@@ -39,7 +39,7 @@ pub struct RequestLedgerCommand {
 
 impl RequestLedgerCommand {
     pub fn with_params(ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool) -> Box<Self> {
-        Box::new( 
+        Box::new(
             RequestLedgerCommand {
                 id: 1,
                 command: "ledger".to_string(),
@@ -62,11 +62,9 @@ impl CommandConversion for RequestLedgerCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
-    
+
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
@@ -77,7 +75,7 @@ impl CommandConversion for RequestLedgerCommand {
     //         Some(b) => b,
     //         None => panic!("&a isn't a B!"),
     //     };
-        
+
     //     b
     // }
 }
@@ -85,7 +83,7 @@ impl CommandConversion for RequestLedgerCommand {
 //实现default方法, 此command不提供default方法~
 // impl Default for RequestLedgerCommand {
 //     fn default() -> Self {
-//         RequestLedgerCommand { 
+//         RequestLedgerCommand {
 //             id: 1,
 //             command: "ledger".to_string(),
 //         }
@@ -156,7 +154,7 @@ pub struct SpecLedgerSideKick {
     pub id              : u32,
     pub request         : RequestLedgerCommand,
     pub status          : String,
-    
+
     #[serde(rename="type")]
     pub rtype            : String,
 }

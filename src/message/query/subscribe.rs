@@ -50,8 +50,6 @@ impl CommandConversion for SubscribeCommand {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("{}", j);
-
         Ok(j)
     }
 

@@ -29,7 +29,6 @@ impl <'a> SignatureX <'a> {
         let message = Message::from_slice(message).unwrap();
         let secret_key = SecretKey::from_slice(key).expect("32 bytes, within curve order");
         let signature = sign.sign(&message, &secret_key);
-        // println!("tx_json signed : {:?}", signature.to_string().to_ascii_uppercase());
 
         signature.to_string().to_ascii_uppercase()
     }
@@ -61,11 +60,8 @@ impl <'a> SignatureX <'a> {
         ctx.update(&so);
 
         let hash = hex_t::encode(&ctx.finish().as_ref());
-        println!("hash : {}", hash);
         let message = hash.get(0..64).unwrap().to_ascii_uppercase();
-        println!("message: {:?}", message);
         let private_key = &self.keypair.private_key;
-//        let private_key = util::get_keypair_from_secret(&self.secret).property.secret_key;
         let key = &hex_t::decode(private_key).unwrap()[1..];
 
         let msg = hex_t::decode(message).unwrap();

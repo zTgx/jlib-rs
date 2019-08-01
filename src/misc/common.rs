@@ -148,32 +148,3 @@ impl Flags {
         }
     }
 }
-    // let fl = Flags::Universal{ name: Universal::FullyCanonicalSig };
-    // let n = fl.get();
-    // println!("n : {}", n);
-//////////////////////////////Flags End
-
-
-
-// fn sigining(tx_json: &TxJson) -> TxJson {
-
-// }
-
-// //Reference tx_json, and generate one signed tx_json.
-// pub fn sign(tx_json: &TxJson) -> TxJson {
-//     if tx_json.sequence.is_some() {
-//         signing(self, callback);
-//     } else {
-//         //Get Account Sequence
-//         Remote::request_account_info(config.clone(), "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string(), |x| match x {
-//             Ok(response) => {
-//                 println!("Sequence: {}", response.Sequence);
-
-//                 self.tx_json.Sequence = data.account_data.Sequence;
-//                 signing(self, callback)
-//             },
-
-//             Err(_) => {}
-//         });
-//     }
-// }

@@ -1,7 +1,7 @@
 examples directory's explaination：  
 
-File which starts with letter 'n' is query api.  
-File which starts with letter 't' is transaction api.  
+Files which starts with letter 'n' are query api.  
+Files which starts with letter 't' are transaction api.  
 
 Example :  
 ```rust
