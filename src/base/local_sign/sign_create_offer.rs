@@ -17,7 +17,7 @@ use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::message::common::amount::Amount;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 
-pub trait FormatSignTxJson <'c> {
+pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
     // fn format(&mut self, tx: &'c mut SignedTxJson);
     fn format(&mut self);
@@ -66,16 +66,14 @@ impl <'a> SignTxCreateOffer <'a> {
     }
 }
 
-impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
+impl <'a> FormatSignTxJson for SignTxCreateOffer <'a> {
     fn prepare(&mut self, sign_tx: &SignTx) {
         sign_tx.update(&mut self.fields, TX_TAKERGETS);
         sign_tx.update(&mut self.fields, TX_TAKERPAYS);
     }
 
     fn format(&mut self) {
-    // fn format(&mut self, output: &'d mut SignedTxJson) {
         let tx_json_rc = Rc::new ( self.tx_json );
-        // let tx_json = self.tx_json;
 
         let mut index = 0;
         for &key in &self.fields {

@@ -565,7 +565,6 @@ impl TxJsonFee {
 }
 impl TxJsonSerializer for TxJsonFee {
     fn serialize_obj(&mut self, so: &mut Vec<u8>) {
-        println!("ssssssss");
         if self.output.is_some() {
             if let Some(x) = &self.output {
                 so.extend_from_slice(&x);
@@ -1137,7 +1136,6 @@ impl <'s> SignedTxJson <'s> {
     pub fn serialize(&mut self) -> Vec<u8> {
         let mut so: Vec<u8> = vec![];
         for component in self.components.as_mut_slice() {
-            println!("3");
             component.serialize_obj(&mut so);
         }
 

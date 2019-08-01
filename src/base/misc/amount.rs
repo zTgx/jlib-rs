@@ -45,7 +45,12 @@ impl Amount {
 
     pub fn from_ramount(ramount: &RAmount) -> Amount {
         if ramount.is_native() {
-            let mut value: BigInt = BigInt::from_str(ramount.value.as_str()).unwrap();
+            let mut value = "".to_string();
+            let r_value = &ramount.value;
+            if r_value.contains(".") {
+                value = Amount::f64_2_usize_str(&ramount.value);
+            } 
+            let mut value: BigInt = BigInt::from_str(value.as_str()).unwrap();
             let base: BigInt = BigInt::from_str("1000000").unwrap();
             let mut evalue = value.checked_mul(&base).unwrap();
             let max: BigInt = BigInt::from_str(BI_XNS_MAX).unwrap();
@@ -69,6 +74,7 @@ impl Amount {
                 // if (base_wallet.isValidAddress(in_json.issuer)) {
                 //TODO, need to find a better way for extracting the exponent and digits
                 // let vpow = Amount::calc_exponential();
+                
                 let vpow = str_t::to_expo(ramount.value.as_str()).unwrap();
                 let vpow = str_t::get_exponent(&vpow);
 
@@ -137,30 +143,54 @@ impl Amount {
         }
     }
 
-    pub fn from_value(value: u64) -> Self {
-        Amount {
-            value: BigInt::from(value),
-            offset: 0,
-            is_native: true,
-            is_negative : false, 
-            currency: Some("SWT".to_string()),
-            issuer: None,
-        }
-    }
+        pub fn f64_2_usize_str(value_str: &String) -> String {
+            //0.01
+            let mut rv = String::from(value_str.as_str());
+            rv = rv.replace(".", "");
+            let mut index = 0;
+            loop {
+                if index >= rv.len() {
+                    break;
+                }
 
-    pub fn from_json(j: String) -> Self {
-        println!("j: {}", &j);
-        Amount {
-            value: BigInt::from_str(j.as_str()).unwrap(),
-            offset: 0,
-            is_native: true,
-            is_negative : false,
-            currency: Some("SWT".to_string()),
-            issuer: None,
-        }
-    }
+                if let Some(x) = rv.as_str().chars().nth(index) {
+                    if x == '0' {
+                        rv = rv.replace("0", "");
+                    } else {
+                        break;
+                    }
+                }
 
-    pub fn is_zero(&self) -> bool {
+                index += 1;
+            }
+
+            rv
+        }
+
+        pub fn from_value(value: u64) -> Self {
+            Amount {
+value: BigInt::from(value),
+           offset: 0,
+           is_native: true,
+           is_negative : false, 
+           currency: Some("SWT".to_string()),
+           issuer: None,
+            }
+        }
+
+        pub fn from_json(j: String) -> Self {
+            println!("j: {}", &j);
+            Amount {
+value: BigInt::from_str(j.as_str()).unwrap(),
+           offset: 0,
+           is_native: true,
+           is_negative : false,
+           currency: Some("SWT".to_string()),
+           issuer: None,
+            }
+        }
+
+        pub fn is_zero(&self) -> bool {
         false
     }
 
