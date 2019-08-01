@@ -192,48 +192,40 @@ use ws::{connect, CloseCode};
 use serde_json::Value;
 use crate::misc::config::Config;
 use message::common::command_trait::CommandConversion;
+pub use crate::contracts::solidity::Arg;
 
-pub trait ContractAPI {
-    fn deploy<F>(&self, op: F)
-    where F: Fn(Result<SolidityInitResponse, &'static str>);
-
-    fn invoke<F>(&self, op: F)
-    where F: Fn(Result<SolidityInvokeResponse, &'static str>);
+pub struct SolidityDeploy <'a> {
+    pub config  : Box<Rc<Config>>,
+    pub account : &'a String,
+    pub secret  : &'a String,
 }
-
-pub struct Solidity {
-    pub config: Box<Rc<Config>>,
-    pub init_message: SolidityInitMessage,
-    pub invoke_message: SolidityInvokeMessage,
-}
-impl Solidity {
-    pub fn with_config(config: Box<Rc<Config>>) -> Self {
-        Solidity {
+impl <'a> SolidityDeploy <'a> {
+    pub fn with_params(config: Box<Rc<Config>>, account: &'a String, secret: &'a String) -> Self {
+        SolidityDeploy {
             config: config,
-            init_message: SolidityInitMessage::default(),
-            invoke_message: SolidityInvokeMessage::default(),
+            account: account,
+            secret: secret,
         }
     }
 
-    pub fn set_init_message(&mut self, message: SolidityInitMessage) {
-        self.init_message = message;
-    }
-
-    pub fn set_invoke_message(&mut self, message: SolidityInvokeMessage) {
-        self.invoke_message = message;
-    }
-}
-
-impl ContractAPI for Solidity {
-    fn deploy<F>(&self, op: F)
+    pub fn deploy<F>(&self, payload: &'a String, op: F)
     where F: Fn(Result<SolidityInitResponse, &'static str>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
+        let account = Rc::new(Cell::new( String::from( self.account.as_str() )) );
+        let secret = Rc::new(Cell::new( String::from( self.secret.as_str() )) );
+        let payload = Rc::new(Cell::new( String::from( payload.as_str() )) );
+
         connect(self.config.addr, |out| {
             let copy = info.clone();
 
-            if let Ok(command) = self.init_message.to_string() {
+            let account = account.clone();
+            let secret = secret.clone();
+            let payload = payload.clone();
+
+            let message = SolidityInitMessage::with_params(account.take(), secret.take(), payload.take());
+            if let Ok(command) = message.to_string() {
                 out.send(command).unwrap();
             }
 
@@ -252,19 +244,52 @@ impl ContractAPI for Solidity {
             let x: String = x["result"].to_string();
                 if let Ok(v) = serde_json::from_str(&x) as Result<SolidityInitResponse, serde_json::error::Error> {
                     op(Ok(v))
+                } else {
+                    op(Err("deploy Error!"))
                 }
+        } else {
+            op(Err("deploy Error!"))
+        }
+    }
+}
+
+pub struct SolidityCall <'a> {
+    pub config: Box<Rc<Config>>,
+    pub account : &'a String,
+    pub secret  : &'a String,
+    pub address : &'a String,
+}
+impl <'a> SolidityCall <'a> {
+    pub fn with_params(config: Box<Rc<Config>>, account: &'a String, secret: &'a String, address: &'a String) -> Self {
+        SolidityCall {
+            config: config,
+            account: account,
+            secret: secret,
+            address: address,
         }
     }
 
-    fn invoke<F>(&self, op: F)
+    pub fn call<F>(&self, method_name: &'a String, args: Vec<Arg>, op: F)
     where F: Fn(Result<SolidityInvokeResponse, &'static str>){
-
         let info = Rc::new(Cell::new("".to_string()));
+
+        let account = Rc::new(Cell::new( String::from( self.account.as_str())) );
+        let secret = Rc::new(Cell::new( String::from(self.secret.as_str())) );
+        let address = Rc::new(Cell::new( String::from( self.address.as_str() )));
+        let method_name = Rc::new(Cell::new( String::from( method_name.as_str() )) );
+        let args = Rc::new(Cell::new(args));
 
         connect(self.config.addr, |out| {
             let copy = info.clone();
 
-            if let Ok(command) = self.invoke_message.to_string() {
+            let account = account.clone();
+            let secret = secret.clone();
+            let address = address.clone();
+            let method_name = method_name.clone();
+            let args = args.clone();
+
+            let message = SolidityInvokeMessage::with_params(account.take(), secret.take(), address.take(), method_name.take(), args.take());
+            if let Ok(command) = message.to_string() {
                 out.send(command).unwrap();
             }
 
