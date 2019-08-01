@@ -50,8 +50,6 @@ pub struct OfferCreateTxJson {
 
 impl OfferCreateTxJson {
     pub fn new(account: String, offer_type: &'static str, taker_gets: Amount,  taker_pays: Amount) -> Self {
-        let flags = 0;
-
         OfferCreateTxJson {
             flags: OfferCreateTxJson::get_flags( offer_type ),
             fee: 10000,
@@ -84,14 +82,15 @@ impl Serialize for OfferCreateTxJson {
         state.serialize_field("Fee", &self.fee)?;
         state.serialize_field("TransactionType", &self.transaction_type)?;
         state.serialize_field("Account", &self.account)?;
+
         if self.taker_gets.is_string () {
-            state.serialize_field("TakerGets", &self.taker_gets.value)?;
+            state.serialize_field("TakerGets", &Amount::mul_million(&self.taker_gets.value))?;
         } else {
             state.serialize_field("TakerGets", &self.taker_gets)?;
         }
 
         if self.taker_pays.is_string () {
-            state.serialize_field("TakerPays", &self.taker_pays.value)?;
+            state.serialize_field("TakerPays", &Amount::mul_million(&self.taker_pays.value))?;
         } else {
             state.serialize_field("TakerPays", &self.taker_pays)?;
         }
@@ -106,9 +105,8 @@ pub struct OfferCreateTx {
     pub id: u64,
 
     #[serde(rename="command")]
-    pub command: String, //Submit
+    pub command: String,
 
-    //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
     pub secret: String,
 
@@ -138,6 +136,7 @@ impl CommandConversion for OfferCreateTx {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
+        println!("j: {}", &j);
         Ok(j)
     }
 

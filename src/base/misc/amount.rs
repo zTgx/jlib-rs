@@ -46,11 +46,14 @@ impl Amount {
     pub fn from_ramount(ramount: &RAmount) -> Amount {
         if ramount.is_native() {
             let mut value = "".to_string();
-            let r_value = &ramount.value;
-            if r_value.contains(".") {
+            let mut point_len = 0;
+            if value.contains(".") {
+                point_len = value.len() - value.find(".").unwrap();
                 value = Amount::f64_2_usize_str(&ramount.value);
-            } 
-            let point_len = r_value.len() - r_value.find(".").unwrap();
+            } else {
+                value = String::from( ramount.value.as_str() );
+            }
+            println!("len: {}", point_len);
             let mut base_str = "1000000";
             match point_len {
                 0 => {
@@ -85,10 +88,10 @@ impl Amount {
                     panic!("invalid value.");
                 }
             }
+
             let mut value: BigInt = BigInt::from_str(value.as_str()).unwrap();
             let base: BigInt = BigInt::from_str(base_str).unwrap();
             let mut evalue = value.checked_mul(&base).unwrap();
-            println!("evalue: {}", evalue);
             let max: BigInt = BigInt::from_str(BI_XNS_MAX).unwrap();
             if evalue > max {
                 evalue = Zero::zero();
@@ -104,7 +107,6 @@ impl Amount {
                 issuer      : None,
             }
         } else {
-
             //non-native amount
             if ramount.issuer.is_some() {
                 // if (base_wallet.isValidAddress(in_json.issuer)) {

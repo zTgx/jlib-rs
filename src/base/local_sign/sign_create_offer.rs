@@ -19,7 +19,6 @@ use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
-    // fn format(&mut self, tx: &'c mut SignedTxJson);
     fn format(&mut self);
 }
 
