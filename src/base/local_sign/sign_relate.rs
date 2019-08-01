@@ -15,12 +15,11 @@ use crate::base::data::constants::{
 
 use crate::base::wallet::keypair::*;
 use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
-use crate::message::common::command_trait::CommandConversion;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
-    fn format(&mut self, tx: &mut SignedTxJson);
+    fn format(&mut self);
 }
 
 pub struct SignTxRelate <'a> {
@@ -29,6 +28,8 @@ pub struct SignTxRelate <'a> {
     pub tx_json: &'a RelationTxJson,
 
     pub sequence: u32,
+
+    pub output: SignedTxJson<'a>,
 }
 
 impl <'a> SignTxRelate <'a> {
@@ -42,6 +43,8 @@ impl <'a> SignTxRelate <'a> {
             tx_json: tx_json,
 
             sequence: sequence,
+
+            output: SignedTxJson::new(),
         }
     }
 
@@ -52,14 +55,13 @@ impl <'a> SignTxRelate <'a> {
         self.prepare(&sign_tx);
 
         //Step 2
-        let mut output: SignedTxJson = SignedTxJson::new();
-        self.format(&mut output);
+        self.format();
 
         //Step 3
-        sign_tx.get_txn_signature(&mut self.fields, &mut output);
+        sign_tx.get_txn_signature(&mut self.fields, &mut self.output);
 
         //Step 4
-        sign_tx.get_blob(&mut output)
+        sign_tx.get_blob(&mut self.output)
     }
 }
 
@@ -70,57 +72,58 @@ impl <'a> FormatSignTxJson for SignTxRelate <'a> {
         sign_tx.update(&mut self.fields, TX_LIMIT_AMOUNT);
     }
 
-    fn format(&mut self, output: &mut SignedTxJson) {
+    fn format(&mut self) {
         let tx_json_rc = Rc::new ( self.tx_json );
 
         let mut index = 0;
         for &key in &self.fields {
             let tx_json = tx_json_rc.clone();
+            println!("key: {}", &key);
             match key {
                 TX_FLAGS => {
                     let value = tx_json.flags;
                     let flags = TxJsonFlagsBuilder::new(value).build();
-                    output.insert(index, flags);
+                    self.output.insert(index, flags);
                 },
                 TX_FEE => {
                     let value = tx_json.fee;
                     let fee = TxJsonFeeBuilder::new(value).build();
-                    output.insert(index, fee);
+                    self.output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
                     let value = *G_TRANSACTION_TYPE_MAP.get_value_from_key(&tx_json.transaction_type).unwrap();
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
-                    output.insert(index, transaction_type);
+                    self.output.insert(index, transaction_type);
                 },
                 TX_SIGNING_PUB_KEY => {
                     let value = String::from( self.keypair.public_key.as_str() );
                     let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
-                    output.insert(index, signing_pub_key);
+                    self.output.insert(index, signing_pub_key);
                 },
                 TX_ACCOUNT => {
                     let value = String::from(tx_json.account.as_str());
                     let account = TxJsonAccountBuilder::new(value).build();
-                    output.insert(index, account);
+                    self.output.insert(index, account);
                 },
                 TX_SEQUENCE => {
                     let value = self.sequence;
                     let amount = TxJsonSequenceBuilder::new(value).build();
-                    output.insert(index, amount);
+                    self.output.insert(index, amount);
                 },
                 TX_LIMIT_AMOUNT => {
-                    let value = String::from( tx_json.limit_amount.to_string().unwrap().as_str() );
-                    let amount = TxJsonLimitAmountBuilder::new(value).build();
-                    output.insert(index, amount);
+                    let value = &tx_json.limit_amount;
+                    let amount = TxJsonLimitAmountBuilder::new(&value).build();
+                    self.output.insert(index, amount);
                 },
                 TX_TARGET => {
                     let value = String::from( tx_json.target.as_str() );
                     let account = TxJsonTargetBuilder::new(value).build();
-                    output.insert(index, account);
+                    self.output.insert(index, account);
                 },
                 TX_RELATION_TYPE => {
                     let value = tx_json.relation_type;
                     let account = TxJsonRelationTypeBuilder::new(value).build();
-                    output.insert(index, account);
+                    self.output.insert(index, account);
                 },
 
                 _ => {

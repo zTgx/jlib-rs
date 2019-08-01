@@ -149,6 +149,7 @@ impl Amount {
     }
 
     pub fn from_json(j: String) -> Self {
+        println!("j: {}", &j);
         Amount {
             value: BigInt::from_str(j.as_str()).unwrap(),
             offset: 0,

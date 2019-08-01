@@ -12,7 +12,7 @@ use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
-    fn format(&mut self, tx: &mut SignedTxJson);
+    fn format(&mut self);
 }
 
 pub struct SignTxPay <'a> {
@@ -21,6 +21,8 @@ pub struct SignTxPay <'a> {
     pub tx_json: &'a TxJson,
 
     pub sequence: u32,
+
+    pub output: SignedTxJson<'a>,
 }
 
 impl <'a> SignTxPay <'a> {
@@ -34,6 +36,8 @@ impl <'a> SignTxPay <'a> {
             tx_json: tx_json,
 
             sequence: sequence,
+
+            output: SignedTxJson::new(),
         }
     }
 
@@ -42,14 +46,13 @@ impl <'a> SignTxPay <'a> {
         self.prepare(&sign_tx);
 
         //Step 2
-        let mut output: SignedTxJson = SignedTxJson::new();
-        self.format(&mut output);
+        self.format();
 
         //Step 3
-        sign_tx.get_txn_signature(&mut self.fields, &mut output);
+        sign_tx.get_txn_signature(&mut self.fields, &mut self.output);
 
         //Step 4
-        sign_tx.get_blob(&mut output)
+        sign_tx.get_blob(&mut self.output)
     }
 }
 impl <'a> SignTxPay <'a> {
@@ -60,7 +63,7 @@ impl <'a> SignTxPay <'a> {
         sign_tx.update(&mut self.fields, TX_MEMOS);
     }
 
-    fn format(&mut self, output: &mut SignedTxJson) {
+    fn format(&mut self) {
         let tx_json_rc = Rc::new ( self.tx_json );
 
         let mut index = 0;
@@ -70,44 +73,43 @@ impl <'a> SignTxPay <'a> {
                 TX_FLAGS => {
                     let value = tx_json.flags;
                     let flags = TxJsonFlagsBuilder::new(value).build();
-                    output.insert(index, flags);
+                    self.output.insert(index, flags);
                 },
                 TX_FEE => {
                     let value = tx_json.fee;
                     let fee = TxJsonFeeBuilder::new(value).build();
-                    output.insert(index, fee);
+                    self.output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
                     let value = *G_TRANSACTION_TYPE_MAP.get_value_from_key(&tx_json.transaction_type).unwrap();
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
-                    output.insert(index, transaction_type);
+                    self.output.insert(index, transaction_type);
                 },
                 TX_ACCOUNT => {
                     let value = String::from(tx_json.account.as_str());
                     let account = TxJsonAccountBuilder::new(value).build();
-                    output.insert(index, account);
+                    self.output.insert(index, account);
                 },
                 TX_AMOUNT => {
-                    let value = String::from(tx_json.amount.as_str());
-
-                    let amount = TxJsonAmountBuilder::new(value).build();
-                    output.insert(index, amount);
+                    let value = &tx_json.amount;
+                    let amount = TxJsonAmountBuilder::new(&value).build();
+                    self.output.insert(index, amount);
                 },
                 TX_DESTINATION => {
                     let value = String::from(tx_json.destination.as_str());
                     let destination = TxJsonDestinationBuilder::new(value).build();
-                    output.insert(index, destination);
+                    self.output.insert(index, destination);
                 },
                 TX_SEQUENCE => {
                     let value = tx_json.sequence;
                     let sequence = TxJsonSequenceBuilder::new(value).build();
-                    output.insert(index, sequence);
+                    self.output.insert(index, sequence);
                 },
 
                 TX_SIGNING_PUB_KEY => {
                     let value = String::from( self.keypair.public_key.as_str() );
                     let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value).build();
-                    output.insert(index, signing_pub_key);
+                    self.output.insert(index, signing_pub_key);
                 },
 
                 TX_MEMOS => {
@@ -122,7 +124,7 @@ impl <'a> SignTxPay <'a> {
                         }
 
                         let tx_memos = TxJsonMemosBuilder::new(v).build();
-                        output.insert(index, tx_memos);
+                        self.output.insert(index, tx_memos);
                     }
                 },
                 _ => {

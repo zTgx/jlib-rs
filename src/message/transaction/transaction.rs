@@ -10,7 +10,7 @@ use std::any::Any;
 use std::cell::Cell;
 
 use crate::message::common::command_trait::CommandConversion;
-use crate::message::common::amount::Amount;
+use crate::message::common::amount::{Amount, string_or_struct};
 use crate::message::common::memo::*;
 use crate::misc::common::*;
 use std::error::Error;
@@ -34,7 +34,8 @@ pub struct TxJson {
     pub account: String,
 
     #[serde(rename="Amount")]
-    pub amount: String,
+    #[serde(deserialize_with = "string_or_struct")]
+    pub amount: Amount,
 
     #[serde(rename="Destination")]
     pub destination: String,
@@ -59,7 +60,8 @@ impl Serialize for TxJson {
         state.serialize_field("TransactionType", &self.transaction_type)?;
         state.serialize_field("Account", &self.account)?;
 
-        state.serialize_field("Amount", &Amount::mul_million(&self.amount))?;
+        state.serialize_field("Amount", &self.amount)?;
+        //state.serialize_field("Amount", &Amount::mul_million(&self.amount))?;
         state.serialize_field("Destination", &self.destination)?;
         state.serialize_field("Memos", &self.memo)?;
 
@@ -76,7 +78,7 @@ impl TxJson {
             transaction_type: "Payment".to_string(),
             account: from,
             destination: to,
-            amount: amount.value,//(amount.value.parse::<f64>().unwrap() * 1000000f64).to_string(),
+            amount: amount,//(amount.value.parse::<f64>().unwrap() * 1000000f64).to_string(),
             sequence: sequence,
             memo: memo,
         }

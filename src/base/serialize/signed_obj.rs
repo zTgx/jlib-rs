@@ -349,26 +349,26 @@ impl TxJsonBuilder <'_> for TxJsonRelationTypeBuilder {
 }
 
 //Amount
-pub struct TxJsonAmount {
+pub struct TxJsonAmount <'a> {
     pub name    : String,
-    pub type_obj : Option<TypeObj>,
-    pub value   : String,
+    pub type_obj: Option<TypeObj>,
+    pub value   : &'a RAmount,
 
     pub output: SignStreamType,
 }
 
-impl TxJsonAmount {
-    pub fn new(value: String) -> Self {
+impl <'a> TxJsonAmount <'a> {
+    pub fn new(value: &'a RAmount) -> Self {
         TxJsonAmount {
             name    : TX_AMOUNT.to_string(),
-            type_obj : TypeObjBuilder::new(TX_AMOUNT).build(),
+            type_obj: TypeObjBuilder::new(TX_AMOUNT).build(),
             value   : value,
 
             output: None,
         }
     }
 }
-impl TxJsonSerializer for TxJsonAmount {
+impl <'a> TxJsonSerializer for TxJsonAmount <'a> {
     fn serialize_obj(&mut self, so: &mut Vec<u8>) {
 
         if self.output.is_some() {
@@ -385,7 +385,7 @@ impl TxJsonSerializer for TxJsonAmount {
             raw.serialize_header(&mut tmp);
         }
 
-        let amount = Amount::from_json(String::from(self.value.as_str()));
+        let amount = Amount::from_ramount( self.value );
         let mut s = STAmount::serialize(amount);
         tmp.append(&mut s);
 
@@ -396,33 +396,33 @@ impl TxJsonSerializer for TxJsonAmount {
         }
     }
 }
-pub struct TxJsonAmountBuilder {
-    pub value   : String,
+pub struct TxJsonAmountBuilder <'a> {
+    pub value   : &'a RAmount,
 }
-impl TxJsonAmountBuilder {
-    pub fn new(value: String) -> Self {
+impl <'a> TxJsonAmountBuilder <'a> {
+    pub fn new(value: &'a RAmount) -> Self {
         TxJsonAmountBuilder {
             value: value,
         }
     }
 }
-impl TxJsonBuilder <'_> for TxJsonAmountBuilder {
-    fn build(&self) -> Box<dyn TxJsonSerializer> {
-        Box::new( TxJsonAmount::new(String::from(self.value.as_str()) ))
+impl <'a> TxJsonBuilder <'a> for TxJsonAmountBuilder <'a> {
+    fn build(&self) -> Box<dyn TxJsonSerializer + 'a> {
+        Box::new( TxJsonAmount::new( self.value ))
     }
 }
 
 //Limit_Amount
-pub struct TxJsonLimitAmount {
+pub struct TxJsonLimitAmount <'a> {
     pub name    : String,
     pub type_obj: Option<TypeObj>,
-    pub value   : String,
+    pub value   : &'a RAmount,
 
     pub output: SignStreamType,
 }
 
-impl TxJsonLimitAmount {
-    pub fn new(value: String) -> Self {
+impl <'a> TxJsonLimitAmount <'a> {
+    pub fn new(value: &'a RAmount) -> Self {
         TxJsonLimitAmount {
             name    : TX_LIMIT_AMOUNT.to_string(),
             type_obj: TypeObjBuilder::new(TX_LIMIT_AMOUNT).build(),
@@ -432,7 +432,7 @@ impl TxJsonLimitAmount {
         }
     }
 }
-impl TxJsonSerializer for TxJsonLimitAmount {
+impl <'a> TxJsonSerializer for TxJsonLimitAmount <'a> {
     fn serialize_obj(&mut self, so: &mut Vec<u8>) {
 
         if self.output.is_some() {
@@ -449,8 +449,8 @@ impl TxJsonSerializer for TxJsonLimitAmount {
             raw.serialize_header(&mut tmp);
         }
 
-        let amount = Amount::from_json(String::from(self.value.as_str()));
-
+        let amount = Amount::from_ramount( self.value );
+        //let amount = Amount::from_json(String::from(self.value.as_str()));
         let mut s = STAmount::serialize(amount);
         tmp.append(&mut s);
 
@@ -461,19 +461,19 @@ impl TxJsonSerializer for TxJsonLimitAmount {
         }
     }
 }
-pub struct TxJsonLimitAmountBuilder {
-    pub value   : String,
+pub struct TxJsonLimitAmountBuilder <'a> {
+    pub value   : &'a RAmount,
 }
-impl TxJsonLimitAmountBuilder {
-    pub fn new(value: String) -> Self {
+impl <'a> TxJsonLimitAmountBuilder <'a> {
+    pub fn new(value: &'a RAmount) -> Self {
         TxJsonLimitAmountBuilder {
             value: value,
         }
     }
 }
-impl TxJsonBuilder <'_> for TxJsonLimitAmountBuilder {
-    fn build(&self) -> Box<dyn TxJsonSerializer> {
-        Box::new( TxJsonLimitAmount::new( String::from( self.value.as_str() ) ))
+impl <'a> TxJsonBuilder <'a> for TxJsonLimitAmountBuilder <'a> {
+    fn build(&self) -> Box<dyn TxJsonSerializer + 'a> {
+        Box::new( TxJsonLimitAmount::new( &self.value ) )
     }
 }
 
@@ -556,7 +556,7 @@ impl TxJsonFee {
     pub fn new(value: u64) -> Self {
         TxJsonFee {
             name    : TX_FEE.to_string(),
-            type_obj : TypeObjBuilder::new(TX_FEE).build(),
+            type_obj: TypeObjBuilder::new(TX_FEE).build(),
             value   : value,
 
             output : None,
@@ -565,6 +565,7 @@ impl TxJsonFee {
 }
 impl TxJsonSerializer for TxJsonFee {
     fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        println!("ssssssss");
         if self.output.is_some() {
             if let Some(x) = &self.output {
                 so.extend_from_slice(&x);
@@ -1136,6 +1137,7 @@ impl <'s> SignedTxJson <'s> {
     pub fn serialize(&mut self) -> Vec<u8> {
         let mut so: Vec<u8> = vec![];
         for component in self.components.as_mut_slice() {
+            println!("3");
             component.serialize_obj(&mut so);
         }
 

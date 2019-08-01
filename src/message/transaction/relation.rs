@@ -92,9 +92,8 @@ pub struct RelationTx {
     id: u64,
 
     #[serde(rename="command")]
-    pub command: String, //Submit
+    pub command: String,
 
-    //如果需要本地签名为false， secret必须，否则可以为空。
     #[serde(rename="secret")]
     pub secret: String,
 
@@ -173,7 +172,7 @@ pub struct RelationTxJsonResponse {
     pub target: String,
 
     #[serde(rename="Timestamp")]
-    pub time_stamp: u64,
+    pub time_stamp: Option<u64>,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
