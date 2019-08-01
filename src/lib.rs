@@ -175,3 +175,119 @@ lazy_static! {
     };
 }
 pub use subscribe::SubscribeI as SubscribeI;
+
+///////////////////////////////////////////////////////////////////////////////////////
+//
+// Solidity contract APIs: deploy && invoke
+//
+///////////////////////////////////////////////////////////////////////////////////////
+pub use crate::contracts::solidity::{
+    SolidityInitMessage,SolidityInitResponse,
+    SolidityInvokeMessage, SolidityInvokeResponse,
+};
+use crate::base::misc::util::{downcast_to_string};
+use std::rc::Rc;
+use std::cell::Cell;
+use ws::{connect, CloseCode};
+use serde_json::Value;
+use crate::misc::config::Config;
+use message::common::command_trait::CommandConversion;
+
+pub trait ContractAPI {
+    fn deploy<F>(&self, op: F)
+    where F: Fn(Result<SolidityInitResponse, &'static str>);
+
+    fn invoke<F>(&self, op: F)
+    where F: Fn(Result<SolidityInvokeResponse, &'static str>);
+}
+
+pub struct Solidity {
+    pub config: Box<Rc<Config>>,
+    pub init_message: SolidityInitMessage,
+    pub invoke_message: SolidityInvokeMessage,
+}
+impl Solidity {
+    pub fn with_config(config: Box<Rc<Config>>) -> Self {
+        Solidity {
+            config: config,
+            init_message: SolidityInitMessage::default(),
+            invoke_message: SolidityInvokeMessage::default(),
+        }
+    }
+
+    pub fn set_init_message(&mut self, message: SolidityInitMessage) {
+        self.init_message = message;
+    }
+
+    pub fn set_invoke_message(&mut self, message: SolidityInvokeMessage) {
+        self.invoke_message = message;
+    }
+}
+
+impl ContractAPI for Solidity {
+    fn deploy<F>(&self, op: F)
+    where F: Fn(Result<SolidityInitResponse, &'static str>) {
+
+        let info = Rc::new(Cell::new("".to_string()));
+
+        connect(self.config.addr, |out| {
+            let copy = info.clone();
+
+            if let Ok(command) = self.init_message.to_string() {
+                out.send(command).unwrap();
+            }
+
+            move |msg: ws::Message| {
+                let c = msg.as_text()?;
+
+                copy.set(c.to_string());
+
+                out.close(CloseCode::Normal)
+            }
+
+        }).unwrap();
+
+        let resp = downcast_to_string(info);
+        if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+            let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<SolidityInitResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+        }
+    }
+
+    fn invoke<F>(&self, op: F)
+    where F: Fn(Result<SolidityInvokeResponse, &'static str>){
+
+        let info = Rc::new(Cell::new("".to_string()));
+
+        connect(self.config.addr, |out| {
+            let copy = info.clone();
+
+            if let Ok(command) = self.invoke_message.to_string() {
+                out.send(command).unwrap();
+            }
+
+            move |msg: ws::Message| {
+                let c = msg.as_text()?;
+
+                copy.set(c.to_string());
+
+                out.close(CloseCode::Normal)
+            }
+
+        }).unwrap();
+
+        let resp = downcast_to_string(info);
+        if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+            let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<SolidityInvokeResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                } else {
+                    op(Err("Err..."))
+                }
+        } else {
+            op(Err("Err..."))
+        }
+    }
+}

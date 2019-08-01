@@ -1,17 +1,12 @@
 
 extern crate jlib;
 
-use jlib::misc::config::*;
-use jlib::contracts::solidity::*;
-
-use std::rc::Rc;
+use jlib::{ContractAPI, Solidity};
 
 fn main() {
-    let config: Box<Rc<Config>> = Config::new(TEST1, true);
-    println!("config : {:?}", config.clone());
+    let config = Config::new(TEST1, true);
 
     //invoke
-    //address:
     let secret  = "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
     let account = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string();
     let address = "jJpU95p4ekWaJJZ7biS7oSM1QGsetxb269".to_string();
