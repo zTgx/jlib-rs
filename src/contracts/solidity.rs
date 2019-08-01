@@ -316,14 +316,14 @@ pub struct SolidityInitTxJsonResponse {
     #[serde(rename="Flags")]
     pub flags: u64,
 
-    #[serde(rename="Method")]
-    pub method: u64,
-
     #[serde(rename="Payload")]
     pub payload: String,
 
     #[serde(rename="Sequence")]
     pub sequence: u64,
+
+    #[serde(rename="Method")]
+    pub method: u64,
 
     #[serde(rename="SigningPubKey")]
     pub signing_pub_key: String,
@@ -364,12 +364,76 @@ pub struct SolidityInitResponse {
 
 
 /////////////////////////////////////////////////////
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct SolidityInvokeTxJsonResponse {
+    #[serde(rename="Destination")]
+    pub args: Args,
+
+    #[serde(rename="Destination")]
+    pub destination: String,
+
+    #[serde(rename="Account")]
+    pub account: String,
+
+    #[serde(rename="Amount")]
+    pub amount: String,
+
+    #[serde(rename="Fee")]
+    pub fee: String,
+
+    #[serde(rename="Flags")]
+    pub flags: u64,
+
+    #[serde(rename="Sequence")]
+    pub sequence: u64,
+
+    #[serde(rename="ContractMethod")]
+    pub method: u64,
+
+    #[serde(rename="SigningPubKey")]
+    pub signing_pub_key: String,
+
+    #[serde(rename="Timestamp")]
+    pub timestamp: u64,
+
+    #[serde(rename="TransactionType")]
+    pub transaction_type: String,
+
+    #[serde(rename="TxnSignature")]
+    pub txn_signature: String,
+
+    #[serde(rename="hash")]
+    pub hash: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct SolidityInvokeResponse {
+    #[serde(rename="ContractState")]
+    pub address: String,
+
+    #[serde(rename="engine_result")]
+    pub engine_result: String,
+
+    #[serde(rename="engine_result_code")]
+    pub engine_result_code: u64,
+
+    #[serde(rename="engine_result_message")]
+    pub engine_result_message: String,
+
+    #[serde(rename="tx_blob")]
+    pub tx_blob: String,
+
+    #[serde(rename="tx_json")]
+    pub tx_json: SolidityInvokeTxJsonResponse,
+}
+/////////////////////////////////////////////////////
 
 pub trait ContractAPI {
     fn deploy<F>(&self, op: F)
     where F: Fn(Result<SolidityInitResponse, &'static str>);
 
-    fn invoke(&self);
+    fn invoke<F>(&self, op: F)
+    where F: Fn(Result<SolidityInvokeResponse, &'static str>);
 }
 
 pub struct Solidity {
@@ -427,7 +491,9 @@ impl ContractAPI for Solidity {
         }
     }
 
-    fn invoke(&self) {
+    fn invoke<F>(&self, op: F)
+    where F: Fn(Result<SolidityInvokeResponse, &'static str>){
+
         let info = Rc::new(Cell::new("".to_string()));
 
         connect(self.config.addr, |out| {
@@ -448,5 +514,15 @@ impl ContractAPI for Solidity {
         }).unwrap();
 
         let resp = downcast_to_string(info);
+        if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+            let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<SolidityInvokeResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                } else {
+                    op(Err("Err..."))
+                }
+        } else {
+            op(Err("Err..."))
+        }
     }
 }
