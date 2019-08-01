@@ -36,7 +36,7 @@ fn main() {
     solidity.invoke(|x| match x {
         Ok(response) => {
             let res: SolidityInvokeResponse = response;
-            println!("账号挂单: {:?}", &res);
+            println!("contract info : {:?}", &res);
         },
 
         Err(err) => {

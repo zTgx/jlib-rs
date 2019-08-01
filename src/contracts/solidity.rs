@@ -400,7 +400,7 @@ pub struct SolidityInvokeTxJsonResponse {
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct SolidityInvokeResponse {
     #[serde(rename="ContractState")]
-    pub address: String,
+    pub contract_state: String,
 
     #[serde(rename="engine_result")]
     pub engine_result: String,
