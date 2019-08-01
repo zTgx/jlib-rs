@@ -185,7 +185,7 @@ pub struct OfferCreateTxJsonResponse {
     pub taker_pays: Amount,
 
     #[serde(rename="Timestamp")]
-    pub time_stamp: u64,
+    pub time_stamp: Option<u64>,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
