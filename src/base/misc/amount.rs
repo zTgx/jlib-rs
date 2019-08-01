@@ -137,17 +137,26 @@ impl Amount {
         }
     }
 
+    pub fn from_value(value: u64) -> Self {
+        Amount {
+            value: BigInt::from(value),
+            offset: 0,
+            is_native: true,
+            is_negative : false, 
+            currency: Some("SWT".to_string()),
+            issuer: None,
+        }
+    }
 
     pub fn from_json(j: String) -> Self {
-        // let mut ret: Amount = Amount::default();
-                Amount {
-                    value: BigInt::from_str("10000").unwrap(),
-                    offset: 0,
-                    is_native: true,
-                    is_negative : false, // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                    currency: Some("SWT".to_string()),
-                    issuer: None,
-                }
+        Amount {
+            value: BigInt::from_str(j.as_str()).unwrap(),
+            offset: 0,
+            is_native: true,
+            is_negative : false,
+            currency: Some("SWT".to_string()),
+            issuer: None,
+        }
     }
 
     pub fn is_zero(&self) -> bool {

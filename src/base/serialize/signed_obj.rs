@@ -546,14 +546,14 @@ impl <'a> TxJsonBuilder <'a> for TxJsonTakerBuilder <'a> {
 //Fee
 pub struct TxJsonFee {
     pub name    : String,
-    pub type_obj : Option<TypeObj>,
-    pub value   : String,
+    pub type_obj: Option<TypeObj>,
+    pub value   : u64,
 
     pub output: SignStreamType,
 }
 
 impl TxJsonFee {
-    pub fn new(value: String) -> Self {
+    pub fn new(value: u64) -> Self {
         TxJsonFee {
             name    : TX_FEE.to_string(),
             type_obj : TypeObjBuilder::new(TX_FEE).build(),
@@ -579,7 +579,7 @@ impl TxJsonSerializer for TxJsonFee {
             raw.serialize_header(&mut tmp);
         }
 
-        let amount = Amount::from_json(String::from( self.value.as_str()));
+        let amount = Amount::from_value( self.value );
         let mut s = STAmount::serialize(amount);
         tmp.append(&mut s);
 
@@ -591,10 +591,10 @@ impl TxJsonSerializer for TxJsonFee {
     }
 }
 pub struct TxJsonFeeBuilder {
-    pub value   : String,
+    pub value   : u64,
 }
 impl TxJsonFeeBuilder {
-    pub fn new(value: String) -> Self {
+    pub fn new(value: u64) -> Self {
         TxJsonFeeBuilder {
             value: value,
         }
@@ -602,7 +602,7 @@ impl TxJsonFeeBuilder {
 }
 impl TxJsonBuilder <'_> for TxJsonFeeBuilder {
     fn build(&self) -> Box<dyn TxJsonSerializer> {
-        Box::new( TxJsonFee::new(String::from(self.value.as_str()) ))
+        Box::new( TxJsonFee::new( self.value ))
     }
 }
 

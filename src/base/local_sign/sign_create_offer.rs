@@ -88,11 +88,10 @@ impl <'a, 'd> FormatSignTxJson <'d> for SignTxCreateOffer <'a> {
                 },
                 TX_FEE => {
                     let value = tx_json.fee;
-                    let fee = TxJsonFeeBuilder::new(value.to_string()).build();
+                    let fee = TxJsonFeeBuilder::new(value).build();
                     self.output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
-                    ////8u16;//tx_json.transaction_type;
                     let value = *G_TRANSACTION_TYPE_MAP.get_value_from_key(&tx_json.transaction_type).unwrap();
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
                     self.output.insert(index, transaction_type);

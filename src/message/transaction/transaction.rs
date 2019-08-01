@@ -25,7 +25,7 @@ pub struct TxJson {
     pub flags: u32,
 
     #[serde(rename="Fee")]
-    pub fee: f64,
+    pub fee: u64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -72,7 +72,7 @@ impl TxJson {
         let flag = Flags::Other;
         TxJson {
             flags: flag.get(),
-            fee: 0.01,
+            fee: 10000,
             transaction_type: "Payment".to_string(),
             account: from,
             destination: to,

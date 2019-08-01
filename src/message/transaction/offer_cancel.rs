@@ -18,10 +18,10 @@ use std::fmt;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OfferCancelTxJson {
     #[serde(rename="Flags")]
-    pub flags: u32, ///How ???????????
+    pub flags: u32,
 
     #[serde(rename="Fee")]
-    pub fee: f64,
+    pub fee: u64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -37,8 +37,8 @@ impl OfferCancelTxJson {
         pub fn new(account: String, offer_sequence: u64) -> Self {
             let flag = Flags::Other;
             OfferCancelTxJson {
-                flags: 0, ///////////////Hard code
-                fee  : 0.01,
+                flags: flag.get(),
+                fee  : 10000,
                 transaction_type: "OfferCancel".to_string(),
                 account: account,
                 offer_sequence: offer_sequence,
@@ -117,11 +117,11 @@ pub struct OfferCancelTxJsonResponse {
     #[serde(rename="Sequence")]
     pub sequence: u64,
 
+    #[serde(rename="OfferSequence")]
+    pub offer_sequence: u64,
+
     #[serde(rename="SigningPubKey")]
     pub signing_pub_key: String,
-
-    #[serde(rename="Timestamp")]
-    pub time_stamp: u64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -148,7 +148,7 @@ pub struct OfferCancelTxResponse {
     pub tx_blob: String,
 
     #[serde(rename="tx_json")]
-    pub tx_json: OfferCancelTxJsonResponse,
+    pub tx_json: Option<OfferCancelTxJsonResponse>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

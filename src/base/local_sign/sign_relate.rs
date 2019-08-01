@@ -84,7 +84,7 @@ impl <'a> FormatSignTxJson for SignTxRelate <'a> {
                 },
                 TX_FEE => {
                     let value = tx_json.fee;
-                    let fee = TxJsonFeeBuilder::new(value.to_string()).build();
+                    let fee = TxJsonFeeBuilder::new(value).build();
                     output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
