@@ -49,7 +49,6 @@ use crate::misc::config::*;
 use crate::message::common::command_trait::CommandConversion;
 use serde_json::json;
 use serde::{Deserialize, Serialize};
-use serde_json::Result;
 use serde_json::{Value};
 use crate::base::misc::util::{downcast_to_string, check};
 
@@ -141,7 +140,7 @@ impl SolidityInitMessage {
 
 impl CommandConversion for SolidityInitMessage {
     type T = SolidityInitMessage;
-    fn to_string(&self) -> Result<String> {
+    fn to_string(&self) -> Result<String, serde_json::error::Error> {
         //https://crates.io/crates/serde_json
         // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
@@ -288,7 +287,7 @@ impl SolidityInvokeMessage {
 
 impl CommandConversion for SolidityInvokeMessage {
     type T = SolidityInvokeMessage;
-    fn to_string(&self) -> Result<String> {
+    fn to_string(&self) -> Result<String, serde_json::error::Error> {
         //https://crates.io/crates/serde_json
         // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
@@ -302,8 +301,74 @@ impl CommandConversion for SolidityInvokeMessage {
     }
 }
 
+///////////////////////////////////////////////
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct SolidityInitTxJsonResponse {
+    #[serde(rename="Account")]
+    pub account: String,
+
+    #[serde(rename="Amount")]
+    pub amount: String,
+
+    #[serde(rename="Fee")]
+    pub fee: String,
+
+    #[serde(rename="Flags")]
+    pub flags: u64,
+
+    #[serde(rename="Method")]
+    pub method: u64,
+
+    #[serde(rename="Payload")]
+    pub payload: String,
+
+    #[serde(rename="Sequence")]
+    pub sequence: u64,
+
+    #[serde(rename="SigningPubKey")]
+    pub signing_pub_key: String,
+
+    #[serde(rename="Timestamp")]
+    pub timestamp: u64,
+
+    #[serde(rename="TransactionType")]
+    pub transaction_type: String,
+
+    #[serde(rename="TxnSignature")]
+    pub txn_signature: String,
+
+    #[serde(rename="hash")]
+    pub hash: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct SolidityInitResponse {
+    #[serde(rename="ContractState")]
+    pub address: String,
+
+    #[serde(rename="engine_result")]
+    pub engine_result: String,
+
+    #[serde(rename="engine_result_code")]
+    pub engine_result_code: u64,
+
+    #[serde(rename="engine_result_message")]
+    pub engine_result_message: String,
+
+    #[serde(rename="tx_blob")]
+    pub tx_blob: String,
+
+    #[serde(rename="tx_json")]
+    pub tx_json: SolidityInitTxJsonResponse,
+}
+
+
+/////////////////////////////////////////////////////
+
 pub trait ContractAPI {
-    fn deploy(&self);
+    fn deploy<F>(&self, op: F)
+    where F: Fn(Result<SolidityInitResponse, &'static str>);
+
     fn invoke(&self);
 }
 
@@ -331,7 +396,9 @@ impl Solidity {
 }
 
 impl ContractAPI for Solidity {
-    fn deploy(&self) {
+    fn deploy<F>(&self, op: F)
+    where F: Fn(Result<SolidityInitResponse, &'static str>) {
+
         let info = Rc::new(Cell::new("".to_string()));
 
         connect(self.config.addr, |out| {
@@ -352,16 +419,12 @@ impl ContractAPI for Solidity {
         }).unwrap();
 
         let resp = downcast_to_string(info);
-
-        // if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-        //     let x: String = x["result"].to_string();
-        //     if let Ok(x) = serde_json::from_str(&x) as Result<Value, serde_json::error::Error> {
-        //         let x: String = x["info"].to_string();
-        //         if let Ok(v) = serde_json::from_str(&x) as Result<ServerInfoResponse, serde_json::error::Error> {
-        //             op(Ok(v))
-        //         }
-        //     }
-        // }
+        if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
+            let x: String = x["result"].to_string();
+                if let Ok(v) = serde_json::from_str(&x) as Result<SolidityInitResponse, serde_json::error::Error> {
+                    op(Ok(v))
+                }
+        }
     }
 
     fn invoke(&self) {

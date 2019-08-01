@@ -19,5 +19,14 @@ fn main() {
 
     let mut solidity = Solidity::with_config(config.clone());
     solidity.set_init_message(message);
-    solidity.deploy();
+    solidity.deploy(|x| match x {
+        Ok(response) => {
+            let res: SolidityInitResponse = response;
+            println!("账号挂单: {:?}", &res);
+        },
+
+        Err(err) => {
+            println!("err: {:?}", err);
+        }
+    });
 }
