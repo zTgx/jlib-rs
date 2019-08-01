@@ -366,29 +366,20 @@ pub struct SolidityInitResponse {
 /////////////////////////////////////////////////////
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct SolidityInvokeTxJsonResponse {
-    #[serde(rename="Destination")]
-    pub args: Args,
-
-    #[serde(rename="Destination")]
-    pub destination: String,
-
     #[serde(rename="Account")]
     pub account: String,
 
     #[serde(rename="Amount")]
     pub amount: String,
 
-    #[serde(rename="Fee")]
-    pub fee: String,
+    #[serde(rename="Args")]
+    pub args: Vec<Args>,
 
-    #[serde(rename="Flags")]
-    pub flags: u64,
+    #[serde(rename="ContractMethod")]
+    pub method: String,
 
     #[serde(rename="Sequence")]
     pub sequence: u64,
-
-    #[serde(rename="ContractMethod")]
-    pub method: u64,
 
     #[serde(rename="SigningPubKey")]
     pub signing_pub_key: String,
