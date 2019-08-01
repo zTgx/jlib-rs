@@ -14,8 +14,7 @@ fn main() {
 
     let relation_type = AUTHORIZE;
     let to  : String = "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string();
-    let amount: Amount = Amount::new("SWT".to_string(), "0.01".to_string(), "".to_string());
-    // let amount: Amount = Amount::new("CCA".to_string(), "0.01".to_string(), "js7M6x28mYDiZVJJtfJ84ydrv2PthY9W9u".to_string());
+    let amount: Amount = Amount::new("CCA".to_string(), "0.01".to_string(), "js7M6x28mYDiZVJJtfJ84ydrv2PthY9W9u".to_string());
 
     Relate::with_params(config.clone(), from, secret)
             .set_relation(relation_type, to, amount,

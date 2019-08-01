@@ -50,9 +50,45 @@ impl Amount {
             if r_value.contains(".") {
                 value = Amount::f64_2_usize_str(&ramount.value);
             } 
+            let point_len = r_value.len() - r_value.find(".").unwrap();
+            let mut base_str = "1000000";
+            match point_len {
+                0 => {
+                    base_str = "1000000";
+                },
+
+                1 => {
+                    base_str = "100000";
+                },
+
+                2 => {
+                    base_str = "10000";
+                },
+
+                3 => {
+                    base_str = "1000";
+                },
+
+                4 => {
+                    base_str = "100";
+                },
+
+                5 => {
+                    base_str = "10";
+                },
+
+                6 => {
+                    base_str = "1";
+                },
+
+                _ => {
+                    panic!("invalid value.");
+                }
+            }
             let mut value: BigInt = BigInt::from_str(value.as_str()).unwrap();
-            let base: BigInt = BigInt::from_str("1000000").unwrap();
+            let base: BigInt = BigInt::from_str(base_str).unwrap();
             let mut evalue = value.checked_mul(&base).unwrap();
+            println!("evalue: {}", evalue);
             let max: BigInt = BigInt::from_str(BI_XNS_MAX).unwrap();
             if evalue > max {
                 evalue = Zero::zero();
