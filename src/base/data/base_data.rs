@@ -4,9 +4,15 @@ pub const NODE_PRIVATE : usize = 32;
 pub const ACCOUNT_ID   : usize = 0;
 pub const FAMILY_SEED  : usize = 33;
 pub const ED25519_SEED : [u8; 3]   = [0x01, 0xe1, 0x4b];
-pub const SIGN_TYPE    : [&'static str; 2] = ["ed25519", "secp256k1"]; 
+pub const SIGN_TYPE    : [&'static str; 2] = ["ed25519", "secp256k1"];
 
-//修改为trait对象（待定)!!!!!!!!!!!!!!!!!!!
+pub trait BaseDataI {
+    fn get_version(&self) -> Option<String>;
+    fn get_version(&self) -> Option<String>;
+    fn get_version_type(&self) -> Option<String>;
+    fn get_checked(&self) -> Option<bool>;
+    fn get_expected_length(&self) -> Option<usize>;
+}
 
 #[derive(Debug)]
 pub struct EdSeed {
@@ -15,7 +21,7 @@ pub struct EdSeed {
 }
 impl Default for EdSeed {
     fn default() -> Self {
-        EdSeed { 
+        EdSeed {
             expected_length: 16,
             version: ED25519_SEED,
         }
@@ -39,9 +45,9 @@ impl Default for Seed {
 }
 
 #[derive(Debug)]
-pub struct AccountID { 
+pub struct AccountID {
     pub version: usize,
-    pub expected_length: usize, 
+    pub expected_length: usize,
 }
 impl Default for AccountID {
     fn default() -> Self {
@@ -53,9 +59,9 @@ impl Default for AccountID {
 }
 
 #[derive(Debug)]
-pub struct Address { 
-    pub version: usize, 
-    pub expected_length: usize, 
+pub struct Address {
+    pub version: usize,
+    pub expected_length: usize,
 }
 impl Default for Address {
     fn default() -> Self {
@@ -67,9 +73,9 @@ impl Default for Address {
 }
 
 #[derive(Debug)]
-pub struct NodePublic { 
-    pub version: usize, 
-    pub expected_length: usize 
+pub struct NodePublic {
+    pub version: usize,
+    pub expected_length: usize
 }
 impl Default for NodePublic {
     fn default() -> Self {
@@ -81,8 +87,8 @@ impl Default for NodePublic {
 }
 
 #[derive(Debug)]
-pub struct NodePrivate { 
-    pub version: usize, 
+pub struct NodePrivate {
+    pub version: usize,
     pub expected_length: usize,
 }
 impl Default for NodePrivate {
@@ -95,9 +101,9 @@ impl Default for NodePrivate {
 }
 
 #[derive(Debug)]
-pub struct K256Seed { 
-    pub version: usize, 
-    pub expected_length: usize, 
+pub struct K256Seed {
+    pub version: usize,
+    pub expected_length: usize,
 }
 impl Default for K256Seed {
     fn default() -> Self {

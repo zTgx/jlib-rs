@@ -8,6 +8,7 @@ pub mod misc;
 pub mod serialize;
 pub mod wallet;
 pub mod curve;
+pub mod xcodec;
 
 //Serialize
 use std::collections::HashMap;
