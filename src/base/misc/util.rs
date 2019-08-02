@@ -5,6 +5,8 @@ use std::cell::Cell;
 use basex_rs::BaseX;
 use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
 use crate::WalletType;
+use crate::message::common::amount::Amount;
+use crate::misc::base_config::*;
 
 pub fn get_keypair_from_secret(secret: &String) -> Keypair {
     let wtype = fetch_wtype_from_secret(&secret);
@@ -17,6 +19,71 @@ pub fn get_keypair_from_secret(secret: &String) -> Keypair {
 
 pub fn fetch_wtype_from_secret(_secret: &String) -> WalletType {
     WalletType::SECP256K1
+}
+
+/////////////////////////////////////////////////////////////////////////
+pub fn check_secret(_secret: &String) -> Option<bool> {
+    Some(true)
+}
+
+pub fn check_address(_address: &String) -> Option<bool> {
+    return None;
+}
+
+pub fn check_currency(cur: &Option<String>) -> bool {
+    let mut f = true;
+    if let Some(x) = cur {
+        if x.len() != 3 {
+            f = false;
+        }
+
+        for c in x.chars() {
+            if c >= 'A' && c <= 'Z' {
+            } else {
+                f = false;
+                break;
+            }
+        }
+    }
+
+    f
+}
+//is valid amount
+pub fn check_amount(amount: &Amount) -> bool {
+    // check amount value
+    let value = &amount.value;
+    let len = value.len();
+    if len == 1 && value == "." {
+        return false;
+    }
+
+    for c in value.chars() {
+        if c >= '0' && c <= '9' || c == '.' {
+        } else {
+            return false;
+        }
+    }
+
+    // check amount currency
+    if check_currency(&amount.currency) {
+        return false;
+    }
+
+    // native currency issuer is empty
+    if amount.currency == Some(CURRENCY.to_string()) && amount.issuer.is_some() {
+        return false;
+    }
+
+    // non native currency issuer is not allowed to be empty
+    let mut is_issuer = None;
+    if let Some(ref x) = amount.issuer {
+        is_issuer = check_address(&x);
+    }
+    if amount.currency != Some(CURRENCY.to_string()) && is_issuer.is_none() {
+        return false;
+    }
+
+    true
 }
 
 /////////////////////////////////////////////////////////////////////////////

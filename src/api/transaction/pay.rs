@@ -12,13 +12,16 @@ use crate::message::transaction::transaction::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::memo::*;
 use crate::message::common::amount::Amount;
-use crate::base::misc::util::{downcast_to_usize, downcast_to_string};
 use crate::api::query::account_info::*;
 
 use cast_rs::hex_t;
 
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
+use crate::base::misc::util::{
+    downcast_to_usize, downcast_to_string,
+    // check_amount, check_secret, check_address,
+};
 
 pub trait PaymentI {
     fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F)
@@ -32,6 +35,14 @@ pub struct Payment {
 }
 impl Payment {
     pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
+        // if check_address(&account).is_none() {
+        //     panic!("invalid account.");
+        // }
+        //
+        // if check_secret(&secret).is_none() {
+        //     panic!("invalid secret");
+        // }
+
         Payment {
             config: config,
             account: account,
@@ -58,26 +69,12 @@ impl Payment {
 impl PaymentI for Payment {
     fn payment<F>(&self,  to: String, amount: Amount, memo: Option<String>, op: F)
     where F: Fn(Result<TransactionTxResponse, PaymentSideKick>) {
-        //params check
-        // var tx = new Transaction(this);
-        // if (options === null || typeof options !== 'object') {
-        //     tx.tx_json.obj = new Error('invalid options type');
-        //     return tx;
+        // if check_address(&to).is_none() || &to.len() == &0usize {
+        //     panic!("invalid destination.");
         // }
-        // var src = options.source || options.from || options.account;
-        // var dst = options.destination || options.to;
-        // var amount = options.amount;
-        // if (!utils.isValidAddress(src)) {
-        //     tx.tx_json.src = new Error('invalid source address');
-        //     return tx;
-        // }
-        // if (!utils.isValidAddress(dst)) {
-        //     tx.tx_json.dst = new Error('invalid destination address');
-        //     return tx;
-        // }
-        // if (!utils.isValidAmount(amount)) {
-        //     tx.tx_json.amount = new Error('invalid amount');
-        //     return tx;
+        //
+        // if check_amount(&amount) == false {
+        //     panic!("invalid Amount.");
         // }
 
         let info = Rc::new(Cell::new("".to_string()));

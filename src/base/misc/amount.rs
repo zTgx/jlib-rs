@@ -23,16 +23,14 @@ static CURRENCY_NAME_LEN2: usize = 6;//货币长度
 #[derive(Debug)]
 pub struct Amount {
     pub value      : BigInt,  //big number
-    pub offset     : i32,  //0 for SWTC
-    pub is_native  : bool, //Default to SWTC
+    pub offset     : i32,    //0 for SWTC
+    pub is_native  : bool,   //Default to SWTC
     pub is_negative: bool,
     pub currency   : Option<String>,
     pub issuer     : Option<String>,
 }
 impl Amount {
-    pub fn new(value: BigInt, offset: i32, is_native: bool,
-               is_negative: bool, currency: Option<String>, issuer: Option<String>) -> Self {
-
+    pub fn new(value: BigInt, offset: i32, is_native: bool, is_negative: bool, currency: Option<String>, issuer: Option<String>) -> Self {
         Amount {
             value       : value,
             offset      : offset,
@@ -45,50 +43,32 @@ impl Amount {
 
     pub fn from_ramount(ramount: &RAmount) -> Amount {
         if ramount.is_native() {
-            let mut value = "".to_string();
             let mut point_len = 0;
-            if value.contains(".") {
-                point_len = value.len() - value.find(".").unwrap();
-                value = Amount::f64_2_usize_str(&ramount.value);
+            let mut value = String::from( ramount.value.as_str() );
+            if value.as_str().contains(".") {
+                let tmp =  String::from( ramount.value.as_str() );
+                let mut v: Vec<&str> = tmp.split('.').collect();
+                let mut right = v[1];
+                let mut right_len = v[1].len() - 1;
+                loop {
+                    if right.chars().nth(right_len).unwrap() != '0' {
+                        break;
+                    }
+
+                    if right_len.checked_sub(1).is_none() {
+                        break;
+                    }
+
+                    right_len -= 1;
+                }
+                right_len += 1;
+
+                point_len = right_len;
+                value = right.get(..right_len).unwrap().parse::<u64>().unwrap().to_string();
             } else {
                 value = String::from( ramount.value.as_str() );
             }
-            println!("len: {}", point_len);
-            let mut base_str = "1000000";
-            match point_len {
-                0 => {
-                    base_str = "1000000";
-                },
-
-                1 => {
-                    base_str = "100000";
-                },
-
-                2 => {
-                    base_str = "10000";
-                },
-
-                3 => {
-                    base_str = "1000";
-                },
-
-                4 => {
-                    base_str = "100";
-                },
-
-                5 => {
-                    base_str = "10";
-                },
-
-                6 => {
-                    base_str = "1";
-                },
-
-                _ => {
-                    panic!("invalid value.");
-                }
-            }
-
+            let base_str = Amount::calc_base_str(point_len);
             let mut value: BigInt = BigInt::from_str(value.as_str()).unwrap();
             let base: BigInt = BigInt::from_str(base_str).unwrap();
             let mut evalue = value.checked_mul(&base).unwrap();
@@ -112,7 +92,7 @@ impl Amount {
                 // if (base_wallet.isValidAddress(in_json.issuer)) {
                 //TODO, need to find a better way for extracting the exponent and digits
                 // let vpow = Amount::calc_exponential();
-                
+
                 let vpow = str_t::to_expo(ramount.value.as_str()).unwrap();
                 let vpow = str_t::get_exponent(&vpow);
 
@@ -181,54 +161,53 @@ impl Amount {
         }
     }
 
-        pub fn f64_2_usize_str(value_str: &String) -> String {
-            //0.01
-            let mut rv = String::from(value_str.as_str());
-            rv = rv.replace(".", "");
-            let mut index = 0;
-            loop {
-                if index >= rv.len() {
+    pub fn f64_2_usize_str(value_str: &String) -> String {
+        //0.01
+        let mut rv = String::from(value_str.as_str());
+        rv = rv.replace(".", "");
+        let mut index = 0;
+        loop {
+            if index >= rv.len() {
+                break;
+            }
+
+            if let Some(x) = rv.as_str().chars().nth(index) {
+                if x == '0' {
+                    rv = rv.replace("0", "");
+                } else {
                     break;
                 }
-
-                if let Some(x) = rv.as_str().chars().nth(index) {
-                    if x == '0' {
-                        rv = rv.replace("0", "");
-                    } else {
-                        break;
-                    }
-                }
-
-                index += 1;
             }
 
-            rv
+            index += 1;
         }
 
-        pub fn from_value(value: u64) -> Self {
-            Amount {
-value: BigInt::from(value),
-           offset: 0,
-           is_native: true,
-           is_negative : false, 
-           currency: Some("SWT".to_string()),
-           issuer: None,
-            }
-        }
+        rv
+    }
 
-        pub fn from_json(j: String) -> Self {
-            println!("j: {}", &j);
-            Amount {
-value: BigInt::from_str(j.as_str()).unwrap(),
-           offset: 0,
-           is_native: true,
-           is_negative : false,
-           currency: Some("SWT".to_string()),
-           issuer: None,
-            }
+    pub fn from_value(value: u64) -> Self {
+        Amount {
+            value: BigInt::from(value),
+            offset: 0,
+            is_native: true,
+            is_negative : false,
+            currency: Some("SWT".to_string()),
+            issuer: None,
         }
+    }
 
-        pub fn is_zero(&self) -> bool {
+    pub fn from_json(j: String) -> Self {
+        Amount {
+            value: BigInt::from_str(j.as_str()).unwrap(),
+            offset: 0,
+            is_native: true,
+            is_negative : false,
+            currency: Some("SWT".to_string()),
+            issuer: None,
+        }
+    }
+
+    pub fn is_zero(&self) -> bool {
         false
     }
 
@@ -272,10 +251,48 @@ value: BigInt::from_str(j.as_str()).unwrap(),
                     index -= 1;
                 }
             }
-
         }
 
         so
+     }
+
+     pub fn calc_base_str(point_len: usize) -> &'static str {
+         let mut base_str = "1000000";
+         match point_len {
+             0 => {
+                 base_str = "1000000";
+             },
+
+             1 => {
+                 base_str = "100000";
+             },
+
+             2 => {
+                 base_str = "10000";
+             },
+
+             3 => {
+                 base_str = "1000";
+             },
+
+             4 => {
+                 base_str = "100";
+             },
+
+             5 => {
+                 base_str = "10";
+             },
+
+             6 => {
+                 base_str = "1";
+             },
+
+             _ => {
+                 panic!("invalid value.");
+             }
+         }
+
+         base_str
      }
 }
 

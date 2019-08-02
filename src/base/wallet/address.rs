@@ -13,6 +13,11 @@ impl WalletAddress {
     pub fn build(key_pair: &Keypair) -> String {
         WalletAddressBuilder::new(&key_pair).build()
     }
+
+    //COdes-x
+    pub fn check_address(_address: &String) -> Option<bool> {
+        None
+    }
 }
 
 #[derive(Debug)]
