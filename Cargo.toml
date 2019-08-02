@@ -3,7 +3,7 @@
 license = "MIT"
 name = "jlib"
 readme = "README.md"
-repository = "https://github.com/zTgx/jlib.git"
+repository = "https://github.com/zTgx/jlib-rs.git"
 version = "0.0.1"
 
 [dependencies]

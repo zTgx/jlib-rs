@@ -181,18 +181,168 @@ pub use subscribe::SubscribeI as SubscribeI;
 // Solidity contract APIs: deploy && invoke
 //
 ///////////////////////////////////////////////////////////////////////////////////////
-pub use crate::contracts::solidity::{
-    SolidityInitMessage,SolidityInitResponse,
-    SolidityInvokeMessage, SolidityInvokeResponse,
+
+use crate::contracts::solidity::{
+    SolidityInitMessage,
+    SolidityInvokeMessage,
 };
-use crate::base::misc::util::{downcast_to_string};
 use std::rc::Rc;
 use std::cell::Cell;
 use ws::{connect, CloseCode};
 use serde_json::Value;
 use crate::misc::config::Config;
 use message::common::command_trait::CommandConversion;
-pub use crate::contracts::solidity::Arg;
+use serde::{Deserialize, Serialize};
+use crate::base::misc::util::{downcast_to_string, check};
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct Args {
+    #[serde(rename="Arg")]
+    pub arg: Arg,
+}
+impl Args {
+    pub fn new(arg: Arg) -> Self {
+        Args {
+            arg: arg,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct Arg {
+    #[serde(rename="Parameter")]
+    pub parameter: String, //Hex String, 0xb6e456bb ===>getUnit 调用方法的（以太坊方式）十六进制处理。
+
+    #[serde(rename="ContractParamsType")]
+    pub contract_params_type: u8, //0 -> Address type; 1 -> general type.
+}
+impl Arg {
+    pub fn new(parameter: String, contract_params_type: u8) -> Self {
+        Arg {
+            parameter: check(parameter),
+            contract_params_type: contract_params_type,
+        }
+    }
+}
+
+//
+// SolidityInitResponse
+//
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct SolidityInitTxJsonResponse {
+    #[serde(rename="Account")]
+    pub account: String,
+
+    #[serde(rename="Amount")]
+    pub amount: String,
+
+    #[serde(rename="Fee")]
+    pub fee: String,
+
+    #[serde(rename="Flags")]
+    pub flags: u64,
+
+    #[serde(rename="Payload")]
+    pub payload: String,
+
+    #[serde(rename="Sequence")]
+    pub sequence: u64,
+
+    #[serde(rename="Method")]
+    pub method: u64,
+
+    #[serde(rename="SigningPubKey")]
+    pub signing_pub_key: String,
+
+    #[serde(rename="Timestamp")]
+    pub timestamp: u64,
+
+    #[serde(rename="TransactionType")]
+    pub transaction_type: String,
+
+    #[serde(rename="TxnSignature")]
+    pub txn_signature: String,
+
+    #[serde(rename="hash")]
+    pub hash: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct SolidityInitResponse {
+    #[serde(rename="ContractState")]
+    pub address: String,
+
+    #[serde(rename="engine_result")]
+    pub engine_result: String,
+
+    #[serde(rename="engine_result_code")]
+    pub engine_result_code: u64,
+
+    #[serde(rename="engine_result_message")]
+    pub engine_result_message: String,
+
+    #[serde(rename="tx_blob")]
+    pub tx_blob: String,
+
+    #[serde(rename="tx_json")]
+    pub tx_json: SolidityInitTxJsonResponse,
+}
+
+
+/////////////////////////////////////////////////////
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct SolidityInvokeTxJsonResponse {
+    #[serde(rename="Account")]
+    pub account: String,
+
+    #[serde(rename="Amount")]
+    pub amount: String,
+
+    #[serde(rename="Args")]
+    pub args: Vec<Args>,
+
+    #[serde(rename="ContractMethod")]
+    pub method: String,
+
+    #[serde(rename="Sequence")]
+    pub sequence: u64,
+
+    #[serde(rename="SigningPubKey")]
+    pub signing_pub_key: String,
+
+    #[serde(rename="Timestamp")]
+    pub timestamp: u64,
+
+    #[serde(rename="TransactionType")]
+    pub transaction_type: String,
+
+    #[serde(rename="TxnSignature")]
+    pub txn_signature: String,
+
+    #[serde(rename="hash")]
+    pub hash: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct SolidityInvokeResponse {
+    #[serde(rename="ContractState")]
+    pub contract_state: String,
+
+    #[serde(rename="engine_result")]
+    pub engine_result: String,
+
+    #[serde(rename="engine_result_code")]
+    pub engine_result_code: u64,
+
+    #[serde(rename="engine_result_message")]
+    pub engine_result_message: String,
+
+    #[serde(rename="tx_blob")]
+    pub tx_blob: String,
+
+    #[serde(rename="tx_json")]
+    pub tx_json: SolidityInvokeTxJsonResponse,
+}
 
 pub struct SolidityDeploy <'a> {
     pub config  : Box<Rc<Config>>,
