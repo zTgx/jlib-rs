@@ -18,27 +18,27 @@ ServerInfo::new().request_server_info(config.clone(), |x| match x {
 Introduction
 ------------
 
-**[Homepage](https://github.com/zTgx/lib/wiki)**
+**[Homepage](https://github.com/zTgx/jlib-rs/wiki)**
 
-**[API Documentation](https://github.com/zTgx/lib/wiki/API-Documentation)**
+**[API Documentation](https://github.com/zTgx/jlib-rs/wiki/API-Documentation)**
 
 
 Getting Started
 ---------------
 
-For detailed installation and usage instructions, check out the [guide](https://github.com/zTgx/lib/wiki/Getting-Started).  
+For detailed installation and usage instructions, check out the [guide](https://github.com/zTgx/jlib-rs/wiki/Getting-Started).  
 
 
 More examples
 ---------------
-More examples can be found [in the examples directory](examples/) and the full documentation can be [found here](https://github.com/zTgx/lib/wiki).  
+More examples can be found [in the examples directory](examples/) and the full documentation can be [found here](https://github.com/zTgx/jlib-rs/wiki).  
 
 
 Contributing
 ------------
 
-Please report bugs and make feature requests [here](https://github.com/zTgx/lib/issues).
+Please report bugs and make feature requests [here](https://github.com/zTgx/jlib-rs/issues).
 
-If you're looking for inspiration, there's list of [open issues](https://github.com/zTgx/lib/issues?state=open) right here on github.
+If you're looking for inspiration, there's list of [open issues](https://github.com/zTgx/jlib-rs/issues?state=open) right here on github.
 
 And hey, did you know you can also contribute by just starring the project here on github :)
