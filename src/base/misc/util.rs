@@ -64,21 +64,15 @@ pub fn check_amount(amount: &Amount) -> bool {
         }
     }
 
-    println!("1");
-
     // check amount currency
     if check_currency(&amount.currency) == false {
         return false;
     }
 
-    println!("2");
-
     // native currency issuer is empty
     if amount.currency == Some(CURRENCY.to_string()) && amount.issuer.is_some() {
         return false;
     }
-
-    println!("3");
 
     // non native currency issuer is not allowed to be empty
     let mut is_issuer = None;
@@ -89,8 +83,6 @@ pub fn check_amount(amount: &Amount) -> bool {
     if amount.currency != Some(CURRENCY.to_string()) && is_issuer.is_none() {
         return false;
     }
-
-    println!("4");
 
     true
 }

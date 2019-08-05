@@ -24,11 +24,11 @@ pub struct Amount {
 }
 
 impl Amount {
-    pub fn new(currency: String, value: String, issuer: String) -> Self {
+    pub fn new(currency: Option<String>, value: String, issuer: Option<String>) -> Self {
         Amount {
             value   : value,
-            currency: Some(currency),
-            issuer  : Some(issuer),
+            currency: currency,
+            issuer  : issuer,
         }
     }
 
