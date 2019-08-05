@@ -20,6 +20,7 @@ use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{
     downcast_to_usize, downcast_to_string,
+    check_address,
     // check_amount, check_secret, check_address,
 };
 
@@ -35,10 +36,9 @@ pub struct Payment {
 }
 impl Payment {
     pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
-        // if check_address(&account).is_none() {
-        //     panic!("invalid account.");
-        // }
-        //
+        if check_address(&account).is_none() {
+            panic!("invalid account.");
+        }
         // if check_secret(&secret).is_none() {
         //     panic!("invalid secret");
         // }

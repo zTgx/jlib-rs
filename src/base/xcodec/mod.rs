@@ -16,9 +16,9 @@ pub fn is_valid_address(string: &String) -> Option<bool> {
     Some(true)
 }
 
-pub fn is_valid_seed(string: String) -> Option<bool> {
+pub fn is_valid_seed(string: &String) -> Option<bool> {
     let arg = Box::new( Seed::default() );
-    if CodecFactory::decode(&string, arg).is_none() {
+    if CodecFactory::decode(string, arg).is_none() {
         return None;
     }
 

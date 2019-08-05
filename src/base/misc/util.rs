@@ -7,6 +7,8 @@ use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
 use crate::WalletType;
 use crate::message::common::amount::Amount;
 use crate::misc::base_config::*;
+use crate::base::wallet::address::{WalletAddress};
+use crate::base::wallet::seed::Seed;
 
 pub fn get_keypair_from_secret(secret: &String) -> Keypair {
     let wtype = fetch_wtype_from_secret(&secret);
@@ -22,12 +24,12 @@ pub fn fetch_wtype_from_secret(_secret: &String) -> WalletType {
 }
 
 /////////////////////////////////////////////////////////////////////////
-pub fn check_secret(_secret: &String) -> Option<bool> {
-    Some(true)
+pub fn check_secret(secret: &String) -> Option<bool> {
+    Seed::check_secret(secret)
 }
 
-pub fn check_address(_address: &String) -> Option<bool> {
-    return None;
+pub fn check_address(address: &String) -> Option<bool> {
+    WalletAddress::check_address(address)
 }
 
 pub fn check_currency(cur: &Option<String>) -> bool {

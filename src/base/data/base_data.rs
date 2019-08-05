@@ -102,7 +102,7 @@ impl Default for Address {
 }
 impl BaseDataI for Address {
     fn get_version(&self) -> Option<String> {
-        Some(self.version.to_string())
+        None
     }
     fn get_versions(&self) -> Option<Vec<String>> {
         None

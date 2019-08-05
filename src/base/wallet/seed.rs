@@ -2,6 +2,7 @@ use crate::base::misc::brorand::Brorand;
 use crate::base::data::constants::PASSWORD_LEN;
 use crate::WalletType;
 use crate::base::wallet::generate_str;
+use crate::base::xcodec::is_valid_seed;
 
 static H_SECP256K1: &[u8] = &[33];
 static H_ED25519: &[u8] = &[33];
@@ -35,5 +36,11 @@ impl Seed {
         }
 
         generate_str(&mut version, &u)
+    }
+}
+
+impl Seed {
+    pub fn check_secret(address: &String) -> Option<bool> {
+        is_valid_seed(address)
     }
 }
