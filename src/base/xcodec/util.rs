@@ -5,7 +5,7 @@ pub fn seq_equal(left: &Vec<u8>, right: &Vec<u8>) -> bool {
 
     let mut idx = 0;
     while idx < left.len() {
-        if left[idx] != right[idex] {
+        if left[idx] != right[idx] {
             return false;
         }
 
@@ -16,9 +16,9 @@ pub fn seq_equal(left: &Vec<u8>, right: &Vec<u8>) -> bool {
 }
 
 pub fn concat_args(so: &mut Vec<u8>, val: &Vec<u8>) {
-    version.extend(so);
+    so.extend(val);
 }
 
-pub fn is_set(val: &Option<String>) {
+pub fn is_set<T>(val: &Option<T>) -> bool {
     val.is_some()
 }

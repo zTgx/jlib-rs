@@ -5,6 +5,8 @@ use crate::base::curve::ripemd160::JRipemd160;
 use crate::base::wallet::keypair::*;
 use crate::base::wallet::generate_str;
 
+use crate::base::xcodec::{is_valid_address};
+
 static H_ADDRESS: &[u8] = &[0];
 
 #[derive(Debug)]
@@ -14,9 +16,9 @@ impl WalletAddress {
         WalletAddressBuilder::new(&key_pair).build()
     }
 
-    //COdes-x
-    pub fn check_address(_address: &String) -> Option<bool> {
-        None
+    //Codes-x
+    pub fn check_address(address: &String) -> Option<bool> {
+        is_valid_address(address)
     }
 }
 

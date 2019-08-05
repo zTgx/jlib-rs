@@ -8,8 +8,9 @@ pub const SIGN_TYPE    : [&'static str; 2] = ["ed25519", "secp256k1"];
 
 pub trait BaseDataI {
     fn get_version(&self) -> Option<String>;
-    fn get_version(&self) -> Option<String>;
+    fn get_versions(&self) -> Option<Vec<String>>;
     fn get_version_type(&self) -> Option<String>;
+
     fn get_checked(&self) -> Option<bool>;
     fn get_expected_length(&self) -> Option<usize>;
 }
@@ -28,6 +29,10 @@ impl Default for EdSeed {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Seed
+//
 #[derive(Debug)]
 pub struct Seed {
     pub version_types: [&'static str; 2],
@@ -41,6 +46,26 @@ impl Default for Seed {
             version: FAMILY_SEED,
             expected_length: 16,
         }
+    }
+}
+impl BaseDataI for Seed {
+    fn get_version(&self) -> Option<String> {
+        Some(self.version.to_string())
+    }
+    fn get_versions(&self) -> Option<Vec<String>> {
+        None
+    }
+
+    fn get_version_type(&self) -> Option<String> {
+        None
+    }
+
+    fn get_checked(&self) -> Option<bool> {
+        None
+    }
+
+    fn get_expected_length(&self) -> Option<usize> {
+        Some(self.expected_length)
     }
 }
 
@@ -58,6 +83,10 @@ impl Default for AccountID {
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+// Address
+//
 #[derive(Debug)]
 pub struct Address {
     pub version: usize,
@@ -69,6 +98,26 @@ impl Default for Address {
             version: ACCOUNT_ID,
             expected_length: 20,
         }
+    }
+}
+impl BaseDataI for Address {
+    fn get_version(&self) -> Option<String> {
+        Some(self.version.to_string())
+    }
+    fn get_versions(&self) -> Option<Vec<String>> {
+        None
+    }
+
+    fn get_version_type(&self) -> Option<String> {
+        None
+    }
+
+    fn get_checked(&self) -> Option<bool> {
+        None
+    }
+
+    fn get_expected_length(&self) -> Option<usize> {
+        Some(self.expected_length)
     }
 }
 
