@@ -31,7 +31,7 @@ impl SignTx {
     pub fn with_params(sequence: u32, secret: &str) -> Self {
         SignTx {
             sequence: sequence,
-            keypair : get_keypair_from_secret(&secret.to_string()),
+            keypair : get_keypair_from_secret(&secret.to_string()).unwrap(),
         }
     }
 }

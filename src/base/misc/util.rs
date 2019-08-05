@@ -10,13 +10,11 @@ use crate::misc::base_config::*;
 use crate::base::wallet::address::{WalletAddress};
 use crate::base::wallet::seed::Seed;
 
-pub fn get_keypair_from_secret(secret: &String) -> Keypair {
+pub fn get_keypair_from_secret(secret: &String) -> Result<Keypair, &'static str> {
     let wtype = fetch_wtype_from_secret(&secret);
 
     //keypair
-    let key_pair = KeypairBuilder::new(&secret, &wtype).build();
-
-    key_pair
+     KeypairBuilder::new(&secret, &wtype).build()
 }
 
 pub fn fetch_wtype_from_secret(_secret: &String) -> WalletType {
@@ -66,24 +64,33 @@ pub fn check_amount(amount: &Amount) -> bool {
         }
     }
 
+    println!("1");
+
     // check amount currency
-    if check_currency(&amount.currency) {
+    if check_currency(&amount.currency) == false {
         return false;
     }
+
+    println!("2");
 
     // native currency issuer is empty
     if amount.currency == Some(CURRENCY.to_string()) && amount.issuer.is_some() {
         return false;
     }
 
+    println!("3");
+
     // non native currency issuer is not allowed to be empty
     let mut is_issuer = None;
     if let Some(ref x) = amount.issuer {
         is_issuer = check_address(&x);
     }
+
     if amount.currency != Some(CURRENCY.to_string()) && is_issuer.is_none() {
         return false;
     }
+
+    println!("4");
 
     true
 }

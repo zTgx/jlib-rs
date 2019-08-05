@@ -20,8 +20,7 @@ use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{
     downcast_to_usize, downcast_to_string,
-    check_address,
-    // check_amount, check_secret, check_address,
+    check_address, check_secret, check_amount,
 };
 
 pub trait PaymentI {
@@ -39,9 +38,9 @@ impl Payment {
         if check_address(&account).is_none() {
             panic!("invalid account.");
         }
-        // if check_secret(&secret).is_none() {
-        //     panic!("invalid secret");
-        // }
+        if check_secret(&secret).is_none() {
+            panic!("invalid secret");
+        }
 
         Payment {
             config: config,
@@ -69,13 +68,12 @@ impl Payment {
 impl PaymentI for Payment {
     fn payment<F>(&self,  to: String, amount: Amount, memo: Option<String>, op: F)
     where F: Fn(Result<TransactionTxResponse, PaymentSideKick>) {
-        // if check_address(&to).is_none() || &to.len() == &0usize {
-        //     panic!("invalid destination.");
-        // }
-        //
-        // if check_amount(&amount) == false {
-        //     panic!("invalid Amount.");
-        // }
+        if check_address(&to).is_none() {
+            panic!("invalid destination.");
+        }
+        if check_amount(&amount) == false {
+            panic!("invalid Amount.");
+        }
 
         let info = Rc::new(Cell::new("".to_string()));
 
