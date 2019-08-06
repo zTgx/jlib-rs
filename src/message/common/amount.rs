@@ -85,7 +85,7 @@ impl FromStr for Amount {
         Ok(
             Amount {
                 value: s.to_string(),
-                currency: None,
+                currency: Some("SWT".to_string()),
                 issuer: None,
             }
         )
