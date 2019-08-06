@@ -10,6 +10,8 @@ use std::fmt;
 use crate::message::common::command_trait::CommandConversion;
 use std::any::Any;
 
+use crate::misc::base_config::{CURRENCY};
+
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Amount {
 
@@ -35,10 +37,8 @@ impl Amount {
     pub fn is_string(&self) -> bool {
         let mut ret = false;
         if let Some(x) = &self.currency {
-            if let Some(y) = &self.issuer {
-                if *x == "SWT".to_string() && y.len() == 0 {
-                    ret = true;
-                }
+            if *x == CURRENCY.to_string() && self.issuer.is_none() {
+                ret = true;
             }
         }
 
