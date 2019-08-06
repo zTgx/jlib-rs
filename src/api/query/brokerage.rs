@@ -13,7 +13,7 @@ use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
 
 pub trait BrokerageI {
-    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F)
+    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, account: String, op: F)
     where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) ;
 }
 
@@ -26,23 +26,19 @@ impl Brokerage {
 }
 
 impl BrokerageI for Brokerage {
-    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, issuer: String, app: u64, currency: String, op: F)
+    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, account: String, op: F)
     where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
 
-        let issuer_rc = Rc::new(Cell::new(issuer));
-        let app_rc = Rc::new(Cell::new(app));
-        let currency_rc = Rc::new(Cell::new(currency));
+        let account_rc = Rc::new(Cell::new(account));
 
         connect(config.addr, |out| {
             let copy = info.clone();
 
-            let issuer = issuer_rc.clone();
-            let app = app_rc.clone();
-            let currency = currency_rc.clone();
+            let account = account_rc.clone();
 
-            if let Ok(command) = RequestBrokerageCommand::with_params(issuer.take(), app.take(), currency.take()).to_string() {
+            if let Ok(command) = RequestBrokerageCommand::with_params(account.take()).to_string() {
                 out.send(command).unwrap();
             }
 

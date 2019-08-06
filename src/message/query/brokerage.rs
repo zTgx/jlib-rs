@@ -12,11 +12,8 @@ use std::fmt;
 /*
 @4.14获得挂单佣金设置信息
 RequestBrokerageCommand 请求格式
-id: u64,         //(固定值): 1
 command: String, //(固定值): Fee_Info
-issuer: String, //需要用户传递的参数，[货币发行方]
-app_type: u64,          //需要用户传递的参数，[应用来源]
-currency: String,       //需要用户传递的参数，[货币种类]
+account: String, //Account
 ledger_index: String //(固定值): 'validated'
 */
 #[derive(Serialize, Deserialize, Debug)]
@@ -27,28 +24,20 @@ pub struct RequestBrokerageCommand {
     #[serde(rename="command")]
     command: String,
 
-    #[serde(rename="issuer")]
-    issuer: String,
-
-    #[serde(rename="app_type")]
-    app_type: u64,
-
-    #[serde(rename="currency")]
-    currency: String,
+    #[serde(rename="account")]
+    account: String,
 
     #[serde(rename="ledger_index")]
     ledger_index: String,
 }
 
 impl RequestBrokerageCommand {
-    pub fn with_params(issuer: String, app_type: u64, currency: String) -> Box<Self> {
+    pub fn with_params(account: String) -> Box<Self> {
         Box::new(
             RequestBrokerageCommand {
                 id: 1,
                 command: "Fee_Info".to_string(),
-                issuer: issuer,
-                app_type: app_type,
-                currency: currency,
+                account: account,
                 ledger_index: "validated".to_string(),
             }
         )
@@ -95,31 +84,42 @@ impl CommandConversion for RequestBrokerageCommand {
 // }
 
 /////////////////////////
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Brokerages {
+    #[serde(rename="FeeCurrency")]
+    pub fee_currency: String,
+
+    #[serde(rename="FeeCurrencyIssuer")]
+    pub fee_currency_issuer: String,
+
+    #[serde(rename="OfferFeeRateDen")]
+    pub den: String,
+
+    #[serde(rename="OfferFeeRateNum")]
+    pub num: String,
+
+    #[serde(rename="Platform")]
+    pub platform: String,
+
+    #[serde(rename="fee_account")]
+    pub fee_account: String,
+}
 /*
 RequestBrokerageResponse 数据返回格式
 */
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestBrokerageResponse {
-    #[serde(rename="AppType")]
-    pub app_type: String,
+    #[serde(rename="account")]
+    pub account: String,
 
-    #[serde(rename="currency")]
-    pub currency: String,
-
-    #[serde(rename="issuer")]
-    pub issuer: String,
+    #[serde(rename="brokerages")]
+    pub brokerages: Vec<Brokerages>,
 
     #[serde(rename="ledger_hash")]
     pub ledger_hash: String,
 
     #[serde(rename="ledger_index")]
     pub ledger_index: u64,
-
-    #[serde(rename="rate_den")]
-    pub rate_den: String,
-
-    #[serde(rename="rate_num")]
-    pub rate_num: String,
 
     #[serde(rename="validated")]
     pub validated: bool,

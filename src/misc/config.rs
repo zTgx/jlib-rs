@@ -3,8 +3,9 @@
 use std::fmt;
 use std::rc::Rc;
 
-pub const TEST1: &'static str = "ws://ts5.jingtum.com:5020";
+pub const TEST1: &'static str = "ws://101.200.230.74:5020";
 pub const TEST2: &'static str = "ws://192.168.208.130:5060";
+pub const TEST3: &'static str = "ws://ts5.jingtum.com:5020";
 
 pub struct Config {
     pub addr: &'static str, //服务器地址
@@ -29,7 +30,7 @@ impl Config {
 //实现default方法，不推荐直接使用。
 impl Default for Config {
     fn default() -> Self {
-        Config { 
+        Config {
             addr: TEST2,
             local_sign: true,
         }
