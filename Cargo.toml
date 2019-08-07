@@ -2,6 +2,7 @@
 [package]
 license = "MIT"
 name = "jlib"
+authors = ["zTgx <beautifularea@163.com>"]
 readme = "README.md"
 repository = "https://github.com/zTgx/jlib-rs.git"
 version = "0.0.1"
