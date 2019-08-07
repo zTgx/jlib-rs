@@ -11,6 +11,7 @@ use crate::message::transaction::transaction::{TxJson};
 use crate::message::transaction::relation::{RelationTxJson};
 use crate::message::transaction::offer_create::{OfferCreateTxJson};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
+use crate::message::transaction::set_brokerage::{SetBrokerageTxJson};
 
 use crate::base::data::constants::{
     TX_SIGNATURE,
@@ -20,6 +21,7 @@ use crate::base::local_sign::sign_pay::{SignTxPay};
 use crate::base::local_sign::sign_relate::{SignTxRelate};
 use crate::base::local_sign::sign_cancel_offer::{SignTxCancelOffer};
 use crate::base::local_sign::sign_create_offer::{SignTxCreateOffer};
+use crate::base::local_sign::sign_brokerage::{SignTxBrokerage};
 
 pub const PRE_FIELDS: [&'static str; 6] = ["Flags", "Fee", "TransactionType", "Account", "SigningPubKey", "Sequence"];
 
@@ -31,7 +33,7 @@ impl SignTx {
     pub fn with_params(sequence: u32, secret: &str) -> Self {
         SignTx {
             sequence: sequence,
-            keypair : get_keypair_from_secret(&secret.to_string()),
+            keypair : get_keypair_from_secret(&secret.to_string()).unwrap(),
         }
     }
 }
@@ -53,6 +55,10 @@ impl SignTx {
     pub fn cancel_offer(&self, tx_json: &OfferCancelTxJson) -> String {
         SignTxCancelOffer::with_params(&self.keypair, &tx_json, self.sequence).build(self)
     }
+
+    pub fn set_rate(&self, tx_json: &SetBrokerageTxJson) -> String {
+        SignTxBrokerage::with_params(&self.keypair, &tx_json, self.sequence).build(self)
+    }
 }
 
 //common
@@ -63,6 +69,7 @@ impl SignTx {
     }
 
     pub fn get_txn_signature(&self, fields: &mut Vec<&str>, signed_tx_json: &mut SignedTxJson) {
+        
         let output: Vec<u8> = signed_tx_json.serialize();
 
         let signature_x = SignatureX::new(&self.keypair);

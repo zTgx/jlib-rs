@@ -8,9 +8,15 @@ use crate::base::ring::{digest};
 use crate::base::data::constants::{CURVE_ORDER, CURVE_ZERO};
 
 //entropy的生成方式: 取值index范围，1 ~ 倒数第5
-pub fn entropy(secret: &String) -> Vec<u8> {
-    let buf = BaseX::decode(secret.to_string()).unwrap();
-    buf[1..buf.len()-4].to_vec()
+pub fn entropy(secret: &String) -> Option<Vec<u8>> {
+    // let buf = BaseX::decode(secret.to_string()).unwrap();
+    // buf[1..buf.len()-4].to_vec()
+
+    if let Some(buf) = BaseX::decode(secret.to_string()) {
+        return Some( buf[1..buf.len()-4].to_vec() );
+    }
+
+    None
 }
 
 pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {

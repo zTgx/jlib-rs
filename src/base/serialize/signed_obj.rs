@@ -11,10 +11,12 @@ use crate::base::data::constants::{
     TX_SIGNATURE, TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
     TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE,TX_FLAGS, TX_MEMOS, TX_MEMO, TX_MEMODATA, SignStreamType,
     TX_OFFER_SEQUENCE, TX_LIMIT_AMOUNT, TX_TARGET, TX_RELATION_TYPE, TXTakerType,
+    TX_RATE_DEN, TX_RATE_NUM, TX_FEE_ACCOUNT,
 };
 use crate::base::serialize::serialized_type::*;
 use crate::base::misc::amount::*;
 use crate::message::common::amount::Amount as RAmount;
+use std::marker::PhantomData;
 
 //序列化接口
 pub trait TxJsonSerializer {
@@ -732,6 +734,66 @@ impl TxJsonBuilder <'_> for TxJsonAccountBuilder {
     }
 }
 
+//FeeAccount
+pub struct TxJsonFeeAccount <'a> {
+    pub type_obj: Option<TypeObj>,
+    pub value   : &'a String,
+
+    pub output: SignStreamType,
+}
+
+impl <'a> TxJsonFeeAccount <'a> {
+    pub fn new(value: &'a String) -> Self {
+        TxJsonFeeAccount {
+            type_obj: TypeObjBuilder::new(TX_FEE_ACCOUNT).build(),
+            value   : value,
+
+            output: None,
+        }
+    }
+}
+impl <'a> TxJsonSerializer for TxJsonFeeAccount <'a> {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        let mut s = STAccount::serialize( self.value.to_string() );
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+    }
+}
+pub struct TxJsonFeeAccountBuilder <'a> {
+    pub value   : &'a String,
+}
+impl <'a> TxJsonFeeAccountBuilder <'a> {
+    pub fn new(value: &'a String) -> Self {
+        TxJsonFeeAccountBuilder {
+            value: value,
+        }
+    }
+}
+impl <'a> TxJsonBuilder <'a> for TxJsonFeeAccountBuilder <'a> {
+    fn build(&self) -> Box<dyn TxJsonSerializer + 'a> {
+        Box::new( TxJsonFeeAccount::new( self.value ) )
+    }
+}
+
 //Account
 pub struct TxJsonTarget {
     pub name    : String,
@@ -1117,6 +1179,139 @@ impl TxJsonBuilder <'_> for TxJsonMemosBuilder {
         }
 
         Box::new( TxJsonMemos::new( v ) )
+    }
+}
+
+//Brokerage den
+pub struct TxJsonBrokerageDen <'a> {
+    pub type_obj: Option<TypeObj>,
+    pub value   : u64,
+
+    pub output: SignStreamType,
+
+    phantom: PhantomData<&'a u64>,
+}
+
+impl <'a> TxJsonBrokerageDen <'a> {
+    pub fn new(value: u64) -> Self {
+        TxJsonBrokerageDen {
+            type_obj: TypeObjBuilder::new( TX_RATE_DEN ).build(),
+            value   : value,
+
+            output : None,
+
+            phantom: PhantomData,
+        }
+    }
+}
+impl <'a> TxJsonSerializer for TxJsonBrokerageDen <'a> {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        let mut s = STInt64::serialize(self.value);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+    }
+}
+pub struct TxJsonBrokerageDenBuilder <'a> {
+    pub value   : u64,
+
+    phantom: PhantomData<&'a u64>,
+}
+impl <'a> TxJsonBrokerageDenBuilder <'a> {
+    pub fn new(value: u64) -> Self {
+        TxJsonBrokerageDenBuilder {
+            value: value,
+            phantom: PhantomData,
+        }
+    }
+}
+impl <'a> TxJsonBuilder <'a> for TxJsonBrokerageDenBuilder <'a> {
+    fn build(&self) -> Box<dyn TxJsonSerializer + 'a> {
+        Box::new( TxJsonBrokerageDen::new( self.value ) )
+    }
+}
+
+//Brokerage num
+pub struct TxJsonBrokerageNum <'a> {
+    pub type_obj: Option<TypeObj>,
+    pub value   : u64,
+
+    pub output: SignStreamType,
+
+    phantom: PhantomData<&'a u64>,
+}
+
+impl <'a> TxJsonBrokerageNum <'a> {
+    pub fn new(value: u64) -> Self {
+        TxJsonBrokerageNum {
+            type_obj: TypeObjBuilder::new( TX_RATE_NUM ).build(),
+            value   : value,
+
+            output : None,
+            phantom: PhantomData,
+        }
+    }
+}
+impl <'a> TxJsonSerializer for TxJsonBrokerageNum <'a> {
+    fn serialize_obj(&mut self, so: &mut Vec<u8>) {
+        if self.output.is_some() {
+            if let Some(x) = &self.output {
+                so.extend_from_slice(&x);
+            }
+
+            return;
+        }
+
+        let mut tmp: Vec<u8> = vec![];
+        //serialize header
+        if let Some(raw) = &self.type_obj {
+            raw.serialize_header(&mut tmp);
+        }
+
+        let mut s = STInt64::serialize(self.value);
+        tmp.append(&mut s);
+
+        self.output = Some(tmp);
+
+        if let Some(x) = &self.output {
+            so.extend_from_slice(&x);
+        }
+    }
+}
+pub struct TxJsonBrokerageNumBuilder <'a> {
+    pub value   : u64,
+
+    phantom: PhantomData<&'a u64>,
+}
+impl <'a> TxJsonBrokerageNumBuilder <'a> {
+    pub fn new(value: u64) -> Self {
+        TxJsonBrokerageNumBuilder {
+            value: value,
+            phantom: PhantomData,
+        }
+    }
+}
+impl <'a> TxJsonBuilder <'a> for TxJsonBrokerageNumBuilder <'a> {
+    fn build(&self) -> Box<dyn TxJsonSerializer + 'a> {
+        Box::new( TxJsonBrokerageNum::new( self.value ) )
     }
 }
 

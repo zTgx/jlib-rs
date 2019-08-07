@@ -2,6 +2,7 @@ use crate::base::misc::brorand::Brorand;
 use crate::base::data::constants::PASSWORD_LEN;
 use crate::WalletType;
 use crate::base::wallet::generate_str;
+use crate::base::wallet::keypair::*;
 
 static H_SECP256K1: &[u8] = &[33];
 static H_ED25519: &[u8] = &[33];
@@ -35,5 +36,21 @@ impl Seed {
         }
 
         generate_str(&mut version, &u)
+    }
+}
+
+impl Seed {
+    pub fn check_secret(seed: &String) -> Option<bool> {
+        let key_pair = KeypairBuilder::new(&seed, &WalletType::SECP256K1).build();
+        if key_pair.is_ok() {
+            return Some(true);
+        }
+
+        let key_pair = KeypairBuilder::new(&seed, &WalletType::ED25519).build();
+        if key_pair.is_ok() {
+            return Some(true);
+        }
+
+        None
     }
 }

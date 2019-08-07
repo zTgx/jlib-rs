@@ -1,6 +1,6 @@
 
 use serde::{Deserialize, Serialize};
-use crate::message::common::amount::Amount;
+use crate::message::common::amount::{Amount, string_or_struct};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct FinalFields {
@@ -25,6 +25,9 @@ pub struct FinalFields {
 
     #[serde(rename="Sequence")]
     pub sequence: Option<u64>,
+
+    #[serde(rename="ExchangeRate")]
+    pub exchange_rate: Option<String>,
     
     #[serde(rename="TakerGetsCurrency")]
     pub taker_gets_currency: Option<String>,
@@ -134,8 +137,10 @@ pub struct NewFields {
     sequence: u32,
     
     #[serde(rename="TakerGets")]
+    #[serde(deserialize_with = "string_or_struct")]
     taker_gets: Amount,
     
     #[serde(rename="TakerPays")]
-    taker_pays: String
+    #[serde(deserialize_with = "string_or_struct")]
+    taker_pays: Amount,
 }

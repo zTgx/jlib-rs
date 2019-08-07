@@ -6,7 +6,7 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
-use crate::message::common::amount::Amount;
+use crate::message::common::amount::{Amount, string_or_struct};
 use crate::message::common::meta::*;
 
 use std::error::Error;
@@ -126,14 +126,25 @@ pub struct Tx {
     #[serde(rename="Flags")]
     pub flags: u64,
 
-    #[serde(rename="OfferSequence")]
-    pub offer_sequence: u64,
+    //#[serde(rename="OfferSequence")]
+    //pub offer_sequence: u64,
 
     #[serde(rename="Sequence")]
     pub sequence: u64,
 
     #[serde(rename="SigningPubKey")]
     pub signing_pub_key: String,
+
+    #[serde(rename="TakerGets")]
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_gets: Amount,
+
+    #[serde(rename="TakerPays")]
+    #[serde(deserialize_with = "string_or_struct")]
+    pub taker_pays: Amount,
+
+    #[serde(rename="Timestamp")]
+    pub timestamp: u64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,
@@ -152,6 +163,7 @@ pub struct Tx {
 
     #[serde(rename="ledger_index")]
     pub ledger_index: u64,
+
 }
 
 #[derive(Serialize, Deserialize, Debug)]

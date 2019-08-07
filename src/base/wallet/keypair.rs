@@ -30,23 +30,29 @@ impl <'a> KeypairBuilder <'a> {
         }
     }
 
-    pub fn build(&self) -> Keypair {
+    pub fn build(&self) -> Result<Keypair, &'static str> {
         let (mut private_key, mut public_key) = ("".to_owned(), "".to_owned());
         match self.wtype {
             &WalletType::ED25519 => {
             },
 
             &WalletType::SECP256K1 => {
-                let (left, right) = J256k1::build_keypair_str(&self.seed);
-
-                private_key = left;
-                public_key = right;
+                if let Ok(x) = J256k1::build_keypair_str(&self.seed) {
+                    private_key = x.0;
+                    public_key = x.1;
+                } else {
+                    return Err("invalid seed, can't generate keypair.");
+                }
             }
         }
 
-        Keypair {
-            private_key: private_key,
-            public_key : public_key,
-        }
+        //result
+        Ok (
+            Keypair {
+                private_key: private_key,
+                public_key : public_key,
+            }
+        )
+
     }
 }

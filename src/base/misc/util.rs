@@ -7,14 +7,14 @@ use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
 use crate::WalletType;
 use crate::message::common::amount::Amount;
 use crate::misc::base_config::*;
+use crate::base::wallet::address::{WalletAddress};
+use crate::base::wallet::seed::Seed;
 
-pub fn get_keypair_from_secret(secret: &String) -> Keypair {
+pub fn get_keypair_from_secret(secret: &String) -> Result<Keypair, &'static str> {
     let wtype = fetch_wtype_from_secret(&secret);
 
     //keypair
-    let key_pair = KeypairBuilder::new(&secret, &wtype).build();
-
-    key_pair
+     KeypairBuilder::new(&secret, &wtype).build()
 }
 
 pub fn fetch_wtype_from_secret(_secret: &String) -> WalletType {
@@ -22,12 +22,12 @@ pub fn fetch_wtype_from_secret(_secret: &String) -> WalletType {
 }
 
 /////////////////////////////////////////////////////////////////////////
-pub fn check_secret(_secret: &String) -> Option<bool> {
-    Some(true)
+pub fn check_secret(secret: &String) -> Option<bool> {
+    Seed::check_secret(secret)
 }
 
-pub fn check_address(_address: &String) -> Option<bool> {
-    return None;
+pub fn check_address(address: &String) -> Option<bool> {
+    WalletAddress::check_address(address)
 }
 
 pub fn check_currency(cur: &Option<String>) -> bool {
@@ -65,7 +65,7 @@ pub fn check_amount(amount: &Amount) -> bool {
     }
 
     // check amount currency
-    if check_currency(&amount.currency) {
+    if check_currency(&amount.currency) == false {
         return false;
     }
 
@@ -79,6 +79,7 @@ pub fn check_amount(amount: &Amount) -> bool {
     if let Some(ref x) = amount.issuer {
         is_issuer = check_address(&x);
     }
+
     if amount.currency != Some(CURRENCY.to_string()) && is_issuer.is_none() {
         return false;
     }

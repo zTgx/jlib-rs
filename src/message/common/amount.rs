@@ -10,6 +10,8 @@ use std::fmt;
 use crate::message::common::command_trait::CommandConversion;
 use std::any::Any;
 
+use crate::misc::base_config::{CURRENCY};
+
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Amount {
 
@@ -24,21 +26,19 @@ pub struct Amount {
 }
 
 impl Amount {
-    pub fn new(currency: String, value: String, issuer: String) -> Self {
+    pub fn new(currency: Option<String>, value: String, issuer: Option<String>) -> Self {
         Amount {
             value   : value,
-            currency: Some(currency),
-            issuer  : Some(issuer),
+            currency: currency,
+            issuer  : issuer,
         }
     }
 
     pub fn is_string(&self) -> bool {
         let mut ret = false;
         if let Some(x) = &self.currency {
-            if let Some(y) = &self.issuer {
-                if *x == "SWT".to_string() && y.len() == 0 {
-                    ret = true;
-                }
+            if *x == CURRENCY.to_string() && self.issuer.is_none() {
+                ret = true;
             }
         }
 
@@ -85,7 +85,7 @@ impl FromStr for Amount {
         Ok(
             Amount {
                 value: s.to_string(),
-                currency: None,
+                currency: Some("SWT".to_string()),
                 issuer: None,
             }
         )

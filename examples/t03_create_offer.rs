@@ -7,19 +7,19 @@ use jlib::message::transaction::offer_create::{OfferCreateTxResponse, OfferCreat
 use jlib::OfferType;
 
 fn main() {
-    let config = Config::new(TEST1, false);
+    let config = Config::new(TEST2, false);
 
     //Sell
     let offer_type = OfferType::Sell;
-    let taker_gets: Amount = Amount::new("CNY".to_string(), "0.01".to_string(), "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS".to_string());
-    let taker_pays: Amount = Amount::new("SWT".to_string(), "1".to_string(), "".to_string());
+    let taker_gets: Amount = Amount::new(Some( "CNY".to_string() ), "0.01".to_string(), Some( "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string() ));
+    let taker_pays: Amount = Amount::new(Some( "SWT".to_string() ), "1".to_string(),    None);
 
     //Buy
-    //let taker_gets: Amount = Amount::new("SWT".to_string(), "1".to_string(), "".to_string());
-    //let taker_pays: Amount = Amount::new("CNY".to_string(), "0.01".to_string(), "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string());
+    //let taker_gets: Amount = Amount::new(Some( "SWT".to_string() ), "1".to_string(), None);
+    //let taker_pays: Amount = Amount::new(Some( "CNY".to_string() ), "0.01".to_string(), Some("jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string()) );
 
-    let account: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
-    let secret : String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
+    let account: String = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string();
+    let secret : String= "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
 
     CreateOffer::with_params(config.clone(), account, secret).create_offer( offer_type, taker_gets, taker_pays,
                                                 |x| match x {
