@@ -37,7 +37,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 调研js版本<br/>
@@ -61,8 +61,8 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
-<tr>
+<table>
+<tr style="width: 250px;">
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 初始化工程<br/>
 </tr>
@@ -80,8 +80,8 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
-<tr>
+<table>
+<tr style="width: 250px;">
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 确定请求command数据结构<br/>
 </tr>
@@ -99,7 +99,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 实现接口（无本地签名）<br/>
@@ -138,7 +138,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] examples<br/>
@@ -156,7 +156,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 钱包模块<br/>
@@ -180,7 +180,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] serialize模块<br/>
@@ -206,7 +206,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 本地签名模块<br/>
@@ -231,7 +231,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] API容错处理<br/>
@@ -250,7 +250,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 创建工具库<br/>
@@ -271,7 +271,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] solidity合约<br/>
@@ -292,7 +292,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 文档整理<br/>
@@ -313,7 +313,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 工程结构重构<br/>
@@ -333,7 +333,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 持续更新<br/>
@@ -352,7 +352,7 @@
 </tr>
 </table>
 
-<table style="width: 1000px;">
+<table>
 <tr>
     <td rowspan="7" style="width: 250px;">模块概述：<br/>
         [√] 待完善<br/>
