@@ -134,7 +134,7 @@ pub struct SetBrokerageTxJsonResponse {
     pub fee_account: String,
 
     #[serde(rename="Flags")]
-    pub flags: i32,
+    pub flags: u32,
 
     #[serde(rename="OfferFeeRateDen")]
     pub den: String,
@@ -149,7 +149,7 @@ pub struct SetBrokerageTxJsonResponse {
     pub signing_pub_key: String,
 
     #[serde(rename="Timestamp")]
-    pub timestamp: u64,
+    pub timestamp: Option<u64>,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,

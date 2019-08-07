@@ -71,67 +71,56 @@ impl <'a> SignTxBrokerage <'a> {
 
         let mut index = 0;
         for &key in &self.fields {
-            println!("key: {}", &key);
             let tx_json = tx_json_rc.clone();
             match key {
                 TX_FLAGS => {
                     let value = tx_json.flags;
-                    println!("flasgs:{}", value);
                     let flags = TxJsonFlagsBuilder::new(value).build();
                     self.output.insert(index, flags);
                 },
                 TX_FEE => {
                     let value = tx_json.fee;
-                    println!("fee: {}", value);
                     let fee = TxJsonFeeBuilder::new(value).build();
                     self.output.insert(index, fee);
                 },
                 TX_TRANSACTION_TYPE => {
                     let value = *G_TRANSACTION_TYPE_MAP.get_value_from_key(&tx_json.transaction_type).unwrap();
-                    println!("type: {}", value);
                     let transaction_type = TxJsonTransactionTypeBuilder::new(value).build();
                     self.output.insert(index, transaction_type);
                 },
                 TX_ACCOUNT => {
                     let value = &tx_json.manage_account;
-                    println!("account: {}", &value);
                     let account = TxJsonAccountBuilder::new(value.to_string()).build();
                     self.output.insert(index, account);
                 },
                 TX_AMOUNT => {
                     let value = &tx_json.amount;
-                    println!("value: {:?}", &value);
                     let amount = TxJsonAmountBuilder::new(&value).build();
                     self.output.insert(index, amount);
                 },
                 TX_RATE_DEN => {
                     let value = tx_json.offer_feerate_den;
-                    println!("value: {}", &value);
                     let den = TxJsonBrokerageDenBuilder::new(value).build();
                     self.output.insert(index, den);
                 },
                 TX_RATE_NUM => {
                     let value = tx_json.offer_feerate_num;
-                    println!("value: {}", &value);
                     let num = TxJsonBrokerageNumBuilder::new(value).build();
                     self.output.insert(index, num);
                 },
                 TX_FEE_ACCOUNT => {
                     let value = &tx_json.fee_account;
-                    println!("value: {}", &value);
                     let account = TxJsonFeeAccountBuilder::new(value).build();
                     self.output.insert(index, account);
                 },
                 TX_SEQUENCE => {
                     let value = tx_json.sequence;
-                    println!("value: {}", &value);
                     let sequence = TxJsonSequenceBuilder::new(value).build();
                     self.output.insert(index, sequence);
                 },
 
                 TX_SIGNING_PUB_KEY => {
                     let value = &self.keypair.public_key;
-                    println!("value: {}", &value);
                     let signing_pub_key = TxJsonSigningPubKeyBuilder::new(value.to_string()).build();
                     self.output.insert(index, signing_pub_key);
                 },

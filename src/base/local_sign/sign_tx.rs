@@ -71,13 +71,9 @@ impl SignTx {
     pub fn get_txn_signature(&self, fields: &mut Vec<&str>, signed_tx_json: &mut SignedTxJson) {
         
         let output: Vec<u8> = signed_tx_json.serialize();
-    
-        println!("output: {:?}", &output);
 
         let signature_x = SignatureX::new(&self.keypair);
         let txn_signature = signature_x.sign_txn_signature(&output);
-
-        println!("txn_signature: {}", &txn_signature);
 
         self.update(fields, TX_SIGNATURE);
 
