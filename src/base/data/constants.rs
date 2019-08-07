@@ -34,6 +34,11 @@ pub const  TX_TARGET            : &'static str = "Target";
 pub const  TX_RELATION_TYPE     : &'static str = "RelationType";
 pub const  TX_TAKERPAYS         : &'static str = "TakerPays";
 pub const  TX_TAKERGETS         : &'static str = "TakerGets";
+pub const  TX_FEE_ACCOUNT       : &'static str = "FeeAccountID";
+pub const  TX_RATE_NUM          : &'static str = "OfferFeeRateNum";
+pub const  TX_RATE_DEN          : &'static str = "OfferFeeRateDen";
+
+
 
 pub enum TXTakerType {
     Gets,

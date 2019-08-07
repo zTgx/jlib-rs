@@ -44,16 +44,20 @@ pub struct SetBrokerageTxJson {
     #[serde(rename="Amount")]
     #[serde(deserialize_with = "string_or_struct")]
     pub amount: Amount,
+
+    #[serde(rename="sequence")]
+    pub sequence: u32,
 }
 
 impl SetBrokerageTxJson {
-        pub fn new(account: String, fee_account: String, offer_feerate_num: u64, offer_feerate_den: u64, amount: Amount) -> Self {
+        pub fn new(account: String, fee_account: String, sequence: u32, offer_feerate_num: u64, offer_feerate_den: u64, amount: Amount) -> Self {
             let flag = Flags::Other;
             SetBrokerageTxJson {
                 flags: flag.get(),
                 fee  : 10000,
                 transaction_type: "Brokerage".to_string(),
                 manage_account: account,
+                sequence: sequence,
                 offer_feerate_num: offer_feerate_num,
                 offer_feerate_den: offer_feerate_den,
                 fee_account: fee_account,
@@ -120,29 +124,32 @@ pub struct SetBrokerageTxJsonResponse {
     #[serde(rename="Account")]
     pub account: String,
 
+    #[serde(rename="Amount")]
+    pub amount: Amount,
+
     #[serde(rename="Fee")]
     pub fee: String,
+
+    #[serde(rename="FeeAccountID")]
+    pub fee_account: String,
 
     #[serde(rename="Flags")]
     pub flags: i32,
 
-    #[serde(rename="Amount")]
-    pub amount: Amount,
-
-    #[serde(rename="feeAccountID")]
-    pub fee_account: String,
-
     #[serde(rename="OfferFeeRateDen")]
-    pub den: i32,
+    pub den: String,
 
     #[serde(rename="OfferFeeRateNum")]
-    pub num: i32,
+    pub num: String,
 
     #[serde(rename="Sequence")]
     pub sequence: u64,
 
     #[serde(rename="SigningPubKey")]
     pub signing_pub_key: String,
+
+    #[serde(rename="Timestamp")]
+    pub timestamp: u64,
 
     #[serde(rename="TransactionType")]
     pub transaction_type: String,

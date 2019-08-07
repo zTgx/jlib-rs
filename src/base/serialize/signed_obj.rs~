@@ -768,7 +768,7 @@ impl <'a> TxJsonSerializer for TxJsonFeeAccount <'a> {
             raw.serialize_header(&mut tmp);
         }
 
-        let mut s = STAccount::serialize( self.value.to_string() );
+        let mut s = STAccount::serialize( self.value );
         tmp.append(&mut s);
 
         self.output = Some(tmp);

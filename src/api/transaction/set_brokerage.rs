@@ -88,14 +88,13 @@ impl BrokerageManageI for BrokerageManage {
             let account = account.take();
 
             //Get Account Seq
-            let _sequence = get_account_seq(&account);
-
-            let tx_json = SetBrokerageTxJson::new(account, fee_account.take(), den.take(), num.take(), amount.take());
+            let sequence = get_account_seq(&account);
+            let tx_json = SetBrokerageTxJson::new(account, fee_account.take(), sequence, den.take(), num.take(), amount.take());
             if self.config.local_sign {
-                // let blob = SignTx::with_params(sequence, &secret.take()).pay(&tx_json);
-                // if let Ok(command) = LocalSignTx::new(blob).to_string() {
-                //     out.send(command).unwrap()
-                // }
+                let blob = SignTx::with_params(sequence, &secret.take()).set_rate(&tx_json);
+                if let Ok(command) = LocalSignTx::new(blob).to_string() {
+                    out.send(command).unwrap()
+                }
             } else {
                 if let Ok(command) = SetBrokerageTx::new(secret.take(), tx_json).to_string() {
                     out.send(command).unwrap()

@@ -100,6 +100,10 @@ impl SerializedSTInt32 for STInt32 {
 }
 
 //STInt64
+pub trait SerializedSTInt64 {
+  fn serialize(value: u64) -> Vec<u8>;
+  fn parse();
+}
 #[derive(TypeName, Debug)]
 pub struct STInt64 {
   pub id: i32,
@@ -114,12 +118,12 @@ impl STInt64 {
   }
 }
 
-impl SerializedType for STInt64 {
-  fn serialize(&self) -> Vec<u8> {
-    self.value.to_be_bytes().to_vec()
+impl SerializedSTInt64 for STInt64 {
+  fn serialize(value: u64) -> Vec<u8> {
+    value.to_be_bytes().to_vec()
   }
 
-  fn parse(&self) {}
+  fn parse() {}
 }
 
 //STHash128

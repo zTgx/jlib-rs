@@ -59,7 +59,8 @@ impl TransactionTypeMap {
                                     ("RelationDel"     , 22),
                                     ("ConfigContract"  , 30),
                                     ("EnableFeature"   , 100),
-                                    ("SetFee"          , 101)
+                                    ("SetFee"          , 101),
+                                    ("Brokerage"       , 205),
                                 ]
                                 .iter().cloned().collect();
 
