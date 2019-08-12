@@ -6,7 +6,7 @@ use jlib::api::transaction::pay::*;
 use jlib::message::common::amount::Amount;
 
 fn main() {
-    let config = Config::new(TEST1, true);
+    let config = Config::new(TEST3, true);
     let amount: Amount = Amount::new(Some("SWT".to_string()), "0.5".to_string(), None);
     let from: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
     let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();

@@ -2,7 +2,7 @@ use crate::base::secp256k1::key::{SecretKey, PublicKey};
 use crate::base::secp256k1::{Secp256k1, Message};
 
 use crate::base::ring::{digest};
-use cast_rs::hex_t;
+use cast_rs::hexcast;
 use crate::base::wallet::keypair::*;
 
 pub struct SignatureX <'a> {
@@ -59,12 +59,12 @@ impl <'a> SignatureX <'a> {
         ctx.update(&[83,84,88, 0]);
         ctx.update(&so);
 
-        let hash = hex_t::encode(&ctx.finish().as_ref());
+        let hash = hexcast::encode(&ctx.finish().as_ref());
         let message = hash.get(0..64).unwrap().to_ascii_uppercase();
         let private_key = &self.keypair.private_key;
-        let key = &hex_t::decode(private_key).unwrap()[1..];
+        let key = &hexcast::decode(private_key).unwrap()[1..];
 
-        let msg = hex_t::decode(message).unwrap();
+        let msg = hexcast::decode(message).unwrap();
         let signed_hex_string = SignatureX::sign(&msg, &key);
 
         return signed_hex_string;

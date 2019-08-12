@@ -3,7 +3,7 @@
 use crate::base::wallet::keypair::*;
 use crate::base::misc::util::{get_keypair_from_secret};
 use crate::base::serialize::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBuilder};
-use cast_rs::hex_t;
+use cast_rs::hexcast;
 use crate::base::local_sign::sign::SignatureX;
 use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
 
@@ -65,11 +65,11 @@ impl SignTx {
 impl SignTx {
     pub fn get_blob(&self, signed_tx_json: &mut SignedTxJson) -> String {
         let output: Vec<u8> = signed_tx_json.serialize();
-        hex_t::encode(&output).to_ascii_uppercase()
+        hexcast::encode(&output).to_ascii_uppercase()
     }
 
     pub fn get_txn_signature(&self, fields: &mut Vec<&str>, signed_tx_json: &mut SignedTxJson) {
-        
+
         let output: Vec<u8> = signed_tx_json.serialize();
 
         let signature_x = SignatureX::new(&self.keypair);

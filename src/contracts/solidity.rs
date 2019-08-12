@@ -51,7 +51,7 @@ use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value};
 
-use cast_rs::hex_t;
+use cast_rs::hexcast;
 use crate::{Args, Arg};
 
 //////////////////////
@@ -99,7 +99,7 @@ impl SolidityInitTxJson {
             account: account,
             amount: 100000000,
             method: 0,
-            payload: hex_t::encode(payload),
+            payload: hexcast::encode(payload),
         }
     }
 }
@@ -250,7 +250,7 @@ impl SolidityInvokeMessage {
             id: 1,
             command: "submit".to_string(),
             secret: secret,
-            tx_json: SolidityInvokeTxJson::new(account, address, hex_t::encode(hex_method), v)
+            tx_json: SolidityInvokeTxJson::new(account, address, hexcast::encode(hex_method), v)
         }
     }
 }
