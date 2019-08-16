@@ -602,6 +602,34 @@ validated: true };
 static OFFSET_SECOND: i64 = 946684800;
 
 //
+pub fn parse_amount(x: &Value) -> Value {
+    let mut result: Value = json!({"value": "0"});
+
+    if x.is_string() { //SWT
+        result["currency"] = json!("SWT");
+        result["issuer"] = json!("");
+
+        result["value"] = json!(x.as_str().unwrap().parse::<f32>().unwrap() / 1000000.0);
+    } else {
+        result["value"] = x["value"].clone();
+        result["currency"] = x["currency"].clone();
+        result["issuer"] = x["issuer"].clone();
+    }
+
+    result
+}
+
+pub fn reverse_amount(x: &Value) -> Value {
+    let mut result: Value = json!({"value": "0"});
+
+    result["value"] = json!( "-".to_owned() + x["LimitAmount"]["value"].as_str().unwrap() );
+    result["currency"] = x["LimitAmount"]["currency"].clone();
+    result["issuer"] = x["Account"].clone();
+
+    result
+}
+
+//
 pub fn txn_type(tx: &Value, account: &str) -> String {
     let tx_account = tx["Account"].as_str().unwrap();
     let tx_target = &tx["Target"];
@@ -611,7 +639,6 @@ pub fn txn_type(tx: &Value, account: &str) -> String {
        ! tx["Destination"].is_null() && tx["Destination"].as_str().unwrap() == account ||
        ! tx["LimitAmount"].is_null() && tx["LimitAmount"]["issuer"].as_str().unwrap() == account {
 
-        println!("type: {}", &tx["TransactionType"].to_string());
         match tx["TransactionType"].as_str().unwrap() {
             "Payment" => {
                 if tx["Account"].as_str().unwrap() == account {
@@ -654,6 +681,109 @@ pub fn txn_type(tx: &Value, account: &str) -> String {
     }
 }
 
+pub fn type_result(x: &Value, result: &mut Value) {
+    println!("type : {}", result["type"].to_string());
+    match result["type"].as_str().unwrap() {
+        "sent" => {
+            result["counterparty"] = x["Destination"].clone();
+            result["amount"] = parse_amount(&x["Amount"]);
+        },
+
+        "received" => {
+            result["counterparty"] = x["Account"].clone();
+            result["amount"] = parse_amount(&x["Amount"]);
+        },
+
+        "trusted" => {
+            result["counterparty"] = x["Account"].clone();
+            result["amount"] = reverse_amount(&x["LimitAmount"]);
+        },
+
+        "trusting" => {
+            result["counterparty"] = x["LimitAmount"]["issuer"].clone();
+            result["amount"] = x["LimitAmount"].clone();
+        },
+
+        "convert" => {
+            result["spent"] = parse_amount(&x["SendMax"]);
+            result["amount"] = parse_amount(&x["Amount"]);
+        },
+
+        "offernew" => {
+            if x["Flags"].as_u64().unwrap() & 0x00080000 as u64 != 0 {
+                result["offertype"] = json!("sell");
+            } else {
+                result["offertype"] = json!("buy");
+            }
+
+            println!("enter...");
+            result["gets"] = parse_amount(&x["TakerGets"]);
+            result["pays"] = parse_amount(&x["TakerPays"]);
+
+            result["seq"] = x["Sequence"].clone();
+
+            // if result["offertype"] == json!("sell") {
+            //     result["price"] = new bignumber(result.pays.value).div(result.gets.value).toNumber()
+            // } else {
+            //     result["price"] = new bignumber(result.gets.value).div(result.pays.value).toNumber();
+            // }
+        },
+
+        // case 'offercancel':
+        //     result.offerseq = tx.Sequence;
+        //     break;
+        // case 'relationset':
+        //     result.counterparty = account === tx.Target ? tx.Account : tx.Target;
+        //     result.relationtype = tx.RelationType === 3 ? 'freeze':'authorize';
+        //     result.isactive = account === tx.Target ? false : true;
+        //     result.amount = parseAmount(tx.LimitAmount);
+        //     break;
+        // case 'relationdel':
+        //     result.counterparty = account === tx.Target ? tx.Account : tx.Target;
+        //     result.relationtype = tx.RelationType === 3 ? 'unfreeze':'unknown';
+        //     result.isactive = account === tx.Target ? false : true;
+        //     result.amount = parseAmount(tx.LimitAmount);
+        //     break;
+        // case 'configcontract':
+        //     result.params =  formatArgs(tx.Args);
+        //     if(tx.Method === 0){
+        //         result.method = 'deploy';
+        //         result.payload = tx.Payload;
+        //     }else  if(tx.Method === 1){
+        //         result.method = 'call';
+        //         result.destination = tx.Destination;
+        //     }
+        //     break;
+        // case 'alethcontract':
+        //     if(tx.Method === 0){
+        //         result.method = 'deploy';
+        //         result.seq = tx.Sequence;
+        //         result.payload = tx.Payload;
+        //     }else  if(tx.Method === 1){
+        //         result.method = 'call';
+        //         result.seq = tx.Sequence;
+        //         result.destination = tx.Destination;
+        //         result.amount = Number(tx.Amount);
+        //         var method = hexToString(tx.MethodSignature);
+        //         result.func = method.substring(0, method.indexOf('('));//函数名
+        //         result.func_parms = method.substring(method.indexOf('(') + 1, method.indexOf(')')).split(','); //函数参数
+        //         if(result.func_parms.length === 1 && result.func_parms[0] === '')//没有参数，返回空数组
+        //             result.func_parms = [];
+        //     }
+        //     break;
+        // case 'brokerage':
+        //     result.feeAccount = tx.FeeAccountID;
+        //     result.mol = parseInt(tx.OfferFeeRateNum, 16);
+        //     result.den = parseInt(tx.OfferFeeRateDen,16);
+        //     result.amount = parseAmount(tx.Amount);
+        //     result.seq = tx.Sequence;
+        //     break;
+
+        _ => {
+            // TODO parse other type
+        }
+    }
+}
 ///
 pub fn process_tx(tx: &str) -> String {
     let mut result: Value = json!({"An": "Object"});
@@ -689,6 +819,8 @@ pub fn process_tx(tx: &str) -> String {
             result["result"] = json!("failed");
         }
 
+        //type result
+        type_result(&x, &mut result);
 
 
     } else {
