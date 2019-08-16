@@ -1,7 +1,7 @@
 
 [package]
 name = "jlib"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["zTgx <beautifularea@163.com>"]
 repository = "https://github.com/zTgx/jlib-rs.git"
 readme = "README.md"
@@ -15,7 +15,6 @@ description = "A lightweight blockchain lib."
 num = "0.2"
 rand = "0.6"
 ws = "0.8.1"
-
 url = "1.7.2"
 hex = "0.3.2"
 log = "0.4.0"
@@ -24,13 +23,11 @@ void = "1.0.2"
 ring = "0.14.6"
 serde_json = "1.0"
 typename = "0.1.1"
-
 env_logger = "0.6.1"
 secp256k1 = "0.13.0"
 rust-crypto = "^0.2"
 lazy_static = "1.3.0"
 ed25519-dalek = "0.9.1"
-
 serde = { version = "1.0", features = ["derive"] }
 basex-rs = "0.1.0"
 cast-rs = "0.2.0"
