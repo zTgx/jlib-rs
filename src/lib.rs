@@ -17,6 +17,8 @@ pub mod misc;
 pub mod api;
 pub mod contracts;
 
+use serde_json::json;
+
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
 //Default` cannot be derived for enums, only structs
@@ -594,13 +596,104 @@ impl <'a> SolidityCall <'a> {
             TransactionResult: 'tesSUCCESS' },
 validated: true };
 */
-pub fn process_tx(tx: String, account: String) -> String {
-    if let Ok(x) = serde_json::from_str(&tx) as Result<Value, serde_json::error::Error> {
+
+///////////////////////////////////////////////////////
+//constant
+static OFFSET_SECOND: i64 = 946684800;
+
+//
+pub fn txn_type(tx: &Value, account: &str) -> String {
+    let tx_account = tx["Account"].as_str().unwrap();
+    let tx_target = &tx["Target"];
+
+    if tx_account == account ||
+       ! tx_target.is_null() && tx_target.as_str().unwrap() == account ||
+       ! tx["Destination"].is_null() && tx["Destination"].as_str().unwrap() == account ||
+       ! tx["LimitAmount"].is_null() && tx["LimitAmount"]["issuer"].as_str().unwrap() == account {
+
+        println!("type: {}", &tx["TransactionType"].to_string());
+        match tx["TransactionType"].as_str().unwrap() {
+            "Payment" => {
+                if tx["Account"].as_str().unwrap() == account {
+                    if tx["Destination"].as_str().unwrap() == account {
+                        return "convert".to_owned();
+                    } else {
+                        return "sent".to_owned();
+                    }
+                } else {
+                    return "received".to_owned();
+                }
+            },
+
+            "OfferCreate" => {
+                return "offernew".to_owned();
+            },
+
+            "OfferCancel" => {
+                return "offercancel".to_owned();
+            },
+
+            "TrustSet" => {
+                if tx["Account"].as_str().unwrap() == account {
+                    return "trusting".to_owned();
+                }
+
+                return "trusted".to_owned();
+            },
+
+            "RelationDel" | "AccountSet" | "SetRegularKey" | "RelationSet" | "SignSet" | "Operation" | "ConfigContract" | "AlethContract" | "Brokerage" => {
+                return tx["TransactionType"].as_str().unwrap().to_ascii_lowercase();
+            },
+
+            _ => {
+                return "unknown".to_owned();
+            }
+        }
+    } else {
+        return "offereffect".to_owned();
+    }
+}
+
+///
+pub fn process_tx(tx: &str) -> String {
+    let mut result: Value = json!({"An": "Object"});
+
+    if let Ok(x) = serde_json::from_str(tx) as Result<Value, serde_json::error::Error> {
+        //account
+        let account = x["Account"].as_str().unwrap();
+
+        //date
+        if ! x["date"].is_null() {
+            let timestamp = x["date"].as_i64().unwrap() + OFFSET_SECOND;
+            result["date"] = json!(timestamp);
+        } else if ! x["timestamp"].is_null() {
+            let timestamp = x["timestamp"].as_i64().unwrap() + OFFSET_SECOND;
+            result["date"] = json!(timestamp);
+        }
+
+        //hash
+        if ! x["hash"].is_null() {
+            result["hash"] = json!(x["hash"]);
+        }
+
+        //type
+        result["type"] = json!(txn_type(&x, &account));
+
+        //fee
+        result["fee"] = json!(x["Fee"].as_str().unwrap().parse::<f64>().unwrap() / 1000000.0);
+
+        //result
+        if ! x["meta"].is_null() {
+            result["result"] = json!(x["meta"]["TransactionResult"]);
+        } else {
+            result["result"] = json!("failed");
+        }
+
 
 
     } else {
         panic!("Error input.");
     }
 
-    tx
+    result.to_string()
 }
