@@ -18,6 +18,7 @@ pub mod api;
 pub mod contracts;
 
 use serde_json::json;
+use cast_rs::hexcast;
 
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
@@ -611,7 +612,7 @@ pub fn parse_amount(x: &Value) -> Value {
 
         result["value"] = json!(x.as_str().unwrap().parse::<f32>().unwrap() / 1000000.0);
     } else {
-        result["value"] = x["value"].clone();
+        result["value"] = json!(x["value"].as_str().unwrap().parse::<f32>().unwrap());// x["value"].clone();
         result["currency"] = x["currency"].clone();
         result["issuer"] = x["issuer"].clone();
     }
@@ -722,62 +723,113 @@ pub fn type_result(x: &Value, result: &mut Value) {
 
             result["seq"] = x["Sequence"].clone();
 
-            // if result["offertype"] == json!("sell") {
-            //     result["price"] = new bignumber(result.pays.value).div(result.gets.value).toNumber()
-            // } else {
-            //     result["price"] = new bignumber(result.gets.value).div(result.pays.value).toNumber();
-            // }
+            let v1 = result["pays"]["value"].clone().as_f64().unwrap();
+            let v2 = result["gets"]["value"].clone().as_f64().unwrap();
+            if result["offertype"] == json!("sell") {
+                result["price"] = json!( v1/v2 );
+            } else {
+                result["price"] = json!( v2/ v1);
+            }
         },
 
-        // case 'offercancel':
-        //     result.offerseq = tx.Sequence;
-        //     break;
-        // case 'relationset':
-        //     result.counterparty = account === tx.Target ? tx.Account : tx.Target;
-        //     result.relationtype = tx.RelationType === 3 ? 'freeze':'authorize';
-        //     result.isactive = account === tx.Target ? false : true;
-        //     result.amount = parseAmount(tx.LimitAmount);
-        //     break;
-        // case 'relationdel':
-        //     result.counterparty = account === tx.Target ? tx.Account : tx.Target;
-        //     result.relationtype = tx.RelationType === 3 ? 'unfreeze':'unknown';
-        //     result.isactive = account === tx.Target ? false : true;
-        //     result.amount = parseAmount(tx.LimitAmount);
-        //     break;
-        // case 'configcontract':
-        //     result.params =  formatArgs(tx.Args);
-        //     if(tx.Method === 0){
-        //         result.method = 'deploy';
-        //         result.payload = tx.Payload;
-        //     }else  if(tx.Method === 1){
-        //         result.method = 'call';
-        //         result.destination = tx.Destination;
-        //     }
-        //     break;
-        // case 'alethcontract':
-        //     if(tx.Method === 0){
-        //         result.method = 'deploy';
-        //         result.seq = tx.Sequence;
-        //         result.payload = tx.Payload;
-        //     }else  if(tx.Method === 1){
-        //         result.method = 'call';
-        //         result.seq = tx.Sequence;
-        //         result.destination = tx.Destination;
-        //         result.amount = Number(tx.Amount);
-        //         var method = hexToString(tx.MethodSignature);
-        //         result.func = method.substring(0, method.indexOf('('));//函数名
-        //         result.func_parms = method.substring(method.indexOf('(') + 1, method.indexOf(')')).split(','); //函数参数
-        //         if(result.func_parms.length === 1 && result.func_parms[0] === '')//没有参数，返回空数组
-        //             result.func_parms = [];
-        //     }
-        //     break;
-        // case 'brokerage':
-        //     result.feeAccount = tx.FeeAccountID;
-        //     result.mol = parseInt(tx.OfferFeeRateNum, 16);
-        //     result.den = parseInt(tx.OfferFeeRateDen,16);
-        //     result.amount = parseAmount(tx.Amount);
-        //     result.seq = tx.Sequence;
-        //     break;
+        "offercancel" => {
+            result["offerseq"] = x["Sequence"].clone();
+        },
+
+        "relationset" => {
+            if x["Account"] == x["Target"] {
+                result["counterparty"] = x["Account"].clone();
+                result["isactive"] = json!(false);
+            } else {
+                result["counterparty"] = x["Target"].clone();
+                result["isactive"] = json!(true);
+            }
+
+            if let Some(tp) = x["RelationType"].as_i64() {
+                if tp == 3 {
+                    result["relationtype"] = json!("freeze");
+                } else {
+                    result["relationtype"] = json!("authorize");
+                }
+            }
+
+            result["amount"] = parse_amount(&x["LimitAmount"]);
+        },
+
+        "relationdel" => {
+            if x["Account"] == x["Target"] {
+                result["counterparty"] = x["Account"].clone();
+                result["isactive"] = json!(false);
+            } else {
+                result["counterparty"] = x["Target"].clone();
+                result["isactive"] = json!(true);
+            }
+
+            if let Some(tp) = x["RelationType"].as_i64() {
+                if tp == 3 {
+                    result["relationtype"] = json!("unfreeze");
+                } else {
+                    result["relationtype"] = json!("unknown");
+                }
+            }
+
+            result["amount"] = parse_amount(&x["LimitAmount"]);
+        },
+
+        "configcontract" => {
+            if x["Method"].as_i64() == Some(0) {
+                result["method"] = json!("deploy");
+                result["payload"] = x["Payload"].clone();
+            } else if x["Method"].as_i64() == Some(1) {
+                result["method"] = json!("call");
+                result["destination"] = x["Destination"].clone();
+            }
+        },
+
+        "alethcontract" => {
+            if x["Method"].as_u64() == Some(0u64) {
+                result["method"] = json!("deploy");
+                result["seq"] = x["Sequence"].clone();
+                result["payload"] = x["Payload"].clone();
+            } else if x["Method"].as_u64() == Some(1u64) {
+                result["method"] = json!("call");
+                result["seq"] = x["Sequence"].clone();
+                result["destination"] = x["Destination"].clone();
+                result["amount"] = x["Amount"].clone();
+
+                let method = hexcast::decode(x["MethodSignature"].clone().as_str().unwrap()).unwrap();
+                let method = String::from_utf8_lossy(&method);
+                let v: Vec<_>  = method.match_indices("(").collect();
+                let v1: Vec<_>  = method.match_indices(")").collect();
+                let idx1 = v[0].0;
+                let idx2 = v1[0].0;
+
+                result["func"] = json!( method.get(0..idx1).unwrap() );
+
+                let ret= method.get(idx1+1..idx2).unwrap();
+                let v: Vec<&str> = ret.split(',').collect();
+                if v.len() == 0 {
+                    result["func_parms"] = json!([]);
+                } else {
+                    let mut idx = 0;
+                    while idx < v.len() {
+                        result["func_parms"][idx] = json!( v[idx] );
+
+                        idx += 1;
+                    }
+                }
+            }
+        },
+
+        "brokerage" => {
+            result["feeAccount"] = x["FeeAccountID"].clone();
+
+            result["mol"] = x["OfferFeeRateNum"].clone();
+            result["den"] = x["OfferFeeRateDen"].clone();
+
+            result["amount"] = parse_amount(&x["Amount"]);
+            result["seq"] = x["Sequence"].clone();
+        },
 
         _ => {
             // TODO parse other type
