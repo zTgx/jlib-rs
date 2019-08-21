@@ -630,6 +630,49 @@ pub fn reverse_amount(x: &Value) -> Value {
     result
 }
 
+pub fn process_affect_node(an: &Value, result: &mut Value) {
+    let mut result = json!([]);
+    let mut i = 0;
+    if let Some(ff) = an.as_array() {
+        for x in ff {
+            if *x == json!("CreatedNode") {
+                result["diffType"] = json!("CreatedNode");
+
+                i = 1;
+            }
+
+            if *x == json!("ModifiedNode") {
+                result["diffType"] = json!("ModifiedNode");
+
+                i = 2;
+            }
+
+            if *x == json!("DeletedNode") {
+                result["diffType"] = json!("DeletedNode");
+
+                i = 3;
+            }
+        }
+    }
+
+    if result["diffType"].is_null() {
+        return;
+    }
+
+    let an = an[i]["diffType"].clone();
+
+    result["entryType"] = an["LedgerEntryType"].clone();
+    result["ledgerIndex"] = an["LedgerIndex"].clone();
+
+    let mut fieils = json!([]);
+    fieils.as_array_mut().unwrap().extend_from_slice(&[an["PreviousFields"].clone(), an["NewFields"].clone(), an["FinalFields"].clone()]);
+
+    result["fieldsPrev"] = an["PreviousFields"].clone();
+    result["fieldsNew"] = an["NewFields"].clone();
+    result["fieldsFinal"] = an["FinalFields"].clone();
+    result["PreviousTxnID"] = an["PreviousTxnID"].clone();
+}
+
 //
 pub fn txn_type(tx: &Value, account: &str) -> String {
     let tx_account = tx["Account"].as_str().unwrap();
@@ -837,7 +880,7 @@ pub fn type_result(x: &Value, result: &mut Value) {
     }
 }
 ///
-pub fn process_tx(tx: &str) -> String {
+pub fn process_tx(tx: &str) -> Value {
     let mut result: Value = json!({"An": "Object"});
 
     if let Ok(x) = serde_json::from_str(tx) as Result<Value, serde_json::error::Error> {
@@ -874,10 +917,61 @@ pub fn process_tx(tx: &str) -> String {
         //type result
         type_result(&x, &mut result);
 
+        //memos
+        if x["Memos"].is_array() && x["Memos"].as_array().unwrap().len() > 0 {
+            let mut m = 0;
+            while m < x["Memos"].as_array().unwrap().len() {
+                let memo_s = x["Memos"][m]["Memo"].clone();
+                let mut memo = memo_s;
+                result["memos"][m] = memo;
+
+                m += 1;
+            }
+        }
+
+        result["effects"] = json!([]);
+        // no effect, return now
+        if x["meta"].is_null() || x["meta"]["TransactionResult"] != json!("tesSUCCESS") {
+            return result;
+        }
+
+        let mut cos: Vec<Value> = vec![];
+        let gets_value = 0;
+        let pays_value = 0;
+        let total_rate = 0;
+
+        if ! result["gets"].is_null() {
+            cos.push( result["gets"]["currency"].clone());
+            cos.push( result["pays"]["currency"].clone());
+        }
+
+        result["balances"] = json!([]);
+        result["balancesPrev"] = json!([]);
+
+        let affected_nodes = x["meta"]["AffectedNodes"].clone();
+        let mut n = 0;
+        while n < affected_nodes.as_array().unwrap().len() {
+            let node = affected_nodes[n].clone();
+            let node = process_affect_node(&node, &mut result);
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     } else {
         panic!("Error input.");
     }
 
-    result.to_string()
+    result
 }
