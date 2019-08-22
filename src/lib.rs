@@ -19,6 +19,7 @@ pub mod contracts;
 
 use serde_json::json;
 use cast_rs::hexcast;
+use misc::base_config::{CURRENCY};
 
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
@@ -673,6 +674,57 @@ pub fn process_affect_node(an: &Value, result: &mut Value) {
     result["PreviousTxnID"] = an["PreviousTxnID"].clone();
 }
 
+pub fn is_amount_zero(amount: &Value) -> bool {
+    if amount.is_null() {
+        return false;
+    }
+
+    return amount.as_f64().unwrap() < std::f64::EPSILON;
+}
+
+pub fn amount_subtract(amount1: &Value, amount2: &Value) -> Value {
+    if amount1.is_null() { return amount2.clone(); }
+    if amount2.is_null() { return amount1.clone(); }
+
+    let mut v: Value = amount1.clone();
+    v["currency"] = amount1["currency"].clone();
+    v["issuer"] = amount1["issuer"].clone();
+    v["value"] = json!( amount1["value"].as_f64().unwrap() - amount2["value"].as_f64().unwrap() );
+
+    v
+}
+
+pub fn amount_ratio(amount1: &Value, amount2: &Value) -> Value {
+    let v1 = amount1["pays"]["value"].clone().as_f64().unwrap();
+    let v2 = amount2["gets"]["value"].clone().as_f64().unwrap();
+
+    let result: Value = json!( v1/v2 );
+
+    result
+}
+
+pub fn get_price(effect: &Value, funded: bool) -> Value {
+    let mut g = effect.clone();
+    if effect["got"].is_null() {
+        g = effect["pays"].clone();
+    } else {
+        g = effect["got"].clone();
+    }
+
+    let mut p = effect.clone();
+    if effect["paid"].is_null() {
+        p = effect["gets"].clone();
+    } else {
+        p = effect["paid"].clone();
+    }
+
+    if ! funded {
+        return amount_ratio(&g, &p);
+    } else {
+        return amount_ratio(&p, &g);
+    }
+}
+
 //
 pub fn txn_type(tx: &Value, account: &str) -> String {
     let tx_account = tx["Account"].as_str().unwrap();
@@ -936,9 +988,9 @@ pub fn process_tx(tx: &str) -> Value {
         }
 
         let mut cos: Vec<Value> = vec![];
-        let gets_value = 0;
-        let pays_value = 0;
-        let total_rate = 0;
+        let mut gets_value = 0;
+        let mut pays_value = 0;
+        let mut total_rate = 0;
 
         if ! result["gets"].is_null() {
             cos.push( result["gets"]["currency"].clone());
@@ -951,23 +1003,278 @@ pub fn process_tx(tx: &str) -> Value {
         let affected_nodes = x["meta"]["AffectedNodes"].clone();
         let mut n = 0;
         while n < affected_nodes.as_array().unwrap().len() {
-            let node = affected_nodes[n].clone();
-            let node = process_affect_node(&node, &mut result);
-        }
+            let node_src = affected_nodes[n].clone();
+            let mut node = json!("node");
+            process_affect_node(&node_src, &mut node);
+            let mut effect = json!("effect");
 
+            if ! node.is_null() && node["entryType"] == json!("Offer") {
+                let field_set = node["fields"].clone();
+                let sell = node["fields"]["Flags"].as_u64().unwrap() & 0x00080000;
 
+                if node["fields"]["Account"] == account {
+                    if node["diffType"] == json!("ModifiedNode") ||
+                       ( node["diffType"] == json!("DeletedNode") &&
+                       ! node["fieldsPrev"]["TakerGets"].is_null() &&
+                       ! is_amount_zero(&parse_amount(&node["fieldsFinal"]["TakerGets"])) ) {
 
+                        effect["effect"] = json!("offer_partially_funded");
+                        effect["counterparty"]["account"] = x["Account"].clone();
+                        effect["counterparty"]["seq"] = x["Sequence"].clone();
+                        effect["counterparty"]["hash"] = x["hash"].clone();
 
+                        if node["diffType"] != json!("DeletedNode") {
+                            effect["remaining"] = json!( ! is_amount_zero(&parse_amount(&node["fields"]["TakerGets"])) );
+                        } else {
+                            effect["cancelled"] = json!(true);
+                        }
 
+                        effect["gets"] = parse_amount(&field_set["TakerGets"]);
+                        effect["pays"] = parse_amount(&field_set["TakerPays"]);
+                        effect["got"] = amount_subtract(&parse_amount(&node["fieldsPrev"]["TakerPays"]), &parse_amount(&node["fields"]["TakerPays"]));
+                        effect["paid"] = amount_subtract(&parse_amount(&node["fieldsPrev"]["TakerGets"]), &parse_amount(&node["fields"]["TakerGets"]));
 
+                        if sell != 0 {
+                            effect["type"] = json!("sold");
+                        } else {
+                            effect["type"] = json!("bought");
+                        }
 
+                        if ! node["fields"]["OfferFeeRateNum"].is_null() {
+                            effect["platform"] = node["fields"]["Platform"].clone();
 
+                            let v1 = node["fields"]["OfferFeeRateNum"].clone().as_f64().unwrap();
+                            let v2 = node["fields"]["OfferFeeRateDen"].clone().as_f64().unwrap();
 
+                            effect["rate"] = json!( v1 / v2 );
+                        }
+                    } else {
+                        if node["diffType"] == json!("CreatedNode") {
+                            effect["effect"] = json!("offer_created");
+                        } else {
+                            if node["fieldsPrev"]["TakerPays"].is_null() {
+                                effect["effect"] = json!("offer_cancelled");
+                            } else {
+                                effect["effect"] = json!("offer_funded");
+                            }
+                        }
 
+                        // 2. offer_funded
+                        if effect["effect"] == json!("offer_funded") {
+                            let field_set = node["fieldsPrev"].clone();
 
+                            effect["counterparty"]["account"] = x["Account"].clone();
+                            effect["counterparty"]["seq"] = x["Sequence"].clone();
+                            effect["counterparty"]["hash"] = x["hash"].clone();
 
+                            effect["got"] = amount_subtract(&parse_amount(&node["fieldsPrev"]["TakerPays"]), &parse_amount(&node["fields"]["TakerPays"]));
+                            effect["paid"] = effect["got"].clone();
+                            if sell != 0 {
+                                effect["type"] = json!("sold");
+                            } else {
+                                effect["type"] = json!("bought");
+                            }
 
+                            if ! node["fields"]["OfferFeeRateNum"].is_null() {
+                                effect["platform"] = node["fields"]["Platform"].clone();
 
+                                let v1 = node["fields"]["OfferFeeRateNum"].clone().as_f64().unwrap();
+                                let v2 = node["fields"]["OfferFeeRateDen"].clone().as_f64().unwrap();
+
+                                effect["rate"] = json!( v1 / v2 );
+                            }
+                        }
+                        // 3. offer_created
+                        if effect["effect"] == json!("offer_created") {
+                            effect["gets"] = parse_amount(&field_set["TakerGets"]);
+                            effect["pays"] = parse_amount(&field_set["TakerPays"]);
+                            if sell != 0 {
+                                effect["type"] = json!("sell");
+                            } else {
+                                effect["type"] = json!("buy");
+                            }
+
+                            if ! field_set["OfferFeeRateNum"].is_null() {
+                                effect["platform"] = field_set["Platform"].clone();
+
+                                let v1 = node["fields"]["OfferFeeRateNum"].clone().as_f64().unwrap();
+                                let v2 = node["fields"]["OfferFeeRateDen"].clone().as_f64().unwrap();
+
+                                effect["rate"] = json!( v1 / v2 );
+                            }
+                        }
+                        // 4. offer_cancelled
+                        if effect["effect"] == json!("offer_cancelled") {
+                            effect["hash"] = node["fields"]["PreviousTxnID"].clone();
+                            // collect data for cancel transaction type
+                            if result["type"] == json!("offercancel") {
+                                result["gets"] = parse_amount(&field_set["TakerGets"]);
+                                result["pays"] = parse_amount(&field_set["TakerPays"]);
+                            }
+
+                            effect["gets"] = parse_amount(&field_set["TakerGets"]);
+                            effect["pays"] = parse_amount(&field_set["TakerPays"]);
+
+                            if sell != 0 {
+                                effect["type"] = json!("sell");
+                            } else {
+                                effect["type"] = json!("buy");
+                            }
+
+                            if !field_set["OfferFeeRateNum"].is_null() {
+                                effect["platform"] = field_set["Platform"].clone();
+                                let v1 = field_set["fields"]["OfferFeeRateNum"].clone().as_f64().unwrap();
+                                let v2 = field_set["fields"]["OfferFeeRateDen"].clone().as_f64().unwrap();
+
+                                effect["rate"] = json!( v1 / v2 );
+                            }
+                        }
+                    }
+
+                    effect["seq"] = node["fields"]["Sequence"].clone();
+                }
+                // 5. offer_bought
+                else if x["Account"] == account && ! node["fieldsPrev"].is_null() {
+                    effect["effect"] = json!("offer_bought");
+
+                    effect["counterparty"]["account"] = node["Account"].clone();
+                    effect["counterparty"]["seq"] = node["Sequence"].clone();
+                    effect["counterparty"]["hash"] = node["hash"].clone();
+
+                    effect["paid"] = amount_subtract(&parse_amount(&node["fieldsPrev"]["TakerPays"]), &parse_amount(&node["fields"]["TakerPays"]));
+                    effect["got"] = amount_subtract(&parse_amount(&node["fieldsPrev"]["TakerGets"]), &parse_amount(&node["fields"]["TakerGets"]));
+
+                    if result["offertype"] == json!("buy") && sell != 0 || result["offertype"] == json!("sell") && sell != 0 {
+                        if sell != 0 {
+                            effect["type"] = json!("bought");
+                        } else {
+                            effect["type"] = json!("sold");
+                        }
+
+                    }else {
+                        if sell != 0 {
+                            effect["type"] = json!("sold");
+                        } else {
+                            effect["type"] = json!("bought");
+                        }
+                    }
+                }
+                // add price
+                if ! effect["gets"].is_null() && ! effect["pays"].is_null() || ! effect["got"].is_null() && ! effect["paid"].is_null() {
+                    let mut created = false;
+                    if effect["effect"] == json!("offer_created") && effect["type"] == json!("buy") {
+                        created = true;
+                    }
+
+                    let mut funded = false;
+                    if effect["effect"] == json!("offer_funded") && effect["type"] == json!("bought") {
+                        funded = true;
+                    }
+
+                    let mut cancelled = false;
+                    if effect["effect"] == json!("offer_cancelled") && effect["type"] == json!("buy") {
+                        cancelled = true;
+                    }
+
+                    let mut bought = false;
+                    if effect["effect"] == json!("offer_bought") && effect["type"] == json!("bought") {
+                        bought = true;
+                    }
+
+                    let mut partially_funded = false;
+                    if effect["effect"] == json!("offer_partially_funded") && effect["type"] == json!("bought") {
+                        partially_funded = true;
+                    }
+
+                    effect["price"] = get_price(&effect, created || funded || cancelled || bought ||  partially_funded );
+                }
+            }
+
+            if result["type"] == json!("offereffect") && ! node.is_null() && node["entryType"] == json!("AccountRoot") {
+                if node["fields"]["RegularKey"] == account {
+                    effect["effect"] = json!("set_regular_key");
+                    effect["type"] = json!("null");
+                    effect["account"] = node["fields"]["Account"].clone();
+                    effect["regularkey"] = json!(account);
+                }
+            }
+
+            if ! node.is_null() && node["entryType"] == json!("Brokerage") {
+                result["platform"] = node["fields"]["Platform"].clone();
+
+                let v1 = node["fields"]["OfferFeeRateNum"].clone().as_f64().unwrap();
+                let v2 = node["fields"]["OfferFeeRateDen"].clone().as_f64().unwrap();
+
+                result["rate"] = json!( v1 / v2 );
+            }
+
+            if ! node.is_null() && node["entryType"] == json!("SkywellState") {//其他币种余额
+                if node["fields"]["HighLimit"]["issuer"] == account || node["fields"]["LowLimit"]["issuer"] == account {
+                    result["balances"][node["fields"]["Balance"]["currency"].clone().as_str().unwrap()] = json!( node["fields"]["Balance"]["value"].clone().as_f64().unwrap().abs() );
+
+                    if ! node["fieldsPrev"]["Balance"].is_null() {
+
+                        result["balancesPrev"][node["fieldsPrev"]["Balance"]["currency"].clone().as_str().unwrap()] = json!( node["fieldsPrev"]["Balance"]["value"].clone().as_f64().unwrap().abs() );
+
+                    } else if ! node["fieldsNew"]["Balance"].is_null() {//新增币种
+
+                        result["balancesPrev"][node["fields"]["Balance"]["currency"].clone().as_str().unwrap()] = json!(0);
+
+                    } else {
+                    }
+                }
+            }
+
+            if !node.is_null() && node["entryType"] == json!("AccountRoot") {//基础币种余额
+                  if node["fields"]["Account"] == account {
+
+                      result["balances"][CURRENCY] = json!( node["fields"]["Balance"].clone().as_u64().unwrap() / 1000000 );
+
+                      if ! node["fieldsPrev"]["Balance"].is_null() {
+
+                          result["balancesPrev"][CURRENCY] = json!( node["fieldsPrev"]["Balance"].clone().as_f64().unwrap() / 1000000.0 );
+
+                      }else if ! node["fieldsNew"]["Balance"].is_null() {
+
+                          result["balancesPrev"][CURRENCY] = json!( 0 );
+
+                      }else {//交易前后余额没有变化
+                      }
+                  }
+            }
+
+            // add effect
+            if ! effect.is_null() {
+                if node["diffType"] == json!("DeletedNode") && effect["effect"] != json!("offer_bought") {
+                    effect["deleted"] = json!(true);
+                }
+
+                result["effects"][n] = effect.clone();
+            }
+
+            if result["type"] == json!("offernew") && ! effect["got"].clone().is_null() {
+                    // let mut gets_value = 0;
+                    if result["gets"]["currency"] == effect["paid"]["currency"] {
+                        gets_value = ( effect["paid"]["value"].clone().as_f64().unwrap() + gets_value as f64 ) as u64;
+                    }
+
+                    // let mut pays_value1 = 0;
+                    if result["pays"]["currency"] == effect["got"]["currency"] {
+                        gets_value = ( effect["got"]["value"].clone().as_f64().unwrap() + pays_value as f64 ) as u64;
+                    }
+
+                    if result["gets"]["currency"] != effect["paid"]["currency"] || result["pays"]["currency"] != effect["got"]["currency"] {
+                        if ! cos.contains(&effect["got"]["currency"]) {
+                            cos.push(effect["got"]["currency"].clone());
+                        }
+
+                        if ! cos.contains(&effect["paid"]["currency"]) {
+                            cos.push(effect["paid"]["currency"].clone());
+                        }
+                    }
+                }
+
+        } // end for
 
     } else {
         panic!("Error input.");
