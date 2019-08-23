@@ -686,8 +686,9 @@ pub fn amount_subtract(amount1: &Value, amount2: &Value) -> Value {
 }
 
 pub fn amount_ratio(amount1: &Value, amount2: &Value) -> Value {
-    let v1 = amount1["pays"]["value"].clone().as_f64().unwrap();
-    let v2 = amount2["gets"]["value"].clone().as_f64().unwrap();
+    println!("amount_ratio: 1: {:?} / 2: {:?}", &amount1, &amount2);
+    let v1 = amount1["value"].clone().as_f64().unwrap();
+    let v2 = amount2["value"].clone().as_f64().unwrap();
 
     let result: Value = json!( v1/v2 );
 
@@ -695,6 +696,8 @@ pub fn amount_ratio(amount1: &Value, amount2: &Value) -> Value {
 }
 
 pub fn get_price(effect: &Value, funded: bool) -> Value {
+    println!("get price: {:?}", effect);
+
     let mut g = effect.clone();
     if effect["got"].is_null() {
         g = effect["pays"].clone();
@@ -702,18 +705,24 @@ pub fn get_price(effect: &Value, funded: bool) -> Value {
         g = effect["got"].clone();
     }
 
+    println!("mid");
+
     let mut p = effect.clone();
     if effect["paid"].is_null() {
         p = effect["gets"].clone();
     } else {
         p = effect["paid"].clone();
     }
+    println!("mid 1");
 
     if ! funded {
         return amount_ratio(&g, &p);
     } else {
         return amount_ratio(&p, &g);
     }
+
+    println!("end");
+
 }
 
 //
@@ -997,7 +1006,7 @@ pub fn process_tx(tx: &str) -> Value {
             let node_src = affected_nodes[n].clone();
             let mut node = json!({"diffType": "node"});
             process_affect_node(&node_src, &mut node);
-            let mut effect = json!("effect");
+            let mut effect = json!({});
 
             println!("nod: {:?}", node.clone());
 
@@ -1135,6 +1144,7 @@ pub fn process_tx(tx: &str) -> Value {
                 }
                 // 5. offer_bought
                 else if x["Account"] == account && ! node["fieldsPrev"].is_null() {
+
                     effect["effect"] = json!("offer_bought");
 
                     effect["counterparty"]["account"] = node["Account"].clone();
@@ -1144,7 +1154,7 @@ pub fn process_tx(tx: &str) -> Value {
                     effect["paid"] = amount_subtract(&parse_amount(&node["fieldsPrev"]["TakerPays"]), &parse_amount(&node["fields"]["TakerPays"]));
                     effect["got"] = amount_subtract(&parse_amount(&node["fieldsPrev"]["TakerGets"]), &parse_amount(&node["fields"]["TakerGets"]));
 
-                    if result["offertype"] == json!("buy") && sell != 0 || result["offertype"] == json!("sell") && sell != 0 {
+                    if result["offertype"] == json!("buy") && sell != 0 || result["offertype"] == json!("sell") && !(sell != 0 ) as bool {
                         if sell != 0 {
                             effect["type"] = json!("bought");
                         } else {
@@ -1161,6 +1171,7 @@ pub fn process_tx(tx: &str) -> Value {
                 }
                 // add price
                 if ! effect["gets"].is_null() && ! effect["pays"].is_null() || ! effect["got"].is_null() && ! effect["paid"].is_null() {
+
                     let mut created = false;
                     if effect["effect"] == json!("offer_created") && effect["type"] == json!("buy") {
                         created = true;
@@ -1187,8 +1198,13 @@ pub fn process_tx(tx: &str) -> Value {
                     }
 
                     effect["price"] = get_price(&effect, created || funded || cancelled || bought ||  partially_funded );
+
+                    println!("------------price");
                 }
             }
+
+            println!("result type: {}", result["type"]);
+            println!("node entryType: {}", node["entryType"]);
 
             if result["type"] == json!("offereffect") && ! node.is_null() && node["entryType"] == json!("AccountRoot") {
                 if node["fields"]["RegularKey"] == account {
@@ -1249,11 +1265,13 @@ pub fn process_tx(tx: &str) -> Value {
                     effect["deleted"] = json!(true);
                 }
 
-                result["effects"][n] = effect.clone();
+                result["effects"].as_array_mut().unwrap().push(  effect.clone() );
             }
 
             if result["type"] == json!("offernew") && ! effect["got"].clone().is_null() {
-                    // let mut gets_value = 0;
+                println!("offfffffffffffffffffffffnewwwwwwwwwwwwwwwwwww");
+                    // println!("result: {:?}", result);
+                    println!("effect: {:?}", effect);
                     if result["gets"]["currency"] == effect["paid"]["currency"] {
                         gets_value = ( effect["paid"]["value"].clone().as_f64().unwrap() + gets_value as f64 ) as u64;
                     }
@@ -1274,6 +1292,7 @@ pub fn process_tx(tx: &str) -> Value {
                     }
                 }
 
+                n += 1;
         } // end while
 
     } else {
