@@ -1,5 +1,5 @@
 extern crate jlib;
-use jlib::process_tx;
+use jlib::misc::util::*;
 
 fn main() {
     let tx = r#"
