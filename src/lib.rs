@@ -634,6 +634,7 @@ pub fn reverse_amount(x: &Value) -> Value {
 }
 
 pub fn process_affect_node(an: &Value, result: &mut Value) {
+    println!("an:--------------------------\n{:?}", an);
     if ! an["CreatedNode"].is_null() {
         result.as_object_mut().unwrap()["diffType"] = json!("CreatedNode");
     }
@@ -654,8 +655,6 @@ pub fn process_affect_node(an: &Value, result: &mut Value) {
 
     result["entryType"] = an["LedgerEntryType"].clone();
     result["ledgerIndex"] = an["LedgerIndex"].clone();
-
-    let mut fieils = json!([]);
 
     result["fields"] = an["FinalFields"].clone();
 
@@ -1003,6 +1002,7 @@ pub fn process_tx(tx: &str) -> Value {
         let affected_nodes = x["meta"]["AffectedNodes"].clone();
         let mut n = 0;
         while n < affected_nodes.as_array().unwrap().len() {
+            println!("--------------------------------------------------------------------------new loop----------------------");
             let node_src = affected_nodes[n].clone();
             let mut node = json!({"diffType": "node"});
             process_affect_node(&node_src, &mut node);
@@ -1207,6 +1207,7 @@ pub fn process_tx(tx: &str) -> Value {
             println!("node entryType: {}", node["entryType"]);
 
             if result["type"] == json!("offereffect") && ! node.is_null() && node["entryType"] == json!("AccountRoot") {
+
                 if node["fields"]["RegularKey"] == account {
                     effect["effect"] = json!("set_regular_key");
                     effect["type"] = json!("null");
@@ -1225,17 +1226,27 @@ pub fn process_tx(tx: &str) -> Value {
             }
 
             if ! node.is_null() && node["entryType"] == json!("SkywellState") {//其他币种余额
-                if node["fields"]["HighLimit"]["issuer"] == account || node["fields"]["LowLimit"]["issuer"] == account {
-                    result["balances"][node["fields"]["Balance"]["currency"].clone().as_str().unwrap()] = json!( node["fields"]["Balance"]["value"].clone().as_f64().unwrap().abs() );
+                println!("node: {:?}", node);
 
+                if node["fields"]["HighLimit"]["issuer"] == account || node["fields"]["LowLimit"]["issuer"] == account {
+                    if let Some(cny) = node["fields"]["Balance"]["currency"].clone().as_str() {
+                        let cny = json!( {cny: node["fields"]["Balance"]["value"].clone().as_str().unwrap().parse::<f64>().unwrap().abs() } );
+                        result["balances"].as_array_mut().unwrap().push( cny.clone() );
+                    }
+
+                    println!("skkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk1111111111111");
                     if ! node["fieldsPrev"]["Balance"].is_null() {
 
-                        result["balancesPrev"][node["fieldsPrev"]["Balance"]["currency"].clone().as_str().unwrap()] = json!( node["fieldsPrev"]["Balance"]["value"].clone().as_f64().unwrap().abs() );
+                        if let Some(cnn) = node["fieldsPrev"]["Balance"]["currency"].clone().as_str() {
+                            let v = json!( {cnn: node["fieldsPrev"]["Balance"]["value"].clone().as_str().unwrap().parse::<f64>().unwrap().abs() } );
+                            result["balancesPrev"].as_array_mut().unwrap().push( v.clone() );
+                        }
 
                     } else if ! node["fieldsNew"]["Balance"].is_null() {//新增币种
 
-                        result["balancesPrev"][node["fields"]["Balance"]["currency"].clone().as_str().unwrap()] = json!(0);
-
+                        if let Some(cnn) = node["fields"]["Balance"]["currency"].clone().as_str() {
+                            result["balancesPrev"].as_array_mut().unwrap().push( json!({cnn: 0}) );
+                        }
                     } else {
                     }
                 }
@@ -1244,29 +1255,48 @@ pub fn process_tx(tx: &str) -> Value {
             if !node.is_null() && node["entryType"] == json!("AccountRoot") {//基础币种余额
                   if node["fields"]["Account"] == account {
 
-                      result["balances"][CURRENCY] = json!( node["fields"]["Balance"].clone().as_u64().unwrap() / 1000000 );
+                      println!("基础货币: {:?}", node);
+                      if let Ok(x) = node["fields"]["Balance"].clone().as_str().unwrap().parse::<f64>() {
+                          let v = json!( { CURRENCY : x/1000000.0 } );
+                          result["balances"].as_array_mut().unwrap().push( v );
+
+                      } else {
+                          let v = json!( { CURRENCY : 0 } );
+                          result["balances"].as_array_mut().unwrap().push( v );
+                      }
+                      println!("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA bbb");
 
                       if ! node["fieldsPrev"]["Balance"].is_null() {
+                          if let Ok(x) =  node["fieldsPrev"]["Balance"].clone().as_str().unwrap().parse::<f64>() {
+                              let v = json!( {CURRENCY: x / 1000000.0} );
+                              result["balancesPrev"].as_array_mut().unwrap().push( v );
+                          } else {
+                              let v = json!( {CURRENCY: 0.0} );
+                              result["balancesPrev"].as_array_mut().unwrap().push( v );
+                          }
 
-                          result["balancesPrev"][CURRENCY] = json!( node["fieldsPrev"]["Balance"].clone().as_f64().unwrap() / 1000000.0 );
+                      } else if ! node["fieldsNew"]["Balance"].is_null() {
 
-                      }else if ! node["fieldsNew"]["Balance"].is_null() {
+                          result["balancesPrev"].as_array_mut().unwrap().push( json!( {CURRENCY: 0 } ));
 
-                          result["balancesPrev"][CURRENCY] = json!( 0 );
-
-                      }else {//交易前后余额没有变化
+                      } else {
                       }
                   }
             }
 
             // add effect
             if ! effect.is_null() {
+
+                println!("AccountRootAccountRootAccountRootAccountRootAccountRootAccountRootAccountRootAccountRootAccountRootAccountRootAccountRootAccountRoot");
+
                 if node["diffType"] == json!("DeletedNode") && effect["effect"] != json!("offer_bought") {
                     effect["deleted"] = json!(true);
                 }
 
                 result["effects"].as_array_mut().unwrap().push(  effect.clone() );
             }
+
+            println!("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
             if result["type"] == json!("offernew") && ! effect["got"].clone().is_null() {
                 println!("offfffffffffffffffffffffnewwwwwwwwwwwwwwwwwww");
