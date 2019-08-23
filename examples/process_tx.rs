@@ -20,7 +20,33 @@ fn main() {
                 "hash": "AB2A25557FF03911A8FC0A412293BE9D9FCB20CDD530EE05957A9859F8467C32",
                 "inLedger": 12839308,
                 "ledger_index": 12839308,
-                "validated": true }
+                "validated": true ,
+                "meta":
+                { "AffectedNodes": [ { "ModifiedNode":
+                    { "FinalFields": { "Account": "j9x4pABowsWxmK1DhhWyK34u3boC6h3LHe",
+                        "BookDirectory": "51603377F758E3C8FA007C77312DDA06A737A1395CD5FC435D0547675A0517F6",
+                        "BookNode": "0000000000000000",
+                        "Flags": 0,
+                        "OwnerNode": "0000000000000000",
+                        "Sequence": 7031,
+                        "TakerGets":
+                            { "currency": "CNY",
+                                "issuer": "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or",
+                                "value": "1148.95233" },
+                        "TakerPays": "170721000000" },
+                        "LedgerEntryType": "Offer",
+                        "LedgerIndex": "020110B8BED1F151B9D3AF9E5D412D8627CB08232B388ADE1F4B0C68E7608BEC",
+                        "PreviousFields": { "TakerGets":
+                            { "currency": "CNY",
+                                "issuer": "jGa9J9TkqtBcUoHe2zqhVFFbgUVED6o9or",
+                                "value": "1162.41233" },
+                            "TakerPays": "172721000000" },
+                        "PreviousTxnID": "9CB6AEFA273C750242D5B8AF4299347E77F9A47C5D0B89EE5F6A4D5577E8C4A0",
+                        "PreviousTxnLgrSeq": 12839301 } }
+                   ],
+                    "TransactionIndex": 3,
+                    "TransactionResult": "tesSUCCESS" }
+            }
     "#;
     let v = process_tx(tx);
     println!("result： \n\n{}", v);
