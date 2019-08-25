@@ -3,7 +3,7 @@ pub mod ed25519;
 pub mod sha256;
 pub mod ripemd160;
 
-use basex_rs::BaseX;
+use basex_rs::{BaseX, SKYWELL, Decode};
 use crate::base::ring::{digest};
 use crate::base::data::constants::{CURVE_ORDER, CURVE_ZERO};
 
@@ -12,7 +12,7 @@ pub fn entropy(secret: &String) -> Option<Vec<u8>> {
     // let buf = BaseX::decode(secret.to_string()).unwrap();
     // buf[1..buf.len()-4].to_vec()
 
-    if let Some(buf) = BaseX::decode(secret.to_string()) {
+    if let Some(buf) = BaseX::new(SKYWELL).decode(secret.to_string()) {
         return Some( buf[1..buf.len()-4].to_vec() );
     }
 

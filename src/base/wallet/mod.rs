@@ -4,7 +4,7 @@ pub mod keypair;
 pub mod address;
 pub mod seed;
 
-use basex_rs::BaseX;
+use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::curve::sha256::JSha256;
 
 //generate seed && address
@@ -22,7 +22,7 @@ pub fn generate_str(version: &mut Vec<u8>, so: &Vec<u8>) -> String {
     version.extend(token);
 
     //end. base58 encode
-    BaseX::encode(version.as_mut_slice())
+    BaseX::new(SKYWELL).encode(version.as_mut_slice())
 }
 
 pub fn check_address(_address: &String) -> bool {
