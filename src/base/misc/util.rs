@@ -2,7 +2,7 @@
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
-use basex_rs::BaseX;
+use basex_rs::{BaseX, SKYWELL, Decode};
 use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
 use crate::WalletType;
 use crate::message::common::amount::Amount;
@@ -121,7 +121,7 @@ pub fn decode_checked(encoded: String) -> Option<Vec<u8>> {
 
 pub fn decode_raw(encoded: String) -> Option<Vec<u8>> {
     // decode(encoded)
-    BaseX::decode(encoded)
+    BaseX::new(SKYWELL).decode(encoded)
 }
 
 pub fn downcast_to_string(value: Rc<dyn Any>) -> String {

@@ -2,7 +2,7 @@
 use crate::base::curve::sha256::JSha256;
 use crate::base::xcodec::util::{is_set, concat_args, seq_equal};
 use crate::base::data::base_data::{BaseDataI};
-use basex_rs::BaseX;
+use basex_rs::{BaseX, SKYWELL, Decode, Encode};
 use cast_rs::hexcast;
 
 pub trait XCodeI {
@@ -69,11 +69,11 @@ impl XCodeI for CodecFactory {
     }
 
     fn encode_raw(bytes: &mut Vec<u8>) -> String {
-        BaseX::encode(bytes.as_mut_slice())
+        BaseX::new(SKYWELL).encode(bytes.as_mut_slice())
     }
 
     fn decode_raw(string: String) -> Option<Vec<u8>> {
-        BaseX::decode(string)
+        BaseX::new(SKYWELL).decode(string)
     }
 
     fn encode_checked(buffer: &mut Vec<u8>) -> String {
