@@ -10,12 +10,15 @@ extern crate void;
 extern crate ws;
 extern crate basex_rs;
 extern crate cast_rs;
+#[macro_use]
+extern crate juniper;
 
 pub mod base;
 pub mod message;
 pub mod misc;
 pub mod api;
 pub mod contracts;
+pub mod graphyql;
 
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
