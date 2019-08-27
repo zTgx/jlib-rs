@@ -12,3 +12,12 @@ pub fn downcast_to_serverinfo(value: Rc<dyn Any>) -> ServerInfoResponse {
 
     s
 }
+
+pub fn downcast_to_bool(value: Rc<dyn Any>) -> bool {
+    let mut s = false;
+    if let Ok(u) = value.downcast::<Cell<bool>>() {
+        s = u.take();
+    }
+
+    s
+}
