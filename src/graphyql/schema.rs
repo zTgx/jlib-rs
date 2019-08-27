@@ -11,7 +11,7 @@ use crate::api::query::server_info::*;
 
 use crate::graphyql::model::*;
 use crate::graphyql::util::{
-    downcast_to_serverinfo, downcast_to_bool
+    downcast_to_serverinfo,
 };
 
 pub struct QueryRoot;
@@ -19,7 +19,7 @@ pub struct QueryRoot;
 graphql_object!(QueryRoot: () |&self| {
     field server_info(&executor) -> FieldResult<ServerInfoResponse> {
         let s = Rc::new( Cell::new( ServerInfoResponse::default() ) );
-        let mut done = Rc::new( Cell::new( false ));
+        //let mut done = Rc::new( Cell::new( false ));
 
         {
             let config = Config::new(TEST1, true);
@@ -59,14 +59,14 @@ graphql_object!(QueryRoot: () |&self| {
 
                     s.set(info);
 
-                    done.set(true);
+                    //done.set(true);
                 }
                 Err(_) => {
                 }
             });
         }
 
-        while ! downcast_to_bool(done.clone()) {}
+        //while ! downcast_to_bool(done.clone()) {}
 
         Ok( downcast_to_serverinfo(s) )
     }
