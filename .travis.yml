@@ -2,8 +2,7 @@ language: rust
 sudo: false
 
 rust:
-  - stable
-  
+  - nightly
+
 script:
-  - cargo build --verbose --all  
- 
+  - cargo build --verbose --all
