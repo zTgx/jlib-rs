@@ -10,12 +10,13 @@ use crate::misc::config::*;
 use crate::api::query::server_info::*;
 
 use crate::graphyql::model::*;
-use crate::graphyql::util::{
-    downcast_to_serverinfo,
-};
+use crate::graphyql::util::*;
 
 use crate::WalletType;
 use crate::generate_wallet;
+
+use crate::api::query::spec_tx::*;
+use crate::message::query::spec_tx::{RequestTxResponse};
 
 pub struct QueryRoot;
 
@@ -36,6 +37,45 @@ graphql_object!(QueryRoot: () |&self| {
         };
 
         Ok( wallet )
+    }
+
+    field tx(&executor, tx_hash: String) -> FieldResult<PaymentInfo> {
+        let s = Rc::new( Cell::new( PaymentInfo::default() ) );
+
+        let config = Config::new(TEST3, true);
+        SpecTx::new().request_tx(config.clone(), tx_hash, |x| match x {
+            Ok(response) => {
+                let res: RequestTxResponse = response;
+
+                let mut memos: Vec<String> = vec![];
+                if let Some(m) = res.memos {
+                    for i in m {
+                        memos.push( i );
+                    }
+                }
+
+                let amount = AmountG {
+                    value: res.taker_pays.value,
+                    currency: res.taker_pays.currency.unwrap(),
+                    issuer: res.taker_pays.issuer.unwrap(),
+                };
+                let info = PaymentInfo {
+                    hash: res.hash,
+                    fee: res.fee,
+                    date: res.date.to_string(),
+                    memos: memos,
+                    counterparty: res.account,
+                    amount: amount,
+                };
+
+                s.set( info );
+            },
+
+            Err(e) => {
+            }
+        });
+
+        Ok( downcast_to_paymentinfo(s) )
     }
 
     field server_info(&executor) -> FieldResult<ServerInfoResponse> {
@@ -77,15 +117,11 @@ graphql_object!(QueryRoot: () |&self| {
                     };
 
                     s.set(info);
-
-                    //done.set(true);
                 }
                 Err(_) => {
                 }
             });
         }
-
-        //while ! downcast_to_bool(done.clone()) {}
 
         Ok( downcast_to_serverinfo(s) )
     }

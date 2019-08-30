@@ -10,7 +10,7 @@ use jlib::base::misc::util::{downcast_to_usize};
 
 
 fn main() {
-    let config = Config::new(TEST1, true);
+    let config = Config::new(TEST3, true);
     let account = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
 
     let seq_rc = Rc::new(Cell::new(0u64));

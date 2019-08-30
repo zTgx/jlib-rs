@@ -36,7 +36,7 @@ pub struct ServerInfoResponse {
     pub validation_quorum: String,
 }
 
-///Wallet
+///账号类接口数据模型
 #[derive(GraphQLEnum, Debug, Copy, Clone)]
 pub enum WType {
     SECP256K1,
@@ -55,4 +55,34 @@ pub struct Wallet {
     pub address : String,
     pub secret  : String,
     pub keypair : Keypair,
+}
+
+#[derive(GraphQLObject, Debug)]
+pub struct Balance {
+    pub value: String,
+    pub currency: String,
+    pub issuer: String,
+    pub freezed: String,
+}
+
+#[derive(GraphQLObject, Debug)]
+pub struct Balances {
+    pub balances: Vec<Balance>,
+}
+
+#[derive(GraphQLObject, Debug, Default)]
+pub struct AmountG {
+    pub value: String,   //0.5
+    pub currency: String,//'USD',
+    pub issuer: String,  //'jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS',
+}
+
+#[derive(GraphQLObject, Debug, Default)]
+pub struct PaymentInfo {
+    pub hash: String,
+    pub fee: String,
+    pub date: String,
+    pub memos: Vec<String>,
+    pub counterparty: String,
+    pub amount: AmountG,
 }
