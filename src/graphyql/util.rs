@@ -30,3 +30,12 @@ pub fn downcast_to_paymentinfo(value: Rc<dyn Any>) -> PaymentInfo {
 
     s
 }
+
+pub fn downcast_to_ledgerinfo(value: Rc<dyn Any>) -> LedgerInfo {
+    let mut s = LedgerInfo::default();
+    if let Ok(u) = value.downcast::<Cell<LedgerInfo>>() {
+        s = u.take();
+    }
+
+    s
+}
