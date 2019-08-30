@@ -39,7 +39,7 @@ graphql_object!(QueryRoot: () |&self| {
         Ok( wallet )
     }
 
-    field tx(&executor, tx_hash: String) -> FieldResult<PaymentInfo> {
+    field tx_info(&executor, tx_hash: String) -> FieldResult<PaymentInfo> {
         let s = Rc::new( Cell::new( PaymentInfo::default() ) );
 
         let config = Config::new(TEST3, true);
