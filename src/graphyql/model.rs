@@ -86,3 +86,9 @@ pub struct PaymentInfo {
     pub counterparty: String,
     pub amount: AmountG,
 }
+
+#[derive(GraphQLObject, Debug, Default)]
+pub struct LedgerInfo {
+    pub ledger_hash: String,
+    pub ledger_index: String,
+}

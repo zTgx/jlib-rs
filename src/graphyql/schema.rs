@@ -17,6 +17,7 @@ use crate::generate_wallet;
 
 use crate::api::query::spec_tx::*;
 use crate::message::query::spec_tx::{RequestTxResponse};
+use crate::api::query::ledger_closed::*;
 
 pub struct QueryRoot;
 
@@ -37,6 +38,26 @@ graphql_object!(QueryRoot: () |&self| {
         };
 
         Ok( wallet )
+    }
+
+    field ledger_info(&executor, address: String) -> FieldResult<LedgerInfo> {
+        let s = Rc::new( Cell::new( LedgerInfo::default() ) );
+
+        let config = Config::new(TEST3, true);
+        let _c = LedgerClosed::new().request_ledger_closed(config.clone(), |x| match x {
+            Ok(response) => {
+                let info = LedgerInfo {
+                    ledger_hash: response.ledger_hash,
+                    ledger_index: response.ledger_index.to_string(),
+                };
+
+                s.set( info );
+            }
+
+            Err(e) => {}
+        });
+
+        Ok( downcast_to_ledgerinfo(s) )
     }
 
     field tx_info(&executor, tx_hash: String) -> FieldResult<PaymentInfo> {
