@@ -14,13 +14,32 @@ use crate::graphyql::util::{
     downcast_to_serverinfo,
 };
 
+use crate::WalletType;
+use crate::generate_wallet;
+
 pub struct QueryRoot;
 
 graphql_object!(QueryRoot: () |&self| {
+    field new_wallet(&executor) -> FieldResult<Wallet> {
+        let wallet_raw = generate_wallet(WalletType::SECP256K1);
+
+        let keypair = Keypair {
+            private_key: wallet_raw.keypair.private_key,
+            public_key: wallet_raw.keypair.public_key,
+        };
+
+        let wallet = Wallet {
+            key_type: WType::SECP256K1,
+            address : wallet_raw.address,
+            secret  : wallet_raw.secret,
+            keypair : keypair,
+        };
+
+        Ok( wallet )
+    }
+
     field server_info(&executor) -> FieldResult<ServerInfoResponse> {
         let s = Rc::new( Cell::new( ServerInfoResponse::default() ) );
-        //let mut done = Rc::new( Cell::new( false ));
-
         {
             let config = Config::new(TEST1, true);
             ServerInfo::new().request_server_info(config.clone(), |x| match x {

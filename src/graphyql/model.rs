@@ -35,3 +35,24 @@ pub struct ServerInfoResponse {
     pub validated_ledger: ValidatedLedger,
     pub validation_quorum: String,
 }
+
+///Wallet
+#[derive(GraphQLEnum, Debug, Copy, Clone)]
+pub enum WType {
+    SECP256K1,
+    ED25519,
+}
+
+#[derive(GraphQLObject, Debug, Clone, Default)]
+pub struct Keypair {
+    pub private_key: String, //hex string
+    pub public_key: String,  //hex string
+}
+
+#[derive(GraphQLObject, Debug)]
+pub struct Wallet {
+    pub key_type: WType,
+    pub address : String,
+    pub secret  : String,
+    pub keypair : Keypair,
+}
