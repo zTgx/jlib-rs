@@ -5,7 +5,7 @@ use jlib::api::query::account_offer::*;
 use jlib::message::query::offer::{RequestAccountOfferResponse, AccountOffersSideKick};
 
 fn main() {
-    let config = Config::new(TEST1, true);
+    let config = Config::new(TEST3, true);
     let account = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
     AccountOffer::new().request_account_offer(config.clone(), account, |x| match x {
         Ok(response) => {
