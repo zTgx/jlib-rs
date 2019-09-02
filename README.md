@@ -46,4 +46,4 @@ And hey, did you know you can also contribute by just starring the project here 
 
 ## Changelog
 
-Release notes are available in [CHANAGELOG.md](CHANAGELOG.md).
+Release notes are available in [CHANGELOG.md](CHANGELOG.md).
