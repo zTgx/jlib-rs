@@ -54,15 +54,16 @@ impl BrokerageI for Brokerage {
 
         let resp = downcast_to_string(info);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-            let status = x["status"].to_string();
-            if status == "\"success\"" {
-                let x: String = x["result"].to_string();
-                if let Ok(v) = serde_json::from_str(&x) as Result<RequestBrokerageResponse, serde_json::error::Error> {
-                    op(Ok(v))
-                }
-            } else {
-                if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<BrokerageSideKick, serde_json::error::Error> {
-                    op(Err(v))
+            if let Some(status) = x["status"].as_str() {
+                if status == "success" {
+                    let x: String = x["result"].to_string();
+                    if let Ok(v) = serde_json::from_str(&x) as Result<RequestBrokerageResponse, serde_json::error::Error> {
+                        op(Ok(v))
+                    }
+                } else {
+                    if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<BrokerageSideKick, serde_json::error::Error> {
+                        op(Err(v))
+                    }
                 }
             }
         }
