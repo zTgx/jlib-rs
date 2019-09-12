@@ -49,14 +49,14 @@ impl LedgerClosedI for LedgerClosed {
 
             let resp = downcast_to_string(info);
             if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
-                let status = x["status"].to_string();
-                if status == "\"success\"" {
-                    let x: String = x["result"].to_string();
-                    if let Ok(x) = serde_json::from_str(&x) as Result<LedgerClosedResponse, serde_json::error::Error> {
-                        op(Ok(x));
+                if let Some(status) = x["status"].as_str() {
+                    if status == "success" {
+                        let x: String = x["result"].to_string();
+                        if let Ok(x) = serde_json::from_str(&x) as Result<LedgerClosedResponse, serde_json::error::Error> {
+                            op(Ok(x));
+                        }
                     }
-                }
-                else {
+                } else {
                     if let Ok(v) = serde_json::from_str(&x.to_string()) as Result<LedgerClosedSideKick, serde_json::error::Error> {
                         op(Err(v))
                     }
