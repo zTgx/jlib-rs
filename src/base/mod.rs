@@ -13,7 +13,6 @@ pub mod xcodec;
 //Serialize
 use std::collections::HashMap;
 
-//针对key和value都是唯一的HashMap方法
 pub trait TWHashMap {
     fn get_value_from_key(&self, s: &str) -> Option<&u16>;
     fn get_key_from_value(&self, i: u16) -> Option<&'static str>;
@@ -89,38 +88,6 @@ impl TWHashMap for TransactionTypeMap {
     }
 }
 
-
-/*
- * return the transaction result in string
- * Data defined in the TRANSACTION_RESULTS
- *  tesSUCCESS               : 0,
-  tecCLAIM                 : 100,
-  tecPATH_PARTIAL          : 101,
-  tecUNFUNDED_ADD          : 102,
-  tecUNFUNDED_OFFER        : 103,
-  tecUNFUNDED_PAYMENT      : 104,
-  tecFAILED_PROCESSING     : 105,
-  tecDIR_FULL              : 121,
-  tecINSUF_RESERVE_LINE    : 122,
-  tecINSUF_RESERVE_OFFER   : 123,
-  tecNO_DST                : 124,
-  tecNO_DST_INSUF_SWT      : 125,
-  tecNO_LINE_INSUF_RESERVE : 126,
-  tecNO_LINE_REDUNDANT     : 127,
-  tecPATH_DRY              : 128,
-  tecMASTER_DISABLED       : 130,
-  tecNO_REGULAR_KEY        : 131,
-  tecOWNERS                : 132,
-  tecNO_ISSUER             : 133,
-  tecNO_AUTH               : 134,
-  tecNO_LINE               : 135,
-  tecINSUFF_FEE            : 136,
-  tecFROZEN                : 137,
-  tecNO_TARGET             : 138,
-  tecNO_PERMISSION         : 139,
-  tecNO_ENTRY              : 140,
-  tecINSUFFICIENT_RESERVE  : 141
-*/
 #[derive(Debug, Default)]
 pub struct TransactionResultMap {
     pub m: HashMap<&'static str, u16>,

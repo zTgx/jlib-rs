@@ -22,7 +22,6 @@ pub mod graphyql;
 
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
-//Default` cannot be derived for enums, only structs
 #[derive(Debug)]
 pub enum RelationType {
     TRUST     = 0,
@@ -126,7 +125,6 @@ impl Handler for Client {
             }
         }
 
-        // self.out.close(CloseCode::Normal)
         Ok(())
     }
 
@@ -214,7 +212,7 @@ impl Args {
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Arg {
     #[serde(rename="Parameter")]
-    pub parameter: String, //Hex String, 0xb6e456bb ===>getUnit 调用方法的（以太坊方式）十六进制处理。
+    pub parameter: String, //Hex String, 0xb6e456bb ===>getUnit 
 
     #[serde(rename="ContractParamsType")]
     pub contract_params_type: u8, //0 -> Address type; 1 -> general type.
