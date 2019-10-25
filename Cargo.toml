@@ -14,7 +14,7 @@ description = "A lightweight blockchain lib."
 [dependencies]
 num = "0.2"
 rand = "0.6"
-ws = "0.8.1"
+ws = { version = "0.8.1", features = ["ssl"]}
 url = "1.7.2"
 hex = "0.3.2"
 log = "0.4.0"

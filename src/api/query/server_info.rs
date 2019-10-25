@@ -32,16 +32,19 @@ impl ServerInfoI for ServerInfo {
         where F: Fn(Result<ServerInfoResponse, serde_json::error::Error>) {
 
         let info = Rc::new(Cell::new("".to_string()));
-
+	println!("info.addr: {}", config.addr);
         connect(config.addr, |out| {
             let copy = info.clone();
 
             if let Ok(command) = ServerInfoCommand::default().to_string() {
+		println!("command: {}", &command);
                 out.send(command).unwrap();
             }
 
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
+
+		println!("c; {}", &c);
 
                 copy.set(c.to_string());
 
