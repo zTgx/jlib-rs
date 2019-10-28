@@ -5,7 +5,7 @@ use jlib::api::query::spec_ledger::*;
 use jlib::message::query::spec_ledger::{RequestLedgerResponse, SpecLedgerSideKick};
 
 fn main() {
-    let config = Config::new(TEST1, true);
+    let config = Config::new(TEST3, true);
     let ledger_index = 88670;
     let ledger_hash = None;
     let return_prev_tx_list = false;
