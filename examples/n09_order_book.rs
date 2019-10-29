@@ -5,7 +5,7 @@ use jlib::api::query::order_book::*;
 use jlib::message::query::order_book::{RequestOrderBookResponse, OrderBookItem, OrderBookSideKick};
 
 fn main() {
-    let config = Config::new(TEST1, true);
+    let config = Config::new(TEST3, true);
     let gets = OrderBookItem::with_params("SWT".to_string(), "".to_string());
     let pays = OrderBookItem::with_params("CNY".to_string(), "jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS".to_string());
     OrderBook::new().request_order_book(config.clone(), gets, pays, |x| match x {
