@@ -5,5 +5,5 @@ Files which starts with letter 't' are transaction api.
 
 Example :  
 ```rust
-cargo run --example n01_server_info
+cargo run --example n00_server_info
 ```
