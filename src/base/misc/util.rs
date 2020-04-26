@@ -9,6 +9,7 @@ use crate::message::common::amount::Amount;
 use crate::misc::base_config::*;
 use crate::base::wallet::address::{WalletAddress};
 use crate::base::wallet::seed::Seed;
+use cast_rs::hex;
 
 pub fn get_keypair_from_secret(secret: &String) -> Result<Keypair, &'static str> {
     let wtype = fetch_wtype_from_secret(&secret);

@@ -6,6 +6,7 @@ use crate::base::wallet::keypair::*;
 use crate::base::wallet::generate_str;
 
 use crate::base::xcodec::{is_valid_address};
+use cast_rs::hex;
 
 static H_ADDRESS: &[u8] = &[0];
 

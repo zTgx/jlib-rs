@@ -8,6 +8,7 @@ use std::ops::{BitAndAssign, BitOrAssign, BitOr, BitAnd, Shr, Mul};
 use num::{Zero};
 
 use crate::base::misc::util::{decode_j_address};
+use cast_rs::hex;
 
 pub trait SerializedType {
   fn serialize(&self) -> Vec<u8>;
