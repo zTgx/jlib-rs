@@ -5,26 +5,26 @@ use std::fmt;
 
 // use serde::{Deserialize, Serialize};
 
-#[derive(Debug)]
-struct SuperError {
-    side: &'static dyn Error,
-}
+// #[derive(Debug)]
+// struct SuperError {
+//     side: &'static dyn Error,
+// }
 
-impl fmt::Display for SuperError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "SuperError is here!")
-    }
-}
+// impl fmt::Display for SuperError {
+//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+//         write!(f, "SuperError is here!")
+//     }
+// }
 
-impl Error for SuperError {
-    fn description(&self) -> &str {
-        self.side.description()
-    }
+// impl Error for SuperError {
+//     fn description(&self) -> &str {
+//         self.side.description()
+//     }
 
-    fn source(&self) -> Option<&(dyn Error + 'static)> {
-        Some(self.side)
-    }
-}
+//     fn source(&self) -> Option<&(dyn Error + 'static)> {
+//         Some(self.side)
+//     }
+// }
 
 // ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // #[derive(Debug, Serialize, Deserialize)]

@@ -10,7 +10,7 @@ fn main() {
             println!("build_version : {:?}", response.build_version);
         }
         Err(_) => {
-	    println! ("error occured.");
+            println! ("error occured.");
         }
     });
 }

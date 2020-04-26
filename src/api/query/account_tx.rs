@@ -52,7 +52,6 @@ impl AccountTxI for AccountTx {
         }).unwrap();
 
         let resp = downcast_to_string(info);
-        println!("resp: {}", &resp);
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             if let Some(status) = x["status"].as_str() {
                 if status == "success" {

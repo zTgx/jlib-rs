@@ -14,7 +14,7 @@ use crate::message::common::memo::*;
 use crate::message::common::amount::Amount;
 use crate::api::query::account_info::*;
 
-use cast_rs::hexcast;
+use cast_rs::hex;
 
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
@@ -84,7 +84,7 @@ impl PaymentI for Payment {
         let amount_rc = Rc::new(Cell::new(amount));
         let memo_rc   = Rc::new(Cell::new(None));
         if memo.is_some() {
-            let upper_hex_memo = hexcast::encode(&memo.unwrap()).to_ascii_uppercase();
+            let upper_hex_memo = hex::encode(&memo.unwrap()).to_ascii_uppercase();
             let memos = MemosBuilder::new( upper_hex_memo ).build();
             memo_rc.set(Some(vec![memos]));
         }

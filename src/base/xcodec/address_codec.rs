@@ -3,7 +3,7 @@ use crate::base::curve::sha256::JSha256;
 use crate::base::xcodec::util::{is_set, concat_args, seq_equal};
 use crate::base::data::base_data::{BaseDataI};
 use basex_rs::{BaseX, SKYWELL, Decode, Encode};
-use cast_rs::hexcast;
+use cast_rs::hex;
 
 pub trait XCodeI {
     fn encode(bytes: &mut Vec<u8>, arg: Box<dyn BaseDataI>) -> String;
@@ -109,7 +109,7 @@ impl XCodeI for CodecFactory {
             panic!("unexpected_payload_length");
         }
 
-        concat_args( bytes, &hexcast::decode(version).unwrap());
+        concat_args( bytes, &hex::decode(version).unwrap());
 
         CodecFactory::encode_checked(bytes)
     }

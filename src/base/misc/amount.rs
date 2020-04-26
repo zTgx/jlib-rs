@@ -3,8 +3,8 @@ use std::str::FromStr;
 extern crate num;
 use num::bigint::{BigInt};
 use num::{Zero, One};
-use crate::cast_rs::str_t;
 use crate::message::common::amount::Amount as RAmount;
+use crate::base::misc::exponent;
 
 const CURRENCY_XNS: u8 = 0;
 const CURRENCY_ONE: u8 = 1;
@@ -93,8 +93,8 @@ impl Amount {
                 //TODO, need to find a better way for extracting the exponent and digits
                 // let vpow = Amount::calc_exponential();
 
-                let vpow = str_t::to_expo(ramount.value.as_str()).unwrap();
-                let vpow = str_t::get_exponent(&vpow);
+                let vpow = exponent::to_expo(ramount.value.as_str()).unwrap();
+                let vpow = exponent::get_exponent(&vpow);
 
                 let offset = 15 - vpow;
                 let base10 = BigInt::from(10 as usize);

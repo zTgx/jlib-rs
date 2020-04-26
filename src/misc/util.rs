@@ -128,7 +128,7 @@
 #![allow(unused)]
 
 use serde_json::json;
-use cast_rs::hexcast;
+use cast_rs::hex;
 use misc::base_config::{CURRENCY};
 use serde_json::{Value};
 
@@ -411,7 +411,7 @@ pub fn type_result(x: &Value, result: &mut Value) {
                 result["destination"] = x["Destination"].clone();
                 result["amount"] = x["Amount"].clone();
 
-                let method = hexcast::decode(x["MethodSignature"].clone().as_str().unwrap()).unwrap();
+                let method = hex::decode(x["MethodSignature"].clone().as_str().unwrap()).unwrap();
                 let method = String::from_utf8_lossy(&method);
                 let v: Vec<_>  = method.match_indices("(").collect();
                 let v1: Vec<_>  = method.match_indices(")").collect();

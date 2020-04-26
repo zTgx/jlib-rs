@@ -136,7 +136,7 @@ impl CommandConversion for OfferCreateTx {
         let j = serde_json::to_string(&self)?;
 
         // Print, write to a file, or send to an HTTP server.
-        println!("j: {}", &j);
+        // println!("j: {}", &j);
         Ok(j)
     }
 

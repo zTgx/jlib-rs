@@ -1,7 +1,7 @@
 use crate::base::secp256k1::key::{ SecretKey, PublicKey };
 use crate::base::secp256k1::Secp256k1;
 use crate::base::curve::{entropy, scalar_multiple};
-use cast_rs::hexcast;
+use cast_rs::hex;
 
 static PRE_PRIVATE_KEY: &'static str = "00";
 
@@ -22,7 +22,7 @@ impl J256k1 {
                         //private_key
                         let private_key = PRE_PRIVATE_KEY.to_owned() + secret_key_gen.to_string().as_str();
 
-                        if let Ok(key_str) = hexcast::decode(&private_key) {
+                        if let Ok(key_str) = hex::decode(&private_key) {
 
                             if let Ok(secret_key) = SecretKey::from_slice(&key_str[1..]) {
 
