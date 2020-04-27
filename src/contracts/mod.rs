@@ -1,3 +1,2 @@
-// extern crate cast_rs;
-
+pub mod message;
 pub mod solidity;
