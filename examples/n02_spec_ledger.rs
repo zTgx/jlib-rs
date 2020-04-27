@@ -1,8 +1,9 @@
 extern crate jlib;
-
-use jlib::misc::config::*;
 use jlib::api::query::spec_ledger::*;
 use jlib::message::query::spec_ledger::{RequestLedgerResponse, SpecLedgerSideKick};
+
+use jlib::misc::config::Config;
+pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);

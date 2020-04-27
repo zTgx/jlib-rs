@@ -14,10 +14,10 @@ use crate::message::common::amount::Amount;
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{
-    downcast_to_string,
+    downcast_to_string, downcast_to_usize,
     check_address, check_secret, check_amount,
 };
-use crate::api::transaction::{get_account_seq};
+use crate::api::query::account_info::{AccountInfo, AccountInfoI};
 
 pub trait BrokerageManageI {
     fn set_rate<F>(&self, den: u64, num: u64, amount: Amount, op: F)
@@ -51,6 +51,21 @@ impl BrokerageManage {
             fee_account: fee_account,
         }
     }
+
+    pub fn get_account_seq(&self) -> u32 {
+        let seq_rc = Rc::new(Cell::new(0u64));
+
+        let acc = String::from(self.account.as_str());
+        AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
+            Ok(response) => {
+                let seq = seq_rc.clone();
+                seq.set(response.sequence);
+            },
+            Err(_) => { }
+        });
+ 
+       downcast_to_usize(seq_rc)
+    }
 }
 
 impl BrokerageManageI for BrokerageManage {
@@ -82,13 +97,13 @@ impl BrokerageManageI for BrokerageManage {
             let fee_account = fee_account_rc.clone();
 
             let den     = den_rc.clone();
-            let num     = num_rc.clone();
+            let num     = num_rc.clone(); 
             let amount  = amount_rc.clone();
 
             let account = account.take();
 
             //Get Account Seq
-            let sequence = get_account_seq(&account);
+            let sequence = self.get_account_seq();
             let tx_json = SetBrokerageTxJson::new(account, fee_account.take(), sequence, den.take(), num.take(), amount.take());
             if self.config.local_sign {
                 let blob = SignTx::with_params(sequence, &secret.take()).set_rate(&tx_json);

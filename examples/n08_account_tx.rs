@@ -1,7 +1,8 @@
 extern crate jlib;
-
-use jlib::misc::config::*;
 use jlib::api::query::account_tx::*;
+
+use jlib::misc::config::Config;
+pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 //Ok && Err
 use jlib::message::query::account_tx::{RequestAccountTxResponse, AccounTxSideKick};

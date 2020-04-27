@@ -3,10 +3,10 @@
 use std::fmt;
 use std::rc::Rc;
 
-pub const TEST1: &'static str = "ws://101.200.230.74:5020";
-pub const TEST2: &'static str = "ws://192.168.208.130:5060";
-pub const TEST3: &'static str = "ws://42.81.160.87:5020";
-pub const TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+const TEST1: &'static str = "ws://101.200.230.74:5020";
+const TEST2: &'static str = "ws://192.168.208.130:5060";
+const TEST3: &'static str = "ws://42.81.160.87:5020";
+const TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 pub struct Config {
     pub addr: &'static str, //服务器地址
@@ -32,7 +32,7 @@ impl Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            addr: TEST2,
+            addr: TEST_SERVER,
             local_sign: true,
         }
     }
