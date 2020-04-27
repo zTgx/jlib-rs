@@ -6,7 +6,7 @@ use jlib::api::transaction::set_brokerage::*;
 use jlib::message::common::amount::Amount;
 
 fn main() {
-    let config = Config::new(TEST1, true);
+    let config = Config::new(TEST_SERVER, true);
 
     let account: String     = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string();
     let secret:String       = "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
@@ -20,9 +20,8 @@ fn main() {
          |x| match x {
             Ok(response) => {
                 let res: SetBrokerageTxResponse = response;
-                println!("挂单佣金信息: {:?}", &res);
+                println!("set brokerage: {:?}", &res);
             },
-
             Err(e) => {
                 let err: SetBrokerageSideKick = e;
                 println!("err: {:?}", err);

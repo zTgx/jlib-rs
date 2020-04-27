@@ -7,7 +7,7 @@ use jlib::message::common::amount::Amount;
 use jlib::RelationType::AUTHORIZE;
 
 fn main() {
-    let config = Config::new(TEST1, true);
+    let config = Config::new(TEST_SERVER, true);
     
     let from: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
     let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
@@ -21,9 +21,8 @@ fn main() {
                                          |x| match x {
         Ok(response) => {
             let res: RelationTxResponse = response;
-            println!("关系设置: {:?}", &res);
+            println!("relations: {:?}", &res);
         },
-
         Err(e) => {
             let err: RelationSideKick = e;
             println!("err: {:?}", err);

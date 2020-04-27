@@ -6,7 +6,7 @@ use jlib::api::transaction::pay::*;
 use jlib::message::common::amount::Amount;
 
 fn main() {
-    let config = Config::new(TEST3, true);
+    let config = Config::new(TEST_SERVER, true);
     let amount: Amount = Amount::new(Some("SWT".to_string()), "0.5".to_string(), None);
     let from: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
     let secret:String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
@@ -17,9 +17,8 @@ fn main() {
          |x| match x {
             Ok(response) => {
                 let res: TransactionTxResponse = response;
-                println!("支付信息: {:?}", &res);
+                println!("payment info: {:?}", &res);
             },
-
             Err(e) => {
                 let err: PaymentSideKick = e;
                 println!("err: {:?}", err);

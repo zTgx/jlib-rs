@@ -6,7 +6,7 @@ use jlib::{SolidityCall, SolidityInvokeResponse};
 use jlib::Arg;
 
 fn main() {
-    let config = Config::new(TEST1, true);
+    let config = Config::new(TEST_SERVER, true);
 
     //invoke
     let secret  = "snoPBjXtMeMyMHUVTgbuqAfg1SUTb".to_string();
@@ -22,10 +22,10 @@ fn main() {
     let p = Arg::new("3739".to_string(), 0);
     v.push(p);
 
-    // 不带参数的调用
+    // no params
     // let message = SolidityInvokeMessage::with_params(account, secret, address, "6236653435366262".to_string(), v);
 
-    // 带参数的调用
+    // with params
     // let p = Arg::new("79".to_string(), 0);
     // v.push(p);
     // let message = SolidityInvokeMessage::with_params(account, secret, address, "0x84e9ec3f".to_string(), v);

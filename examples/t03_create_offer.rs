@@ -7,7 +7,7 @@ use jlib::message::transaction::offer_create::{OfferCreateTxResponse, OfferCreat
 use jlib::OfferType;
 
 fn main() {
-    let config = Config::new(TEST2, false);
+    let config = Config::new(TEST_SERVER, false);
 
     //Sell
     let offer_type = OfferType::Sell;
@@ -25,9 +25,8 @@ fn main() {
                                                 |x| match x {
         Ok(response) => {
             let res: OfferCreateTxResponse = response;
-            println!("res: {:?}", &res);
             let fee = res.tx_json.fee.parse::<f32>().unwrap() / 1000000f32;
-            println!("[交易费: {}]", fee);
+            println!("transaction fee: {}]", fee);
         },
 
         Err(e) => {
