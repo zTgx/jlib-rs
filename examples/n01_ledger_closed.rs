@@ -10,12 +10,11 @@ fn main() {
         Ok(response) => {
             let res: LedgerClosedResponse = response;
             println!("----------------------------------------------------------------------------------");
-            println!("最新账本信息 : ");
-            println!("-- 账本Hash : {}", &res.ledger_hash);
-            println!("-- 账本Index: {}", &res.ledger_index);
+            println!("last closed ledger info : ");
+            println!("-- ledger hash : {}", &res.ledger_hash);
+            println!("-- ledger index: {}", &res.ledger_index);
             println!("----------------------------------------------------------------------------------");
-        }
-
+        },
         Err(e) => {
             let err: LedgerClosedSideKick = e;
             println!("{:?}", err);
