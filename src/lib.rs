@@ -19,22 +19,6 @@ pub mod contracts;
 
 pub use crate::base::wallet::wallet::Wallet as Wallet;
 
-#[derive(Debug)]
-pub enum RelationType {
-    TRUST     = 0,
-    AUTHORIZE = 1,
-    FREEZE    = 3,
-}
-impl RelationType {
-    pub fn get(&self) -> u32 {
-        match *self {
-            RelationType::TRUST     => { 0 },
-            RelationType::AUTHORIZE => { 1 },
-            RelationType::FREEZE    => { 3 },
-        }
-    }
-}
-
 #[derive(Debug, Copy, Clone)]
 pub enum WalletType {
     SECP256K1,

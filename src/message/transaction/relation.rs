@@ -15,8 +15,24 @@ use crate::misc::common::*;
 use std::error::Error;
 use std::fmt;
 
+#[derive(Debug)]
+pub enum RelationType {
+    TRUST     = 0,
+    AUTHORIZE = 1,
+    FREEZE    = 3,
+}
+impl RelationType {
+    pub fn get(&self) -> u32 {
+        match *self {
+            RelationType::TRUST     => { 0 },
+            RelationType::AUTHORIZE => { 1 },
+            RelationType::FREEZE    => { 3 },
+        }
+    }
+}
+
 /*
-关系对象: LimitAmount Can't be Native.!!!
+LimitAmount Can't be Native.!!!
 */
 #[derive(Deserialize, Debug, Default)]
 pub struct RelationTxJson {
