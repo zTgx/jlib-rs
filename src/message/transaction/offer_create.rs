@@ -20,11 +20,22 @@ use std::cell::Cell;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::*;
 use crate::misc::common::*;
-use crate::OfferType;
 
-/*
-挂单对象
-*/
+//Offer Type
+#[derive(PartialEq)]
+pub enum OfferType {
+    Sell,
+    Buy,
+}
+impl OfferType {
+    pub fn get(&self) -> &'static str {
+        match *self {
+            OfferType::Sell => { "Sell" },
+            OfferType::Buy  => { "Buy"  },
+        }
+    }
+}
+
 #[derive(Deserialize, Debug)]
 pub struct OfferCreateTxJson {
     #[serde(rename="Flags")]
@@ -75,7 +86,7 @@ impl Serialize for OfferCreateTxJson {
     where
         S: Serializer,
     {
-        // 3 is the number of fields in the struct.
+        // 6 is the number of fields in the struct.
         let mut state = serializer.serialize_struct("OfferCreateTxJson", 6)?;
 
         state.serialize_field("Flags", &self.flags)?;
@@ -128,36 +139,15 @@ impl OfferCreateTx {
 impl CommandConversion for OfferCreateTx {
     type T = OfferCreateTx;
     fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-        // let compact = format!("{}", json);
-
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
-        // println!("j: {}", &j);
         Ok(j)
     }
 
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
 }
 
-/*
-OfferCreateTxJsonResponse
-*/
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OfferCreateTxJsonResponse {
     #[serde(rename="Account")]

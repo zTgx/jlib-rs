@@ -18,7 +18,6 @@ pub mod api;
 pub mod contracts;
 
 pub use crate::base::wallet::wallet::Wallet as Wallet;
-pub use crate::api::subscribe::subs::{Subscribe, SubscribeI};
 
 #[derive(Debug)]
 pub enum RelationType {
@@ -32,21 +31,6 @@ impl RelationType {
             RelationType::TRUST     => { 0 },
             RelationType::AUTHORIZE => { 1 },
             RelationType::FREEZE    => { 3 },
-        }
-    }
-}
-
-//Offer Type
-#[derive(PartialEq)]
-pub enum OfferType {
-    Sell,
-    Buy,
-}
-impl OfferType {
-    pub fn get(&self) -> &'static str {
-        match *self {
-            OfferType::Sell => { "Sell" },
-            OfferType::Buy  => { "Buy"  },
         }
     }
 }

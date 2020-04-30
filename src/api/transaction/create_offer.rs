@@ -16,7 +16,6 @@ use crate::message::transaction::local_sign_tx::LocalSignTx;
 use crate::base::misc::util::{downcast_to_string,downcast_to_usize};
 
 use crate::base::local_sign::sign_tx::{SignTx};
-use OfferType;
 
 pub trait CreateOfferI {
     fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F)

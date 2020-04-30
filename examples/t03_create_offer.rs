@@ -1,8 +1,7 @@
 extern crate jlib;
 use jlib::message::common::amount::Amount;
 use jlib::api::transaction::create_offer::*;
-use jlib::message::transaction::offer_create::{OfferCreateTxResponse, OfferCreateSideKick};
-use jlib::OfferType;
+use jlib::message::transaction::offer_create::{OfferType, OfferCreateTxResponse, OfferCreateSideKick};
 
 use jlib::misc::config::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
@@ -27,7 +26,7 @@ fn main() {
         Ok(response) => {
             let res: OfferCreateTxResponse = response;
             let fee = res.tx_json.fee.parse::<f32>().unwrap() / 1000000f32;
-            println!("transaction fee: {}]", fee);
+            println!("transaction fee: {}", fee);
         },
 
         Err(e) => {
