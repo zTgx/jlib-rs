@@ -6,6 +6,38 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+//! How to use jlib-rs
+//!
+//!
+//! # Quick Start
+//!
+//! To get you started quickly, the easiest and highest-level way to get
+//! current server info is to use [`request_server_info`]; 
+//!
+//! ```
+//! use jlib::api::query::server_info::*;
+//! use jlib::misc::config::Config;
+//! pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+//! 
+//! fn main() {
+//!     let config = Config::new(TEST_SERVER, true);
+//!     ServerInfo::new().request_server_info(config.clone(), |x| match x {
+//!         Ok(response) => {
+//!             println!("build_version : {:?}", response.build_version);
+//!         }
+//!         Err(_) => {
+//!             println! ("error occured.");
+//!         }
+//!     });
+//! }
+//! 
+//! ```
+//!
+//! # Wiki
+//!
+//! For the user guide and further documentation, please read
+//! [jlib-wiki](https://github.com/zTgx/jlib-rs/wiki).
+
 #[macro_use]
 extern crate lazy_static;
 extern crate typename;
