@@ -2,12 +2,12 @@ extern crate jlib;
 use jlib::api::query::ledger_closed::*;
 use jlib::message::query::ledger_closed::{LedgerClosedResponse, LedgerClosedSideKick};
 
-use jlib::misc::config::Config;
+use jlib::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);
-    let _c = LedgerClosed::new().request_ledger_closed(config.clone(), |x| match x {
+    let _c = LedgerClosed::new().request_ledger_closed(config, |x| match x {
         Ok(response) => {
             let res: LedgerClosedResponse = response;
             println!("----------------------------------------------------------------------------------");

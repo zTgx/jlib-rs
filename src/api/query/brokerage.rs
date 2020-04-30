@@ -7,13 +7,13 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::brokerage::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait BrokerageI {
-    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, account: String, op: F)
+    fn request_brokerage<F>(&self, config: Config, account: String, op: F)
     where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) ;
 }
 
@@ -26,7 +26,7 @@ impl Brokerage {
 }
 
 impl BrokerageI for Brokerage {
-    fn request_brokerage<F>(&self, config: Box<Rc<Config>>, account: String, op: F)
+    fn request_brokerage<F>(&self, config: Config, account: String, op: F)
     where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));

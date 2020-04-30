@@ -1,20 +1,17 @@
-//
-// 关系
-//
 extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
+use crate::Config;
 use crate::message::transaction::relation::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::Amount;
-use crate::api::query::account_info::*;
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
-use crate::base::misc::util::{downcast_to_usize, downcast_to_string};
+use crate::base::misc::util::{downcast_to_string};
+use crate::api::query::get_account_sequence;
 
 pub trait RelateI {
     fn set_relation<F>(&self, relation_type: RelationType, target: String, amount: Amount, op: F)
@@ -22,32 +19,17 @@ pub trait RelateI {
 }
 
 pub struct Relate {
-    pub config : Box<Rc<Config>>,
+    pub config : Config,
     pub account: String,
     pub secret : String,
 }
 impl Relate {
-    pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
+    pub fn with_params(config: Config, account: String, secret: String) -> Self {
         Relate {
             config : config,
             account: account,
             secret : secret,
         }
-    }
-
-    pub fn get_account_seq(&self) -> u32 {
-        let seq_rc = Rc::new(Cell::new(0u64));
-
-        let acc = String::from(self.account.as_str());
-        AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
-            Ok(response) => {
-                let seq = seq_rc.clone();
-                seq.set(response.sequence);
-            },
-            Err(_) => { }
-        });
-
-       downcast_to_usize(seq_rc)
     }
 }
 
@@ -65,6 +47,9 @@ impl RelateI for Relate {
 
         let amount_rc = Rc::new(Cell::new(amount));
 
+        // Get Account Seq
+        let account_seq = get_account_sequence(&self.config, self.account.clone());
+        
         connect(self.config.addr, |out| {
             let copy = info.clone();
 
@@ -74,11 +59,10 @@ impl RelateI for Relate {
             let rtype  = rtype_rc.clone();
             let target = target_rc.clone();
             let amount = amount_rc.clone();
-
+            
             let tx_json = RelationTxJson::new(account.take(), target.take(), rtype.take(), amount.take());
             if self.config.local_sign {
-                let sequence = self.get_account_seq();
-                let blob = SignTx::with_params(sequence, &secret.take()).relate(&tx_json);
+                let blob = SignTx::with_params(account_seq, &secret.take()).relate(&tx_json);
                 if let Ok(command) = LocalSignTx::new(blob).to_string() {
                     out.send(command).unwrap()
                 }

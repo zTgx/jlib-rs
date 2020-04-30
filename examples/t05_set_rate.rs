@@ -3,7 +3,7 @@ use jlib::message::transaction::set_brokerage::{SetBrokerageTxResponse, SetBroke
 use jlib::api::transaction::set_brokerage::*;
 use jlib::message::common::amount::Amount;
 
-use jlib::misc::config::Config;
+use jlib::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 fn main() {
@@ -17,7 +17,7 @@ fn main() {
     let num = 1000u64;
     let amount: Amount = Amount::new(Some("TES".to_string()), "3".to_string(), Some("jBciDE8Q3uJjf111VeiUNM775AMKHEbBLS".to_string()));
 
-    BrokerageManage::with_params(config.clone(), account, secret, fee_account).set_rate(  den, num, amount,
+    BrokerageManage::with_params(config, account, secret, fee_account).set_rate(  den, num, amount,
          |x| match x {
             Ok(response) => {
                 let res: SetBrokerageTxResponse = response;

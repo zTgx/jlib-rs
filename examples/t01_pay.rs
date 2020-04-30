@@ -3,7 +3,7 @@ use jlib::message::transaction::transaction::{TransactionTxResponse, PaymentSide
 use jlib::api::transaction::pay::*;
 use jlib::message::common::amount::Amount;
 
-use jlib::misc::config::Config;
+use jlib::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 fn main() {
@@ -14,7 +14,7 @@ fn main() {
     let to  : String = "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string();
     let memo: Option<String> = Some("TTTTTTTTTTTTTTTTTTTTTis memo".to_string());
 
-    Payment::with_params(config.clone(), from, secret).payment(  to, amount, memo,
+    Payment::with_params(config, from, secret).payment(  to, amount, memo,
          |x| match x {
             Ok(response) => {
                 let res: TransactionTxResponse = response;

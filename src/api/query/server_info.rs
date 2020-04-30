@@ -1,19 +1,16 @@
 
-//
-// 请求底层服务器信息
-//
 extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
-use crate::misc::config::*;
 use crate::message::query::server_info::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait ServerInfoI {
-    fn request_server_info<F>(&self, config: Box<Rc<Config>>, op: F)
+    fn request_server_info<F>(&self, config: Config, op: F)
         where
             F : Fn(Result<ServerInfoResponse, serde_json::error::Error>);
 }
@@ -28,7 +25,7 @@ impl ServerInfo {
 }
 
 impl ServerInfoI for ServerInfo {
-    fn request_server_info<F> (&self, config: Box<Rc<Config>>, op: F)
+    fn request_server_info<F> (&self, config: Config, op: F)
         where F: Fn(Result<ServerInfoResponse, serde_json::error::Error>) {
 
         let info = Rc::new(Cell::new("".to_string()));

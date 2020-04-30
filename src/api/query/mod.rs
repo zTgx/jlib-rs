@@ -9,3 +9,23 @@ pub mod account_offer;
 pub mod account_tx;
 pub mod order_book;
 pub mod brokerage;
+
+use crate::base::misc::util::{downcast_to_usize};
+use api::query::account_info::{AccountInfo, AccountInfoI};
+use std::cell::Cell;
+use std::rc::Rc;
+use crate::Config;
+
+pub fn get_account_sequence(config: &Config, account: String) -> u32 {
+    let seq_rc = Rc::new(Cell::new(0u64));
+
+    AccountInfo::new().request_account_info(config, account, |x| match x {
+        Ok(response) => {
+            let seq = seq_rc.clone();
+            seq.set(response.sequence);
+        },
+        Err(_) => { }
+    });
+
+   downcast_to_usize(seq_rc)
+} 

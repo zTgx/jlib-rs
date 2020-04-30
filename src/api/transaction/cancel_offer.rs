@@ -1,20 +1,16 @@
-//
-// 取消挂单
-//
 extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
+use crate::Config;
 use crate::message::transaction::offer_cancel::*;
 use crate::message::common::command_trait::CommandConversion;
-use crate::api::query::account_info::*;
 use crate::message::transaction::local_sign_tx::LocalSignTx;
-use crate::base::misc::util::{downcast_to_string,downcast_to_usize};
-
+use crate::base::misc::util::{downcast_to_string};
 use crate::base::local_sign::sign_tx::{SignTx};
+use crate::api::query::get_account_sequence;
 
 pub trait CancelOfferI {
     fn cancel_offer<F>(&self, offer_sequence: u64, op: F)
@@ -22,32 +18,17 @@ pub trait CancelOfferI {
 }
 
 pub struct CancelOffer {
-    pub config: Box<Rc<Config>>,
+    pub config : Config,
     pub account: String,
-    pub secret: String,
+    pub secret : String,
 }
 impl CancelOffer {
-        pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
+        pub fn with_params(config: Config, account: String, secret: String) -> Self {
         CancelOffer {
             config  : config,
             account : account,
             secret  : secret,
         }
-    }
-
-    pub fn get_account_seq(&self) -> u32 {
-        let seq_rc = Rc::new(Cell::new(0u64));
-
-        let acc = String::from(self.account.as_str());
-        AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
-            Ok(response) => {
-                let seq = seq_rc.clone();
-                seq.set(response.sequence);
-            },
-            Err(_) => { }
-        });
-
-       downcast_to_usize(seq_rc)
     }
 }
 
@@ -62,6 +43,9 @@ impl CancelOfferI for CancelOffer {
 
         let offer_sequence_rc = Rc::new(Cell::new(offer_sequence));
 
+        // Get Account Seq
+        let account_seq = get_account_sequence(&self.config, self.account.clone());
+
         connect(self.config.addr, |out| {
             let copy = info.clone();
 
@@ -71,9 +55,7 @@ impl CancelOfferI for CancelOffer {
 
             let tx_json = OfferCancelTxJson::new(account.take(),  offer_sequence.take());
             if self.config.local_sign {
-                //Get Account Seq
-                let seq = self.get_account_seq();
-                let blob = SignTx::with_params(seq, &secret.take()).cancel_offer(&tx_json);
+                let blob = SignTx::with_params(account_seq, &secret.take()).cancel_offer(&tx_json);
                 if let Ok(command) = LocalSignTx::new(blob).to_string() {
                     out.send(command).unwrap()
                 }

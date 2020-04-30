@@ -1,4 +1,3 @@
-
 extern crate jlib;
 use jlib::WalletType;
 use jlib::generate_wallet;

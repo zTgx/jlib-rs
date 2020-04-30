@@ -1,19 +1,16 @@
-//
-// 请求账号信息
-//
 extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::account_info::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait AccountInfoI {
-    fn request_account_info<F>(&self, config: Box<Rc<Config>>, account: String, op: F)
+    fn request_account_info<F>(&self, config: &Config, account: String, op: F)
     where F: Fn(Result<RequestAccountInfoResponse, AccounInfoSideKick>);
 }
 
@@ -26,7 +23,7 @@ impl AccountInfo {
 }
 
 impl AccountInfoI for AccountInfo {
-        fn request_account_info<F>(&self, config: Box<Rc<Config>>, account: String, op: F)
+        fn request_account_info<F>(&self, config: &Config, account: String, op: F)
         where F: Fn(Result<RequestAccountInfoResponse, AccounInfoSideKick>) {
 
             let info = Rc::new(Cell::new("".to_string()));

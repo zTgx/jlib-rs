@@ -7,13 +7,13 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::spec_tx::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait SpecTxI {
-    fn request_tx<F>(&self, config: Box<Rc<Config>>, hash: String,  op: F)
+    fn request_tx<F>(&self, config: Config, hash: String,  op: F)
     where F: Fn(Result<RequestTxResponse, SpecTxSideKick>);
 }
 
@@ -26,7 +26,7 @@ impl SpecTx {
 }
 
 impl SpecTxI for SpecTx {
-    fn request_tx<F>(&self, config: Box<Rc<Config>>, hash: String,  op: F)
+    fn request_tx<F>(&self, config: Config, hash: String,  op: F)
     where F: Fn(Result<RequestTxResponse, SpecTxSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));

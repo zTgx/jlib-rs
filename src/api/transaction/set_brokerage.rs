@@ -1,23 +1,20 @@
-//
-// 支付
-//
 extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
+use crate::Config;
 use crate::message::transaction::set_brokerage::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::Amount;
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{
-    downcast_to_string, downcast_to_usize,
+    downcast_to_string,
     check_address, check_secret, check_amount,
 };
-use crate::api::query::account_info::{AccountInfo, AccountInfoI};
+use crate::api::query::get_account_sequence;
 
 pub trait BrokerageManageI {
     fn set_rate<F>(&self, den: u64, num: u64, amount: Amount, op: F)
@@ -25,13 +22,13 @@ pub trait BrokerageManageI {
 }
 
 pub struct BrokerageManage {
-    pub config: Box<Rc<Config>>,
-    pub account: String,
-    pub secret: String,
+    pub config  : Config,
+    pub account : String,
+    pub secret  : String,
     pub fee_account: String,
 }
 impl BrokerageManage {
-    pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String, fee_account: String) -> Self {
+    pub fn with_params(config: Config, account: String, secret: String, fee_account: String) -> Self {
         if check_address(&account).is_none() {
             panic!("invalid account.");
         }
@@ -50,21 +47,6 @@ impl BrokerageManage {
             secret: secret,
             fee_account: fee_account,
         }
-    }
-
-    pub fn get_account_seq(&self) -> u32 {
-        let seq_rc = Rc::new(Cell::new(0u64));
-
-        let acc = String::from(self.account.as_str());
-        AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
-            Ok(response) => {
-                let seq = seq_rc.clone();
-                seq.set(response.sequence);
-            },
-            Err(_) => { }
-        });
- 
-       downcast_to_usize(seq_rc)
     }
 }
 
@@ -89,6 +71,9 @@ impl BrokerageManageI for BrokerageManage {
         let num_rc = Rc::new(Cell::new( num ));
         let amount_rc = Rc::new(Cell::new(amount));
 
+        // Get Account Seq
+        let account_seq = get_account_sequence(&self.config, self.account.clone());
+
         connect(self.config.addr, |out| {
             let copy = info.clone();
 
@@ -102,11 +87,9 @@ impl BrokerageManageI for BrokerageManage {
 
             let account = account.take();
 
-            //Get Account Seq
-            let sequence = self.get_account_seq();
-            let tx_json = SetBrokerageTxJson::new(account, fee_account.take(), sequence, den.take(), num.take(), amount.take());
+            let tx_json = SetBrokerageTxJson::new(account, fee_account.take(), account_seq, den.take(), num.take(), amount.take());
             if self.config.local_sign {
-                let blob = SignTx::with_params(sequence, &secret.take()).set_rate(&tx_json);
+                let blob = SignTx::with_params(account_seq, &secret.take()).set_rate(&tx_json);
                 if let Ok(command) = LocalSignTx::new(blob).to_string() {
                     out.send(command).unwrap()
                 }

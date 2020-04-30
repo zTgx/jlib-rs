@@ -7,13 +7,13 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::order_book::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait OrderBookI {
-    fn request_order_book<F>(&self, config: Box<Rc<Config>>, gets: OrderBookItem, pays: OrderBookItem, op: F)
+    fn request_order_book<F>(&self, config: Config, gets: OrderBookItem, pays: OrderBookItem, op: F)
     where F: Fn(Result<RequestOrderBookResponse, OrderBookSideKick>) ;
 }
 
@@ -26,7 +26,7 @@ impl OrderBook {
 }
 
 impl OrderBookI for OrderBook {
-    fn request_order_book<F>(&self, config: Box<Rc<Config>>, gets: OrderBookItem, pays: OrderBookItem, op: F)
+    fn request_order_book<F>(&self, config: Config, gets: OrderBookItem, pays: OrderBookItem, op: F)
     where F: Fn(Result<RequestOrderBookResponse, OrderBookSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));

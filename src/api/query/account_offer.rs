@@ -1,19 +1,16 @@
-//
-// 请求账号挂单
-//
 extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::offer::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait AccountOfferI {
-    fn request_account_offer<F>(&self, config: Box<Rc<Config>>, account: String, op: F)
+    fn request_account_offer<F>(&self, config: Config, account: String, op: F)
         where F: Fn(Result<RequestAccountOfferResponse, AccountOffersSideKick>);
 }
 
@@ -26,7 +23,7 @@ impl AccountOffer {
 }
 
 impl AccountOfferI for AccountOffer {
-        fn request_account_offer<F>(&self, config: Box<Rc<Config>>, account: String, op: F)
+        fn request_account_offer<F>(&self, config: Config, account: String, op: F)
         where F: Fn(Result<RequestAccountOfferResponse, AccountOffersSideKick>) {
 
             let info = Rc::new(Cell::new("".to_string()));

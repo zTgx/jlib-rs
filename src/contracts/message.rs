@@ -4,7 +4,6 @@ use std::any::Any;
 use std::cell::Cell;
 use std::cell::RefCell;
 
-use crate::misc::config::*;
 use crate::message::common::command_trait::CommandConversion;
 use serde_json::json;
 use serde::{Deserialize, Serialize};
@@ -12,18 +11,6 @@ use serde_json::{Value};
 
 use cast_rs::hex;
 use crate::base::misc::util::check;
-
-//////////////////////
-/*
-@合约部署请求
-SolidityInitMessage 请求格式
-id      : u64
-command : String
-secret  : String,
-tx_json : TxJson Object
-值分别为(固定值): 1, "submit"
-*/
-
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 // #[serde(rename_all = "camelCase")]
@@ -261,9 +248,6 @@ impl Arg {
     }
 }
 
-//
-// SolidityInitResponse
-//
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct SolidityInitTxJsonResponse {
     #[serde(rename="Account")]

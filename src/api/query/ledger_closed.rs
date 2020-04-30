@@ -7,13 +7,13 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::ledger_closed::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait LedgerClosedI {
-    fn request_ledger_closed<F>(&self, config: Box<Rc<Config>>, op: F)
+    fn request_ledger_closed<F>(&self, config: Config, op: F)
         where
             F : Fn(Result<LedgerClosedResponse, LedgerClosedSideKick>);
 }
@@ -27,7 +27,7 @@ impl LedgerClosed {
 }
 
 impl LedgerClosedI for LedgerClosed {
-    fn request_ledger_closed<F>(&self, config: Box<Rc<Config>>, op: F)
+    fn request_ledger_closed<F>(&self, config: Config, op: F)
         where F: Fn(Result<LedgerClosedResponse, LedgerClosedSideKick>) {
             let info = Rc::new(Cell::new("".to_string()));
 

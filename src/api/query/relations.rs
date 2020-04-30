@@ -7,13 +7,13 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::relations::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait RelationsI {
-    fn request_account_relations<F>(&self, config: Box<Rc<Config>>, account: String, relation_type: Option<String>, op: F)
+    fn request_account_relations<F>(&self, config: Config, account: String, relation_type: Option<String>, op: F)
     where F: Fn(Result<RequestAccountRelationsResponse, RelationsSideKick>);
 }
 
@@ -26,7 +26,7 @@ impl Relations {
 }
 
 impl RelationsI for Relations {
-    fn request_account_relations<F>(&self, config: Box<Rc<Config>>, account: String, relation_type: Option<String>, op: F)
+    fn request_account_relations<F>(&self, config: Config, account: String, relation_type: Option<String>, op: F)
     where F: Fn(Result<RequestAccountRelationsResponse, RelationsSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));

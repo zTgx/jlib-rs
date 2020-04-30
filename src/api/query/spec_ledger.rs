@@ -7,13 +7,13 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::spec_ledger::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait SpecLedgerI {
-    fn request_ledger<F>(&self, config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F)
+    fn request_ledger<F>(&self, config: Config, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F)
     where F: Fn(Result<RequestLedgerResponse, SpecLedgerSideKick>);
 }
 
@@ -26,7 +26,7 @@ impl SpecLedger {
 }
 
 impl SpecLedgerI for SpecLedger {
-        fn request_ledger<F>(&self, config: Box<Rc<Config>>, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F)
+        fn request_ledger<F>(&self, config: Config, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F)
         where F: Fn(Result<RequestLedgerResponse, SpecLedgerSideKick>) {
 
             let info = Rc::new(Cell::new("".to_string()));

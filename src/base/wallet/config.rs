@@ -1,9 +1,5 @@
-/*
-base config
-*/
 use crate::WalletType;
 
-//钱包属性：地址长度，加密算法等
 #[derive(Debug, Copy, Clone)]
 pub struct WalletConfig {
     pub key_type: WalletType,
@@ -15,7 +11,7 @@ impl WalletConfig {
         }
     }
 }
-//实现default方法
+
 impl Default for WalletConfig {
     fn default() -> Self {
         WalletConfig {

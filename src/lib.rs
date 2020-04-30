@@ -16,7 +16,7 @@
 //!
 //! ```
 //! use jlib::api::query::server_info::*;
-//! use jlib::misc::config::Config;
+//! use jlib::Config;
 //! pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 //! 
 //! fn main() {
@@ -58,6 +58,21 @@ pub mod api;
 pub mod contracts;
 
 pub use crate::base::wallet::wallet::Wallet as Wallet;
+
+#[derive(Debug)]
+pub struct Config {
+    pub addr        : &'static str, // server address 
+    pub local_sign  : bool,         // local sign flag
+}
+
+impl Config {
+    pub fn new(addr: &'static str, local_sign: bool) -> Self {
+        Config {
+            addr: addr,
+            local_sign: local_sign,
+        }
+    }
+}
 
 #[derive(Debug, Copy, Clone)]
 pub enum WalletType {

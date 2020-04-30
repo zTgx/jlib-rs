@@ -1,27 +1,24 @@
-//
-// 支付
-//
 extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
+use crate::Config;
 use crate::message::transaction::transaction::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::memo::*;
 use crate::message::common::amount::Amount;
-use crate::api::query::account_info::*;
 
 use cast_rs::hex;
 
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{
-    downcast_to_usize, downcast_to_string,
+    downcast_to_string,
     check_address, check_secret, check_amount,
 };
+use crate::api::query::get_account_sequence;
 
 pub trait PaymentI {
     fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F)
@@ -29,12 +26,12 @@ pub trait PaymentI {
 }
 
 pub struct Payment {
-    pub config: Box<Rc<Config>>,
+    pub config : Config,
     pub account: String,
-    pub secret: String,
+    pub secret : String,
 }
 impl Payment {
-    pub fn with_params(config: Box<Rc<Config>>, account: String, secret: String) -> Self {
+    pub fn with_params(config: Config, account: String, secret: String) -> Self {
         if check_address(&account).is_none() {
             panic!("invalid account.");
         }
@@ -47,21 +44,6 @@ impl Payment {
             account: account,
             secret: secret,
         }
-    }
-
-    pub fn get_account_seq(&self) -> u32 {
-        let seq_rc = Rc::new(Cell::new(0u64));
-
-        let acc = String::from(self.account.as_str());
-        AccountInfo::new().request_account_info(self.config.clone(), acc, |x| match x {
-            Ok(response) => {
-                let seq = seq_rc.clone();
-                seq.set(response.sequence);
-            },
-            Err(_) => { }
-        });
-
-       downcast_to_usize(seq_rc)
     }
 }
 
@@ -83,6 +65,11 @@ impl PaymentI for Payment {
         let to_rc     = Rc::new(Cell::new(to));
         let amount_rc = Rc::new(Cell::new(amount));
         let memo_rc   = Rc::new(Cell::new(None));
+
+        // Get Account Seq
+        let seq_rc = get_account_sequence(&self.config, self.account.clone());
+        // let seq_rc = Rc::new(Cell::new(account_seq));
+        
         if memo.is_some() {
             let upper_hex_memo = hex::encode(&memo.unwrap()).to_ascii_uppercase();
             let memos = MemosBuilder::new( upper_hex_memo ).build();
@@ -99,8 +86,8 @@ impl PaymentI for Payment {
             let amount = amount_rc.clone();
             let memo   = memo_rc.clone();
 
-            //Get Account Seq
-            let sequence = self.get_account_seq();
+            // let sequence = seq_rc.clone();
+            let sequence = seq_rc;
             let tx_json = TxJson::new(from.take(), to.take(), amount.take(), sequence, memo.take());
             if self.config.local_sign {
                 let blob = SignTx::with_params(sequence, &secret.take()).pay(&tx_json);

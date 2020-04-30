@@ -5,9 +5,9 @@ use ws::{connect, Handler, Sender, Handshake, Message, CloseCode};
 use std::rc::Rc;
 use serde_json::{Value};
 
-use crate::misc::config::Config;
 use crate::message::common::command_trait::CommandConversion;
 use crate::api::subscribe::message::{SubscribeResponse, SubscribeCommand};
+use crate::Config;
 
 pub struct Client {
     out: Sender,
@@ -53,7 +53,7 @@ impl Handler for Client {
 }
 
 pub trait SubscribeI {
-    fn with_config<F>(&self, config: Box<Rc<Config>>, op: F)
+    fn with_config<F>(&self, config: Config, op: F)
     where F: 'static + Fn(Result<SubscribeResponse, serde_json::error::Error>);
 }
 
@@ -66,7 +66,7 @@ impl Subscribe {
 }
 
 impl SubscribeI for Subscribe {
-    fn with_config<F>(&self, config: Box<Rc<Config>>, op: F)
+    fn with_config<F>(&self, config: Config, op: F)
     where F: 'static + Fn(Result<SubscribeResponse, serde_json::error::Error>) {
 
         let op_rc = Rc::new(op);

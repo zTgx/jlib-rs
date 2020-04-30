@@ -7,13 +7,13 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::misc::config::*;
 use crate::message::query::account_tx::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
+use crate::Config;
 
 pub trait AccountTxI {
-    fn request_account_tx<F>(&self, config: Box<Rc<Config>>, account: String, limit: Option<u64>, op: F)
+    fn request_account_tx<F>(&self, config: Config, account: String, limit: Option<u64>, op: F)
     where F: Fn(Result<RequestAccountTxResponse, AccounTxSideKick>);
 }
 
@@ -26,7 +26,7 @@ impl AccountTx {
 }
 
 impl AccountTxI for AccountTx {
-    fn request_account_tx<F>(&self, config: Box<Rc<Config>>, account: String, limit: Option<u64>, op: F)
+    fn request_account_tx<F>(&self, config: Config, account: String, limit: Option<u64>, op: F)
     where F: Fn(Result<RequestAccountTxResponse, AccounTxSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));

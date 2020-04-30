@@ -3,7 +3,7 @@ use jlib::message::transaction::relation::{RelationType, RelationTxResponse, Rel
 use jlib::api::transaction::relate::*;
 use jlib::message::common::amount::Amount;
 
-use jlib::misc::config::Config;
+use jlib::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 fn main() {
@@ -16,7 +16,7 @@ fn main() {
     let to  : String = "jDUjqoDZLhzx4DCf6pvSivjkjgtRESY62c".to_string();
     let amount: Amount = Amount::new(Some( "CCA".to_string() ), "0.01".to_string(), Some( "js7M6x28mYDiZVJJtfJ84ydrv2PthY9W9u".to_string()) );
 
-    Relate::with_params(config.clone(), from, secret)
+    Relate::with_params(config, from, secret)
             .set_relation(relation_type, to, amount,
                                          |x| match x {
         Ok(response) => {

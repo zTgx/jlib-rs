@@ -17,17 +17,17 @@ use std::rc::Rc;
 use std::cell::Cell;
 use ws::{connect, CloseCode};
 use serde_json::Value;
-use crate::misc::config::Config;
 use message::common::command_trait::CommandConversion;
 use crate::base::misc::util::{downcast_to_string};
+use crate::Config;
 
 pub struct SolidityDeploy <'a> {
-    pub config  : Box<Rc<Config>>,
+    pub config  : Config,
     pub account : &'a String,
     pub secret  : &'a String,
 }
 impl <'a> SolidityDeploy <'a> {
-    pub fn with_params(config: Box<Rc<Config>>, account: &'a String, secret: &'a String) -> Self {
+    pub fn with_params(config: Config, account: &'a String, secret: &'a String) -> Self {
         SolidityDeploy {
             config: config,
             account: account,
@@ -81,13 +81,13 @@ impl <'a> SolidityDeploy <'a> {
 }
 
 pub struct SolidityCall <'a> {
-    pub config: Box<Rc<Config>>,
+    pub config  : Config,
     pub account : &'a String,
     pub secret  : &'a String,
     pub address : &'a String,
 }
 impl <'a> SolidityCall <'a> {
-    pub fn with_params(config: Box<Rc<Config>>, account: &'a String, secret: &'a String, address: &'a String) -> Self {
+    pub fn with_params(config: Config, account: &'a String, secret: &'a String, address: &'a String) -> Self {
         SolidityCall {
             config: config,
             account: account,
