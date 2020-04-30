@@ -1,5 +1,6 @@
 ### v0.3.5(2020-4-30)
-* refactor Config
+* refactorations and bug corrections
+* delete mod misc
 * update examples
 
 ### v0.3.4(2020-4-27)
