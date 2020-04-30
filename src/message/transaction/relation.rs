@@ -11,7 +11,7 @@ use std::cell::Cell;
 
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::{Amount, string_or_struct};
-use crate::misc::common::*;
+use crate::message::tx_flags::*;
 use std::error::Error;
 use std::fmt;
 
@@ -51,7 +51,6 @@ pub struct RelationTxJson {
     #[serde(rename="Target")]
     pub target: String,
 
-    //关系类型：0信任；1授权；3冻结/解冻；
     #[serde(rename="RelationType")]
     pub relation_type: u32,
 
@@ -81,7 +80,7 @@ impl Serialize for RelationTxJson {
     where
         S: Serializer,
     {
-        // 3 is the number of fields in the struct.
+        // 7 is the number of fields in the struct.
         let mut state = serializer.serialize_struct("RelationTxJson", 7)?;
 
         state.serialize_field("Flags", &self.flags)?;
@@ -131,35 +130,15 @@ impl RelationTx {
 impl CommandConversion for RelationTx {
     type T = RelationTx;
     fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-        // let compact = format!("{}", json);
-
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
         Ok(j)
     }
 
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
 }
 
-/*
-RelationTxJsonResponse
-*/
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RelationTxJsonResponse {
     #[serde(rename="Account")]

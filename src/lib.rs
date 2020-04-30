@@ -54,7 +54,6 @@ extern crate cast_rs;
 pub mod api;
 pub mod message;
 pub mod base;
-pub mod misc;
 
 #[derive(Debug)]
 pub struct Config {

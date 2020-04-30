@@ -9,6 +9,8 @@ pub mod serialize;
 pub mod wallet;
 pub mod curve;
 pub mod xcodec;
+pub mod base_config;
+pub mod parse_tx;
 
 //Serialize
 use std::collections::HashMap;

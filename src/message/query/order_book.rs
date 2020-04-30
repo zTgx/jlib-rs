@@ -6,21 +6,11 @@ use serde_json::Result;
 use std::any::Any;
 
 use crate::message::common::command_trait::CommandConversion;
-use crate::misc::common::*;
+use crate::message::tx_flags::*;
 use crate::message::common::amount::{Amount, string_or_struct};
 use std::error::Error;
 use std::fmt;
 
-/*
-@4.13获得市场挂单列表
-RequestOrderBookCommand 请求格式
-id: u64,              //(固定值): 1
-command: String,      //(固定值): book_offers
-taker_gets, Item,//对家想要[获得]的货币信息
-taker_pays, Item,//对家想要[支付]的货币信息
-taker: String, //'(固定值): jjjjjjjjjjjjjjjjjjjjBZbvri (SWTC的银关地址)
-*/
-//名字暂定OrderBookItem
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct OrderBookItem {
     #[serde(rename="currency")]
@@ -74,46 +64,16 @@ impl RequestOrderBookCommand {
 impl CommandConversion for RequestOrderBookCommand {
     type T = RequestOrderBookCommand;
     fn to_string(&self) -> Result<String> {
-        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-        // let compact = format!("{}", json);
-
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
 
-        // Print, write to a file, or send to an HTTP server.
         Ok(j)
     }
 
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
 }
 
-//实现default方法, 此command不提供default方法~
-// impl Default for RequestLedgerCommand {
-//     fn default() -> Self {
-//         RequestLedgerCommand {
-//             id: 1,
-//             command: "ledger".to_string(),
-//         }
-//     }
-// }
-
-/////////////////////////
-/*
-RequestOrderBookResponse 数据返回格式
-*/
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Offer {
     #[serde(rename="Account")]

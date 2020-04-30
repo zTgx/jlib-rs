@@ -2,7 +2,7 @@
 
 use serde_json::json;
 use cast_rs::hex;
-use misc::base_config::{CURRENCY};
+use crate::base::base_config::{CURRENCY};
 use serde_json::{Value};
 
 static OFFSET_SECOND: i64 = 946684800;

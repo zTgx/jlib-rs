@@ -4,7 +4,6 @@ use serde_json::json;
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 use serde::ser::{Serializer, SerializeStruct};
-//use serde_json::Result;
 use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
@@ -12,13 +11,10 @@ use std::cell::Cell;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::{Amount, string_or_struct};
 use crate::message::common::memo::*;
-use crate::misc::common::*;
+use crate::message::tx_flags::*;
 use std::error::Error;
 use std::fmt;
 
-/*
-支付对象:
-*/
 #[derive(Deserialize, Debug, Default)]
 pub struct TxJson {
     #[serde(rename="Flags")]
@@ -52,7 +48,7 @@ impl Serialize for TxJson {
     where
         S: Serializer,
     {
-        // 3 is the number of fields in the struct.
+        // 6 is the number of fields in the struct.
         let mut state = serializer.serialize_struct("OfferCreateTxJson", 6)?;
 
         state.serialize_field("Flags", &self.flags)?;
@@ -87,11 +83,7 @@ impl TxJson {
 impl CommandConversion for TxJson {
     type T = TxJson;
     fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
         Ok(j)
     }
 
@@ -130,35 +122,15 @@ impl TransactionTx {
 impl CommandConversion for TransactionTx {
     type T = TransactionTx;
     fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-        // let compact = format!("{}", json);
-
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
         Ok(j)
     }
 
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
 }
 
-/*
-TransactionResponse
-*/
 #[derive(Serialize, Deserialize, Debug)]
 pub struct TxJsonResponse {
     #[serde(rename="Account")]

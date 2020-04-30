@@ -6,7 +6,7 @@ use basex_rs::{BaseX, SKYWELL, Decode};
 use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
 use crate::WalletType;
 use crate::message::common::amount::Amount;
-use crate::misc::base_config::*;
+use crate::base::base_config::*;
 use crate::base::wallet::address::{WalletAddress};
 use crate::base::wallet::seed::Seed;
 use cast_rs::hex;

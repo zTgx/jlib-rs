@@ -10,7 +10,7 @@ use std::fmt;
 use crate::message::common::command_trait::CommandConversion;
 use std::any::Any;
 
-use crate::misc::base_config::{CURRENCY};
+use crate::base::base_config::{CURRENCY};
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Amount {

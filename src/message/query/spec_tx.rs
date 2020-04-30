@@ -18,18 +18,10 @@ use void::Void;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::meta::*;
 use crate::message::common::amount::{Amount, string_or_struct};
-use crate::misc::common::*;
+use crate::message::tx_flags::*;
 
 use std::error::Error;
 
-//////////////////////
-/*
-@4.7查询某一交易具体信息
-RequestTxCommand 请求格式
-id: u64,          //为(固定值): 1
-command: String,  //为(固定值): tx
-hash: String,     //需要用户传递的参数，[交易hash]
-*/
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestTxCommand {
     #[serde(rename="id")]
@@ -57,50 +49,15 @@ impl RequestTxCommand {
 impl CommandConversion for RequestTxCommand {
     type T = RequestTxCommand;
     fn to_string(&self) -> Result<String> {
-        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-        // let compact = format!("{}", json);
-
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
         Ok(j)
     }
 
     fn box_to_raw(&self) -> &dyn Any {
-        // if let Ok(x) = value.downcast::<T>() {
-        //     x
-        // }
-
         self
     }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
 }
 
-//实现default方法
-// impl Default for RequestTxCommand {
-//     fn default() -> Self {
-//         ServerInfoCommand {
-//             id: 1,
-//             command: "server_info".to_string(),
-//         }
-//     }
-// }
-
-///////////////////////////////
-/*
-RequestTxResponse 数据返回格式
-*/
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RequestTxResponse {
     #[serde(rename="Account")]

@@ -3,10 +3,7 @@
 
 use std::fmt; //fmt METHOD
 use serde::{Deserialize, Serialize};
-// use serde::de::{self, Visitor, MapAccess};
 
-
-////////////////////Flags 相关
 // Universal flags can apply to any transaction type
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Universal {
@@ -73,8 +70,6 @@ pub enum Flags {
 impl fmt::Display for Flags {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{:?}", self)
-        // or, alternatively:
-        // fmt::Debug::fmt(self, f)
     }
 }
 

@@ -8,13 +8,10 @@ use std::any::Any;
 use std::cell::Cell;
 
 use crate::message::common::command_trait::CommandConversion;
-use crate::misc::common::*;
+use crate::message::tx_flags::*;
 use std::error::Error;
 use std::fmt;
 
-/*
-4.19取消挂单
-*/
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OfferCancelTxJson {
     #[serde(rename="Flags")]
@@ -74,35 +71,15 @@ impl OfferCancelTx {
 impl CommandConversion for OfferCancelTx {
     type T = OfferCancelTx;
     fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-        // let compact = format!("{}", json);
-
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
         let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
         Ok(j)
     }
 
     fn box_to_raw(&self) -> &dyn Any {
         self
     }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
 }
 
-/*
-OfferCancelTxJsonResponse
-*/
 #[derive(Serialize, Deserialize, Debug)]
 pub struct OfferCancelTxJsonResponse {
     #[serde(rename="Account")]

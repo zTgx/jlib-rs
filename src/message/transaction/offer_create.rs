@@ -19,7 +19,7 @@ use std::cell::Cell;
 
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::*;
-use crate::misc::common::*;
+use crate::message::tx_flags::*;
 
 //Offer Type
 #[derive(PartialEq)]
