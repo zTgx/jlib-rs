@@ -21,7 +21,7 @@
 //! 
 //! fn main() {
 //!     let config = Config::new(TEST_SERVER, true);
-//!     ServerInfo::new().request_server_info(config.clone(), |x| match x {
+//!     ServerInfo::new().request_server_info(config, |x| match x {
 //!         Ok(response) => {
 //!             println!("build_version : {:?}", response.build_version);
 //!         }
@@ -51,13 +51,10 @@ extern crate basex_rs;
 extern crate cast_rs;
 
 // exports
-pub mod base;
-pub mod message;
-pub mod misc;
 pub mod api;
-pub mod contracts;
-
-pub use crate::base::wallet::wallet::Wallet as Wallet;
+pub mod message;
+pub mod base;
+pub mod misc;
 
 #[derive(Debug)]
 pub struct Config {
@@ -79,9 +76,4 @@ pub enum WalletType {
     SECP256K1,
     ED25519,
 }
-
-pub fn generate_wallet(wtype: WalletType) -> Wallet {
-    Wallet::new(wtype)
-}
-
 
