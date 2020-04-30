@@ -1,7 +1,6 @@
 extern crate jlib;
-use jlib::message::query::subscribe::{SubscribeResponse};
-use jlib::SUBSCRIBE;
-use jlib::SubscribeI;
+use jlib::api::subscribe::{SUBSCRIBE, SubscribeI};
+use jlib::api::subscribe::message::SubscribeResponse;
 
 use jlib::misc::config::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
