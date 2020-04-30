@@ -1,6 +1,6 @@
 
 extern crate jlib;
-use jlib::{SolidityDeploy, SolidityInitResponse};
+use jlib::api::contracts::solidity::{SolidityDeploy, SolidityInitResponse};
 
 use jlib::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";

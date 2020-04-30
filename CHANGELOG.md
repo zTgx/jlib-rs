@@ -1,3 +1,7 @@
+### v0.3.5(2020-4-30)
+* refactor Config
+* update examples
+
 ### v0.3.4(2020-4-27)
 * fix bugs
 * remove some comments

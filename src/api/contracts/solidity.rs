@@ -4,7 +4,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 
-use crate::contracts::message::{
+pub use crate::api::contracts::message::{
     SolidityInitMessage,
     SolidityInitResponse,
 
