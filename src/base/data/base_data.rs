@@ -173,6 +173,3 @@ pub enum BASEStates {
     NodePrivate(NodePrivate),
     K256Seed(K256Seed),
 }
-
-//USE, reference commoms/Flags/get method.
-//A::default()

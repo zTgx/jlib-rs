@@ -1,46 +1,8 @@
-
-
-
 use std::collections::HashMap;
 /*
  * Inverse of the fields map
  *
 */
-/*
-Example:
-
-pub enum LedgerEntryType {
-    FullyCanonicalSig,
-}
-
-pub enum INVERSE_FIELDS_MAP { 
-    LedgerEntryType  { name: LedgerEntryType   },
-}
-
-impl INVERSE_FIELDS_MAP {
-    pub fn get(&self) -> Vec<u8> {
-        match *self {
-            //LedgerEntryType
-            INVERSE_FIELDS_MAP::LedgerEntryType { ref name } => { 
-            match name {
-                FullyCanonicalSig => { vec![1, 2] }
-            }}
-        }
-    }
-}
-
-let fl = INVERSE_FIELDS_MAP::LedgerEntryType{ name: LedgerEntryType::FullyCanonicalSig };
-let n = fl.get();
-println!("n : {:?}", n); //n : [1, 2]
-
-
-example 2:
-static X: [(&'static str, [u8; 2]); 2] = [("ledgertype", [1,2]),("transaction", [1,1])];
-println!("x : {:?}", X[1].0);
-*/
-
-
-// pub static INVERSE_FIELDS_MAP: [(&'static str, [u8; 2]); 132] = [
 lazy_static! {
     pub static ref INVERSE_FIELDS_MAP: HashMap<&'static str, [u8;2]> = {
         let m: HashMap<&'static str, [u8;2]> = [

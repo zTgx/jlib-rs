@@ -60,29 +60,5 @@ impl J256k1 {
         } else {
             return Err("entropy error.");
         }
-
-        // let seed = entropy(seed);
-        // let scalar = scalar_multiple(&seed, None);
-        //
-        // let secp = Secp256k1::new();
-        // let secret_key = SecretKey::from_slice(&scalar).expect("32 bytes, within curve order");
-        // let public_key = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
-        //
-        // let scalar_public_key = scalar_multiple(public_key.as_slice(), Some(0));
-        // let mut secret_key_gen = SecretKey::from_slice(&scalar_public_key).expect("32 bytes, within curve order");
-        // secret_key_gen.add_assign(&secret_key[..]).unwrap();
-        //
-        // //private_key
-        // let private_key = PRE_PRIVATE_KEY.to_owned() + secret_key_gen.to_string().as_str();
-        //
-        // let key_str = hex::decode(&private_key).unwrap();
-        // let secret_key = SecretKey::from_slice(&key_str[1..]).expect("32 bytes, within curve order");
-        // let public_gen = PublicKey::from_secret_key(&secp, &secret_key).serialize().to_vec();
-        //
-        // //public key
-        // let public_key = hex::encode(public_gen);
-        //
-        // //so 33bytes = 33 * 8 = 264 = 32 * 8 + 8 = 256 + 8;
-        // ( private_key.to_ascii_uppercase(), public_key.to_ascii_uppercase() )
     }
 }
