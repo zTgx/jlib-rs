@@ -1,21 +1,31 @@
-use crate::message::transaction::offer_create::{OfferCreateTxJson};
-
 use crate::base::serialize::signed_obj::{
-    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder,
-    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder,
+    SignedTxJson, 
+    TxJsonBuilder,  
+    TxJsonSigningPubKeyBuilder,
+    TxJsonFlagsBuilder, 
+    TxJsonFeeBuilder, 
+    TxJsonTransactionTypeBuilder, 
+    TxJsonAccountBuilder, 
+    TxJsonSequenceBuilder,
     TxJsonTakerBuilder,
 };
-
 use crate::base::data::constants::{
-    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY, TX_TAKERPAYS, TX_TAKERGETS,
+    TX_FLAGS, 
+    TX_FEE, 
+    TX_ACCOUNT, 
+    TX_TRANSACTION_TYPE, 
+    TX_SEQUENCE, 
+    TX_SIGNING_PUB_KEY, 
+    TX_TAKERPAYS, 
+    TX_TAKERGETS,
     TXTakerType,
 };
-
-use crate::base::wallet::keypair::*;
 use std::rc::Rc;
-use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
+use crate::base::wallet::keypair::*;
 use crate::message::common::amount::Amount;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
+use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
+use crate::message::transaction::offer_create::{OfferCreateTxJson};
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
@@ -23,13 +33,11 @@ pub trait FormatSignTxJson {
 }
 
 pub struct SignTxCreateOffer <'a> {
-    pub fields : Vec<&'a str>,
-    pub keypair: &'a Keypair,
-    pub tx_json: &'a OfferCreateTxJson,
-
+    pub fields  : Vec<&'a str>,
+    pub keypair : &'a Keypair,
+    pub tx_json : &'a OfferCreateTxJson,
     pub sequence: u32,
-
-    pub output: SignedTxJson<'a>,
+    pub output  : SignedTxJson<'a>,
 }
 
 impl <'a> SignTxCreateOffer <'a> {
@@ -72,7 +80,7 @@ impl <'a> FormatSignTxJson for SignTxCreateOffer <'a> {
     }
 
     fn format(&mut self) {
-        let tx_json_rc = Rc::new ( self.tx_json );
+        let tx_json_rc = Rc::new (self.tx_json);
 
         let mut index = 0;
         for &key in &self.fields {

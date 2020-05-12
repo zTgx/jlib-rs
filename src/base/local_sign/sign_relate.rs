@@ -1,21 +1,32 @@
-use std::rc::Rc;
-
-use crate::message::transaction::relation::{RelationTxJson};
-
 use crate::base::serialize::signed_obj::{
-    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, TxJsonRelationTypeBuilder,
-    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder,
-    TxJsonTargetBuilder, TxJsonLimitAmountBuilder,
+    SignedTxJson, 
+    TxJsonBuilder,  
+    TxJsonSigningPubKeyBuilder, 
+    TxJsonRelationTypeBuilder,
+    TxJsonFlagsBuilder, 
+    TxJsonFeeBuilder, 
+    TxJsonTransactionTypeBuilder, 
+    TxJsonAccountBuilder, 
+    TxJsonSequenceBuilder,
+    TxJsonTargetBuilder, 
+    TxJsonLimitAmountBuilder,
 };
-
 use crate::base::data::constants::{
-    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY,
-    TX_RELATION_TYPE, TX_TARGET, TX_LIMIT_AMOUNT
+    TX_FLAGS, 
+    TX_FEE, 
+    TX_ACCOUNT, 
+    TX_TRANSACTION_TYPE, 
+    TX_SEQUENCE, 
+    TX_SIGNING_PUB_KEY,
+    TX_RELATION_TYPE, 
+    TX_TARGET, 
+    TX_LIMIT_AMOUNT
 };
-
+use std::rc::Rc;
 use crate::base::wallet::keypair::*;
 use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
+use crate::message::transaction::relation::RelationTxJson;
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
@@ -23,13 +34,11 @@ pub trait FormatSignTxJson {
 }
 
 pub struct SignTxRelate <'a> {
-    pub fields : Vec<&'a str>,
-    pub keypair: &'a Keypair,
-    pub tx_json: &'a RelationTxJson,
-
+    pub fields  : Vec<&'a str>,
+    pub keypair : &'a Keypair,
+    pub tx_json : &'a RelationTxJson,
     pub sequence: u32,
-
-    pub output: SignedTxJson<'a>,
+    pub output  : SignedTxJson<'a>,
 }
 
 impl <'a> SignTxRelate <'a> {
@@ -38,19 +47,16 @@ impl <'a> SignTxRelate <'a> {
         pre.extend_from_slice(&PRE_FIELDS);
 
         SignTxRelate {
-            fields : pre,
-            keypair: keypair,
-            tx_json: tx_json,
-
+            fields  : pre,
+            keypair : keypair,
+            tx_json : tx_json,
             sequence: sequence,
-
-            output: SignedTxJson::new(),
+            output  : SignedTxJson::new(),
         }
     }
 
     //output blob which is signed.
     pub fn build(&mut self, sign_tx: &SignTx) -> String {
-
         //Step 1
         self.prepare(&sign_tx);
 
@@ -73,7 +79,7 @@ impl <'a> FormatSignTxJson for SignTxRelate <'a> {
     }
 
     fn format(&mut self) {
-        let tx_json_rc = Rc::new ( self.tx_json );
+        let tx_json_rc = Rc::new (self.tx_json);
 
         let mut index = 0;
         for &key in &self.fields {

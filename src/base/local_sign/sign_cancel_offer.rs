@@ -1,20 +1,28 @@
-use std::rc::Rc;
-
-use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
-
 use crate::base::serialize::signed_obj::{
-    SignedTxJson, TxJsonBuilder,  TxJsonSigningPubKeyBuilder, TxJsonOfferSequenceBuilder,
-    TxJsonFlagsBuilder, TxJsonFeeBuilder, TxJsonTransactionTypeBuilder, TxJsonAccountBuilder, TxJsonSequenceBuilder,
+    SignedTxJson, 
+    TxJsonBuilder,  
+    TxJsonSigningPubKeyBuilder, 
+    TxJsonOfferSequenceBuilder,
+    TxJsonFlagsBuilder, 
+    TxJsonFeeBuilder, 
+    TxJsonTransactionTypeBuilder, 
+    TxJsonAccountBuilder, 
+    TxJsonSequenceBuilder,
 };
-
 use crate::base::data::constants::{
-    TX_FLAGS, TX_FEE, TX_ACCOUNT, TX_TRANSACTION_TYPE, TX_SEQUENCE, TX_SIGNING_PUB_KEY, TX_OFFER_SEQUENCE,
+    TX_FLAGS, 
+    TX_FEE, 
+    TX_ACCOUNT, 
+    TX_TRANSACTION_TYPE, 
+    TX_SEQUENCE, 
+    TX_SIGNING_PUB_KEY, 
+    TX_OFFER_SEQUENCE,
 };
-
+use std::rc::Rc;
 use crate::base::wallet::keypair::*;
-
-use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
+use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
+use crate::message::transaction::offer_cancel::OfferCancelTxJson;
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
@@ -22,10 +30,9 @@ pub trait FormatSignTxJson {
 }
 
 pub struct SignTxCancelOffer <'a> {
-    pub fields : Vec<&'a str>,
-    pub keypair: &'a Keypair,
-    pub tx_json: &'a OfferCancelTxJson,
-
+    pub fields  : Vec<&'a str>,
+    pub keypair : &'a Keypair,
+    pub tx_json : &'a OfferCancelTxJson,
     pub sequence: u32,
 }
 
@@ -35,17 +42,15 @@ impl <'a> SignTxCancelOffer <'a> {
         pre.extend_from_slice(&PRE_FIELDS);
 
         SignTxCancelOffer {
-            fields : pre,
-            keypair: keypair,
-            tx_json: tx_json,
-
+            fields  : pre,
+            keypair : keypair,
+            tx_json : tx_json,
             sequence: sequence,
         }
     }
 
     //output blob which is signed.
     pub fn build(&mut self, sign_tx: &SignTx) -> String {
-
         //Step 1
         self.prepare(&sign_tx);
 
@@ -67,7 +72,7 @@ impl <'a> FormatSignTxJson for SignTxCancelOffer <'a> {
     }
 
     fn format(&mut self, output: &mut SignedTxJson) {
-        let tx_json_rc = Rc::new ( self.tx_json );
+        let tx_json_rc = Rc::new(self.tx_json);
 
         let mut index = 0;
         for &key in &self.fields {
@@ -116,13 +121,4 @@ impl <'a> FormatSignTxJson for SignTxCancelOffer <'a> {
             index += 1;
         }
     }
-
-
-
-
-
-
-
-
-
 }

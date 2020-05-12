@@ -1,16 +1,21 @@
-use crate::message::transaction::set_brokerage::{SetBrokerageTxJson};
-use crate::base::serialize::signed_obj::*;
-
 use crate::base::data::constants::{
-    TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
-    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE, TX_FLAGS,
-    TX_RATE_DEN, TX_RATE_NUM, TX_FEE_ACCOUNT,
+    TX_ACCOUNT, 
+    TX_SIGNING_PUB_KEY, 
+    TX_FEE,
+    TX_AMOUNT, 
+    TX_SEQUENCE, 
+    TX_TRANSACTION_TYPE, 
+    TX_FLAGS,
+    TX_RATE_DEN, 
+    TX_RATE_NUM, 
+    TX_FEE_ACCOUNT,
 };
-
 use std::rc::Rc;
-use crate::base::wallet::keypair::{Keypair};
-use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
+use crate::base::serialize::signed_obj::*;
+use crate::base::wallet::keypair::Keypair;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
+use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
+use crate::message::transaction::set_brokerage::SetBrokerageTxJson;
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
@@ -18,13 +23,11 @@ pub trait FormatSignTxJson {
 }
 
 pub struct SignTxBrokerage <'a> {
-    pub fields : Vec<&'a str>,
-    pub keypair: &'a Keypair,
-    pub tx_json: &'a SetBrokerageTxJson,
-
+    pub fields  : Vec<&'a str>,
+    pub keypair : &'a Keypair,
+    pub tx_json : &'a SetBrokerageTxJson,
     pub sequence: u32,
-
-    pub output: SignedTxJson<'a>,
+    pub output  : SignedTxJson<'a>,
 }
 
 impl <'a> SignTxBrokerage <'a> {
@@ -33,13 +36,11 @@ impl <'a> SignTxBrokerage <'a> {
         pre.extend_from_slice(&PRE_FIELDS);
 
         SignTxBrokerage {
-            fields : pre,
-            keypair: keypair,
-            tx_json: tx_json,
-
+            fields  : pre,
+            keypair : keypair,
+            tx_json : tx_json,
             sequence: sequence,
-
-            output: SignedTxJson::new(),
+            output  : SignedTxJson::new(),
         }
     }
 
@@ -59,7 +60,6 @@ impl <'a> SignTxBrokerage <'a> {
 }
 impl <'a> SignTxBrokerage <'a> {
     pub fn prepare(&mut self, sign_tx: &SignTx) {
-        //Pay specific fields
         sign_tx.update(&mut self.fields, TX_AMOUNT);
         sign_tx.update(&mut self.fields, TX_RATE_DEN);
         sign_tx.update(&mut self.fields, TX_RATE_NUM);
@@ -67,7 +67,7 @@ impl <'a> SignTxBrokerage <'a> {
     }
 
     fn format(&mut self) {
-        let tx_json_rc = Rc::new ( self.tx_json );
+        let tx_json_rc = Rc::new(self.tx_json);
 
         let mut index = 0;
         for &key in &self.fields {

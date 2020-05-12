@@ -1,14 +1,20 @@
-use crate::message::transaction::transaction::{TxJson};
-use crate::base::serialize::signed_obj::*;
-
 use crate::base::data::constants::{
-    TX_DESTINATION, TX_ACCOUNT, TX_SIGNING_PUB_KEY, TX_FEE,
-    TX_AMOUNT, TX_SEQUENCE, TX_TRANSACTION_TYPE, TX_FLAGS, TX_MEMOS,
+    TX_DESTINATION, 
+    TX_ACCOUNT, 
+    TX_SIGNING_PUB_KEY, 
+    TX_FEE,
+    TX_AMOUNT, 
+    TX_SEQUENCE, 
+    TX_TRANSACTION_TYPE, 
+    TX_FLAGS, 
+    TX_MEMOS,
 };
 use std::rc::Rc;
-use crate::base::wallet::keypair::{Keypair};
-use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
+use crate::base::serialize::signed_obj::*;
+use crate::base::wallet::keypair::Keypair;
+use crate::message::transaction::transaction::TxJson;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
+use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);
@@ -16,13 +22,12 @@ pub trait FormatSignTxJson {
 }
 
 pub struct SignTxPay <'a> {
-    pub fields : Vec<&'a str>,
-    pub keypair: &'a Keypair,
-    pub tx_json: &'a TxJson,
-
+    pub fields  : Vec<&'a str>,
+    pub keypair : &'a Keypair,
+    pub tx_json : &'a TxJson,
     pub sequence: u32,
 
-    pub output: SignedTxJson<'a>,
+    pub output  : SignedTxJson<'a>,
 }
 
 impl <'a> SignTxPay <'a> {
@@ -31,13 +36,11 @@ impl <'a> SignTxPay <'a> {
         pre.extend_from_slice(&PRE_FIELDS);
 
         SignTxPay {
-            fields : pre,
-            keypair: keypair,
-            tx_json: tx_json,
-
+            fields  : pre,
+            keypair : keypair,
+            tx_json : tx_json,
             sequence: sequence,
-
-            output: SignedTxJson::new(),
+            output  : SignedTxJson::new(),
         }
     }
 
@@ -57,14 +60,13 @@ impl <'a> SignTxPay <'a> {
 }
 impl <'a> SignTxPay <'a> {
     pub fn prepare(&mut self, sign_tx: &SignTx) {
-        //Pay specific fields
         sign_tx.update(&mut self.fields, TX_AMOUNT);
         sign_tx.update(&mut self.fields, TX_DESTINATION);
         sign_tx.update(&mut self.fields, TX_MEMOS);
     }
 
     fn format(&mut self) {
-        let tx_json_rc = Rc::new ( self.tx_json );
+        let tx_json_rc = Rc::new (self.tx_json);
 
         let mut index = 0;
         for &key in &self.fields {

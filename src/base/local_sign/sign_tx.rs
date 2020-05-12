@@ -1,9 +1,6 @@
-
-
 use crate::base::wallet::keypair::*;
 use crate::base::misc::util::{get_keypair_from_secret};
 use crate::base::serialize::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBuilder};
-use cast_rs::hex;
 use crate::base::local_sign::sign::SignatureX;
 use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
 
@@ -13,9 +10,8 @@ use crate::message::transaction::offer_create::{OfferCreateTxJson};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 use crate::message::transaction::set_brokerage::{SetBrokerageTxJson};
 
-use crate::base::data::constants::{
-    TX_SIGNATURE,
-};
+use cast_rs::hex;
+use crate::base::data::constants::TX_SIGNATURE;
 
 use crate::base::local_sign::sign_pay::{SignTxPay};
 use crate::base::local_sign::sign_relate::{SignTxRelate};
