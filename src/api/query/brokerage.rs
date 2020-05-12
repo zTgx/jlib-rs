@@ -1,7 +1,3 @@
-//
-// 账号交易列表
-//
-extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
@@ -42,14 +38,12 @@ impl BrokerageI for Brokerage {
                 out.send(command).unwrap();
             }
 
-            //返回一个Handler类型(trait)，等待epoll调用。
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());
 
                 out.close(CloseCode::Normal)
             }
-
         }).unwrap();
 
         let resp = downcast_to_string(info);

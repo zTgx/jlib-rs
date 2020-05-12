@@ -1,7 +1,3 @@
-//
-// 获得账号关系
-//
-extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;

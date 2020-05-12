@@ -1,7 +1,3 @@
-//
-// 获取某一账本具体信息
-//
-extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;

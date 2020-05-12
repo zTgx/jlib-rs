@@ -1,7 +1,3 @@
-//
-// 查询某一交易具体信息
-//
-extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
@@ -42,7 +38,6 @@ impl SpecTxI for SpecTx {
                 out.send(command).unwrap();
             }
 
-            //返回一个Handler类型(trait)，等待epoll调用。
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());

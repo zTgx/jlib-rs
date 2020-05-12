@@ -1,7 +1,3 @@
-//
-// 获得账号可接收和发送的货币
-//
-extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;

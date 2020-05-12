@@ -1,7 +1,3 @@
-//
-// 获取市场挂单列表
-//
-extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
@@ -39,13 +35,10 @@ impl OrderBookI for OrderBook {
             let gets = gets_rc.clone();
             let pays = pays_rc.clone();
 
-            //使用take（）的对象要实现Default trait，因为 take（） 调用后，原始值会调用default（）
-            //OrderBookItem, add #[derive(Default)] or impl default trait.
             if let Ok(command) = RequestOrderBookCommand::with_params(gets.take(), pays.take()).to_string() {
                 out.send(command).unwrap();
             }
 
-            //返回一个Handler类型(trait)，等待epoll调用。
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());

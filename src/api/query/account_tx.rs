@@ -1,7 +1,3 @@
-//
-// 账号交易列表
-//
-extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
@@ -41,7 +37,6 @@ impl AccountTxI for AccountTx {
                 out.send(command).unwrap();
             }
 
-            //返回一个Handler类型(trait)，等待epoll调用。
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
                 copy.set(c.to_string());
