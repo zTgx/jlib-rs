@@ -1,7 +1,3 @@
-#![allow(unused)]
-
-use serde_json::json;
-use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::any::Any;
@@ -104,5 +100,4 @@ pub struct SubscribeResponse {
 
     #[serde(rename="type")]
     ttype: Option<String>,
-
 }

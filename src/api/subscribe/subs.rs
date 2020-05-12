@@ -5,8 +5,8 @@ use ws::{connect, Handler, Sender, Handshake, Message, CloseCode};
 use std::rc::Rc;
 use serde_json::{Value};
 
-use crate::message::common::command_trait::CommandConversion;
-use crate::api::subscribe::message::{SubscribeResponse, SubscribeCommand};
+use crate::message::common::command_trait::CommandConversion; 
+use crate::message::subscribe::message::{SubscribeResponse, SubscribeCommand};
 use crate::Config;
 
 pub struct Client {
