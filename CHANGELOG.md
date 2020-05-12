@@ -1,3 +1,8 @@
+### v0.3.7(2020-4-30)
+* refactor base mod
+* remove dead codes
+* update examples
+
 ### v0.3.5(2020-4-30)
 * refactorations and bug corrections
 * delete mod misc
