@@ -1,4 +1,3 @@
-extern crate ws;
 use ws::{connect, CloseCode};
 use std::rc::Rc;
 use std::cell::Cell;
@@ -68,7 +67,6 @@ impl PaymentI for Payment {
 
         // Get Account Seq
         let seq_rc = get_account_sequence(&self.config, self.account.clone());
-        // let seq_rc = Rc::new(Cell::new(account_seq));
         
         if memo.is_some() {
             let upper_hex_memo = hex::encode(&memo.unwrap()).to_ascii_uppercase();
@@ -86,7 +84,6 @@ impl PaymentI for Payment {
             let amount = amount_rc.clone();
             let memo   = memo_rc.clone();
 
-            // let sequence = seq_rc.clone();
             let sequence = seq_rc;
             let tx_json = TxJson::new(from.take(), to.take(), amount.take(), sequence, memo.take());
             if self.config.local_sign {
