@@ -49,6 +49,7 @@ extern crate void;
 extern crate ws;
 extern crate basex_rs;
 extern crate cast_rs;
+extern crate phf;
 
 // exports
 pub mod api;

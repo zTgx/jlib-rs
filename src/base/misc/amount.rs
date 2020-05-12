@@ -1,24 +1,25 @@
-#![allow(unused)]
+use num::Zero;
 use std::str::FromStr;
-extern crate num;
 use num::bigint::{BigInt};
-use num::{Zero, One};
-use crate::message::common::amount::Amount as RAmount;
 use crate::base::misc::exponent;
+use crate::message::common::amount::Amount as RAmount;
+use phf::phf_map;
 
-const CURRENCY_XNS: u8 = 0;
-const CURRENCY_ONE: u8 = 1;
-const XNS_PRECISION: u8 = 6;
-
-//big number
-// const BI_5: u8 = 5;
-// const BI_7: u8 = 7;
-// const BI_10: u8 = 10;
 static BI_XNS_MAX: &'static str = "9000000000000000000"; //"9e18";  //new BigInteger('9000000000000000000'), // Json wire limit.
-static BI_XNS_MIN: &'static str = "-9000000000000000000";//"-9e18"; //new BigInteger('-9000000000000000000'),// Json wire limit.
+// static BI_XNS_MIN: &'static str = "-9000000000000000000";//"-9e18"; //new BigInteger('-9000000000000000000'),// Json wire limit.
 
-static CURRENCY_NAME_LEN: usize = 3;//货币长度
-static CURRENCY_NAME_LEN2: usize = 6;//货币长度
+static CURRENCY_NAME_LEN: usize = 3;
+static CURRENCY_NAME_LEN2: usize = 6;
+
+static BASE_STR: phf::Map<&'static str, &'static str> = phf_map! {
+    "0" => "1000000",
+    "1" => "100000",
+    "2" => "10000",
+    "3" => "1000",
+    "4" => "100",
+    "5" => "10",
+    "6" => "1",
+};
 
 #[derive(Debug)]
 pub struct Amount {
@@ -47,8 +48,8 @@ impl Amount {
             let mut value = String::from( ramount.value.as_str() );
             if value.as_str().contains(".") {
                 let tmp =  String::from( ramount.value.as_str() );
-                let mut v: Vec<&str> = tmp.split('.').collect();
-                let mut right = v[1];
+                let v: Vec<&str> = tmp.split('.').collect();
+                let right = v[1];
                 let mut right_len = v[1].len() - 1;
                 loop {
                     if right.chars().nth(right_len).unwrap() != '0' {
@@ -68,8 +69,9 @@ impl Amount {
             } else {
                 value = String::from( ramount.value.as_str() );
             }
-            let base_str = Amount::calc_base_str(point_len);
-            let mut value: BigInt = BigInt::from_str(value.as_str()).unwrap();
+
+            let base_str = BASE_STR.get(point_len.to_string().as_str()).unwrap();
+            let value: BigInt = BigInt::from_str(value.as_str()).unwrap();
             let base: BigInt = BigInt::from_str(base_str).unwrap();
             let mut evalue = value.checked_mul(&base).unwrap();
             let max: BigInt = BigInt::from_str(BI_XNS_MAX).unwrap();
@@ -129,10 +131,10 @@ impl Amount {
                     index += 1;
                 }
 
-                let mut value: BigInt = BigInt::from_str(rv.as_str()).unwrap();
+                let value: BigInt = BigInt::from_str(rv.as_str()).unwrap();
 
                 let base: BigInt = BigInt::from(factor);
-                let mut evalue = value.checked_mul(&base).unwrap();
+                let evalue = value.checked_mul(&base).unwrap();
 
                 let offset: i32 = -1 * offset as i32;
 
@@ -239,7 +241,7 @@ impl Amount {
 
             if len >= CURRENCY_NAME_LEN && len <= CURRENCY_NAME_LEN2 {
                 let end = 14;
-                let mut len = len - 1;
+                let len = len - 1;
                 let mut index = len as isize;
                 loop {
                     if index < 0 {
@@ -254,45 +256,6 @@ impl Amount {
         }
 
         so
-     }
-
-     pub fn calc_base_str(point_len: usize) -> &'static str {
-         let mut base_str = "1000000";
-         match point_len {
-             0 => {
-                 base_str = "1000000";
-             },
-
-             1 => {
-                 base_str = "100000";
-             },
-
-             2 => {
-                 base_str = "10000";
-             },
-
-             3 => {
-                 base_str = "1000";
-             },
-
-             4 => {
-                 base_str = "100";
-             },
-
-             5 => {
-                 base_str = "10";
-             },
-
-             6 => {
-                 base_str = "1";
-             },
-
-             _ => {
-                 panic!("invalid value.");
-             }
-         }
-
-         base_str
      }
 }
 
