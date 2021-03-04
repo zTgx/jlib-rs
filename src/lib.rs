@@ -48,7 +48,7 @@ extern crate num;
 extern crate void;
 extern crate ws;
 extern crate basex_rs;
-extern crate cast_rs;
+extern crate hex;
 extern crate phf;
 
 // exports
@@ -75,5 +75,6 @@ impl Config {
 pub enum WalletType {
     SECP256K1,
     ED25519,
+    // GUOMI,
 }
 

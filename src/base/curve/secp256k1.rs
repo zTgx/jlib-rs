@@ -1,7 +1,7 @@
 use crate::base::secp256k1::key::{ SecretKey, PublicKey };
 use crate::base::secp256k1::Secp256k1;
 use crate::base::curve::{entropy, scalar_multiple};
-use cast_rs::hex;
+use hex;
 
 static PRE_PRIVATE_KEY: &'static str = "00";
 

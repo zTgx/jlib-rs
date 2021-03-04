@@ -1,7 +1,8 @@
 #![allow(unused)]
 
 use serde_json::json;
-use cast_rs::hex;
+use hex;
+
 use crate::base::base_config::{CURRENCY};
 use serde_json::{Value};
 

@@ -9,7 +9,7 @@ use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value};
 
-use cast_rs::hex;
+use hex;
 use crate::base::misc::util::check;
 
 #[derive(Serialize, Deserialize, Debug, Default)]

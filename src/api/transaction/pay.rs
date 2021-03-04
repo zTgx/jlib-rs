@@ -9,7 +9,7 @@ use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::memo::*;
 use crate::message::common::amount::Amount;
 
-use cast_rs::hex;
+use hex;
 
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};

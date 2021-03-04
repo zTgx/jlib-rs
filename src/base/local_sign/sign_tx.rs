@@ -10,7 +10,8 @@ use crate::message::transaction::offer_create::{OfferCreateTxJson};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 use crate::message::transaction::set_brokerage::{SetBrokerageTxJson};
 
-use cast_rs::hex;
+use hex;
+
 use crate::base::data::constants::TX_SIGNATURE;
 
 use crate::base::local_sign::sign_pay::{SignTxPay};
