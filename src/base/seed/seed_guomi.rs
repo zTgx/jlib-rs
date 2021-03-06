@@ -24,7 +24,7 @@ impl SeedI for SeedGuomi {
     生成seed算法：
     sm3(passphrase) 的结果取128位。
     */
-    fn generate_seed(&self, passphrase: Option<&str>) -> Vec<u8> {
+    fn generate_masterphrase(&self, passphrase: Option<&str>) -> Vec<u8> {
         // TOOD: warning: value assigned to `phrase_bytes` is never read
         let mut phrase_bytes: Vec<u8> = vec![0; 16];
         if let Some(phrase) = passphrase  {
@@ -39,7 +39,7 @@ impl SeedI for SeedGuomi {
         let digest: [u8;32] = hash.get_hash();
         let seed: &[u8] = &digest[..16];
 
-        println!("generate_seed: {:?}", seed);
+        println!("masterphrase: {:?}", seed);
         return seed.to_vec();
     }
 
