@@ -1,6 +1,7 @@
 extern crate rand;
 use rand::Rng;
 
+// 16字节长度的随机数据
 pub struct Brorand {}
 impl Brorand {
     //random generate a specific length's [u8]

@@ -50,6 +50,7 @@ extern crate ws;
 extern crate basex_rs;
 extern crate hex;
 extern crate phf;
+extern crate libsm;
 
 // exports
 pub mod api;
@@ -75,6 +76,6 @@ impl Config {
 pub enum WalletType {
     SECP256K1,
     ED25519,
-    // GUOMI,
+    SM2P256V1, // sm2p256v1
 }
 

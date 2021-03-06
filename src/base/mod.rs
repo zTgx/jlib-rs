@@ -12,6 +12,8 @@ pub mod xcodec;
 pub mod base_config;
 pub mod parse_tx;
 
+pub mod seed;
+
 //Serialize
 use std::collections::HashMap;
 

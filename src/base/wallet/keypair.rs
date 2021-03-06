@@ -1,4 +1,7 @@
-use crate::base::curve::secp256k1::J256k1;
+use crate::base::curve::{
+    secp256k1::J256k1,
+    sm2p256v1::SM2P256V1
+};
 use crate::WalletType;
 
 #[derive(Debug, Clone)]
@@ -40,6 +43,16 @@ impl <'a> KeypairBuilder <'a> {
                 if let Ok(x) = J256k1::build_keypair_str(&self.seed) {
                     private_key = x.0;
                     public_key = x.1;
+                } else {
+                    return Err("invalid seed, can't generate keypair.");
+                }
+            }
+            &WalletType::SM2P256V1 => {
+                println!("这是国密算法。");
+
+                if let Ok(x) = SM2P256V1::build_keypair_str(&self.seed) {
+                    private_key = x.0;
+                    public_key  = x.1;
                 } else {
                     return Err("invalid seed, can't generate keypair.");
                 }
