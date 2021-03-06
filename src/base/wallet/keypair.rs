@@ -1,8 +1,8 @@
 use crate::base::curve::{
-    secp256k1::J256k1,
-    sm2p256v1::SM2P256V1
+    secp256k1::J256k1
 };
 use crate::WalletType;
+use crate::base::keypair::keypair_guomi::KeypairGuomi;
 
 #[derive(Debug, Clone)]
 pub struct Keypair {
@@ -50,12 +50,15 @@ impl <'a> KeypairBuilder <'a> {
             &WalletType::SM2P256V1 => {
                 println!("#############开始生成国密版本的 private key  / public key 对。");
 
-                if let Ok(x) = SM2P256V1::build_keypair_str(&self.seed) {
-                    private_key = x.0;
-                    public_key  = x.1;
-                } else {
-                    return Err("invalid seed, can't generate keypair.");
-                }
+                // if let Ok(x) = SM2P256V1::build_keypair_str(&self.seed) {
+                //     private_key = x.0;
+                //     public_key  = x.1;
+                // } else {
+                //     return Err("invalid seed, can't generate keypair.");
+                // }
+
+                let _key_pair = KeypairGuomi::new().build(&self.seed);
+                // println!("----pair: {:?}", key_pair);
             }
         }
 

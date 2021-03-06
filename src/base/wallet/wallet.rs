@@ -26,6 +26,7 @@ impl <'a> WalletBuilder <'a> {
         
         //keypair
         let key_pair = KeypairBuilder::new(&seed, &self.config.key_type).build().unwrap();
+        // println!("生成公私钥对: {:?}", key_pair);
 
         //address
         let address = WalletAddress::build(&key_pair);

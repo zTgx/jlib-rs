@@ -53,4 +53,6 @@ pub trait KeypairI {
         8.	映射到base58，34字节
     */
     fn human_readable_public_key(&self, public_key: &Vec<u8>) -> String;
+
+    fn public_key_hash_generator(&self, public_generator: &Vec<u8>)  -> Vec<u8>;
 }

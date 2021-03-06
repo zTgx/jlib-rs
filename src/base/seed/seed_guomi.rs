@@ -3,6 +3,7 @@ use libsm::sm3::hash::Sm3Hash;
 use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::misc::brorand::Brorand;
 use crate::base::seed::seed_trait::SeedI;
+use hex;
 
 // ----------------------------------------------------------------
 // 生成国密版本seed需要的常量
@@ -25,6 +26,8 @@ impl SeedGuomi {
     pub fn build(&self, passphrase: Option<&str>) -> String {
         //第一步： 生成masterphrase
         let masterphrase = self.generate_masterphrase(passphrase);
+        println!("masterphrase seed: {:?}", masterphrase);
+        println!("master_seed_hex: {:?}", hex::encode_upper(&masterphrase));
 
         //第二步： 生成base58后的seed
         self.human_readable_seed(&masterphrase)
@@ -51,7 +54,6 @@ impl SeedI for SeedGuomi {
         let digest: [u8;32] = hash.get_hash();
         let seed: &[u8] = &digest[..16];
 
-        println!("masterphrase: {:?}", seed);
         return seed.to_vec();
     }
 
@@ -91,6 +93,7 @@ impl SeedI for SeedGuomi {
         let hash1 = hash.get_hash();
         let mut hash2 = Sm3Hash::new(&hash1);
         let digest = hash2.get_hash();
+
     
         let checksum = digest.get(..4).unwrap().to_vec();
         return checksum;

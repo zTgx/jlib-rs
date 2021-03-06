@@ -4,6 +4,7 @@ use libsm::sm2::signature::{Pubkey, Seckey};
 use libsm::sm2::ecc::EccCtx;
 use basex_rs::{BaseX, SKYWELL, Encode}; 
 use crate::base::curve::ripemd160::JRipemd160;
+use hex;
 
 // The order of the sm2p256v1 curve
 pub const CURVE_ORDER_SM2P256V1: &[u8; 32] = &[
@@ -33,14 +34,40 @@ impl KeypairGuomi {
         }
     }
 
-    // pub fn build(&self) -> Result<(String, String), &'static str> {
-    //     Ok()
-    // }
+    pub fn build(&self, _masterphrase: &String) -> Result<(String, String), &'static str> {
+        let x = [122, 174, 27, 9, 106, 99, 19, 141, 183, 13, 193, 169, 42, 98, 171, 188].to_vec();
+        let private_generator = self.private_generator(&x);
+        println!("private_generator = {:?}", private_generator);
+        let public_generator  = self.public_generator(&private_generator);
+        println!("public_generator: {:?}", public_generator);
+
+        let _private_key = self.generate_private_key(&private_generator, &public_generator);
+
+        let public_key  = self.generate_public_key(&public_generator);
+        println!("public key: {:?}", public_key);
+        println!("public_key_hex : {:?}", hex::encode(&public_key));
+        
+
+        let human_readable_public_key = self.human_readable_public_key(&public_key);
+        println!("human_readable_public_key: {}", human_readable_public_key);
+
+        Ok(
+            (
+                "private...".to_string(),
+                "public....".to_string()
+            )
+        )
+    }
 }
 
 impl KeypairI for KeypairGuomi {
     fn private_generator(&self, masterphrase: &Vec<u8>)  -> Vec<u8> {
+        // println!("xxx: {:?}", masterphrase);
+
         let mut seq = 0u32;
+
+        let ecc_ctx = EccCtx::new();
+        let n: Seckey = ecc_ctx.get_n();
 
         let mut vec = Vec::new();
         loop {
@@ -49,15 +76,63 @@ impl KeypairI for KeypairGuomi {
         
             let mut sm3_hash = Sm3Hash::new(&vec);
             let digest = sm3_hash.get_hash();
+
+            let privx = Seckey::from_bytes_be(&digest);
+
+            if privx < n {
+                let ret = privx.to_bytes_be();
+
+                // println!("ret: {:?}, seq = {}", ret, seq);
+
+                return ret;
+            }
             
             // We hash the bytes to find a 256 bit number, looping until we are sure it
             // is less than the order of the curve.
-            if digest < *CURVE_ORDER_SM2P256V1 && digest > *ZERO_ORDER_SM2P256V1 {
-                return digest.to_vec();
-            }
+            // if digest < *CURVE_ORDER_SM2P256V1 && digest > *ZERO_ORDER_SM2P256V1 {
+            //     return digest.to_vec();
+            // }
     
             vec.clear();
             seq += 1;
+        } // end while    
+    }
+
+    fn public_key_hash_generator(&self, public_generator: &Vec<u8>)  -> Vec<u8> {
+        let seq = 0u32;
+        let mut sub_seq = 0u32;
+
+        let ecc_ctx = EccCtx::new();
+        let n: Seckey = ecc_ctx.get_n();
+
+        let mut vec = Vec::new();
+        loop {
+            vec.extend_from_slice(&public_generator);
+            vec.extend_from_slice(&seq.to_be_bytes());
+            vec.extend_from_slice(&sub_seq.to_be_bytes());
+        
+            let mut sm3_hash = Sm3Hash::new(&vec);
+            let digest = sm3_hash.get_hash();
+
+            let privx = Seckey::from_bytes_be(&digest);
+
+            if privx < n {
+                let ret = privx.to_bytes_be();
+
+                println!("ret: {:?}, seq = {}", ret, seq);
+                // println!("hex: {}", hex::decode(&ret));
+
+                return ret;
+            }
+            
+            // We hash the bytes to find a 256 bit number, looping until we are sure it
+            // is less than the order of the curve.
+            // if digest < *CURVE_ORDER_SM2P256V1 && digest > *ZERO_ORDER_SM2P256V1 {
+            //     return digest.to_vec();
+            // }
+    
+            vec.clear();
+            sub_seq += 1;
         } // end while    
     }
 
@@ -101,64 +176,42 @@ impl KeypairI for KeypairGuomi {
     }
 
     fn generate_public_key(&self, public_generator: &Vec<u8>) -> Vec<u8> {
-        let (seq, mut sub_seq) = (0u32, 0u32);
+        let public_key_hash_generator = self.public_key_hash_generator(&public_generator);
 
-        let mut vec = Vec::new();
-
-        loop {
-            vec.extend_from_slice(&public_generator);
-            vec.extend_from_slice(&seq.to_be_bytes());
-            vec.extend_from_slice(&sub_seq.to_be_bytes());
-    
-            let mut sm3_hash =  Sm3Hash::new(&vec);
-            let digest = sm3_hash.get_hash();
-    
-            if digest < *CURVE_ORDER_SM2P256V1 && digest > *ZERO_ORDER_SM2P256V1 {
-                let hash = digest.to_vec();
-
-                let a_p = self.public_generator(&hash);
-
-                let ecc_ctx = EccCtx::new();
-                let a = ecc_ctx.bytes_to_point(&a_p).unwrap();
-
-                let b = ecc_ctx.bytes_to_point(&public_generator).unwrap();
-
-                let c = ecc_ctx.add(&a, &b);
-
-                let public_key = ecc_ctx.point_to_bytes(&c, true);
-                return public_key;
-            }
-
-            vec.clear();
-            sub_seq += 1;
-        }
+        let ecc_ctx = EccCtx::new();
+        let m = Seckey::from_bytes_be(&public_key_hash_generator);
+        let a: Pubkey = ecc_ctx.g_mul(&m);
+        let b = ecc_ctx.bytes_to_point(&public_generator).unwrap();
+        let c = ecc_ctx.add(&a, &b);
+        let public_key = ecc_ctx.point_to_bytes(&c, true);
+        return public_key;
     }
 
     fn human_readable_public_key(&self, public_key: &Vec<u8>) -> String {
         let mut sm3_hash =  Sm3Hash::new(&public_key);
         let digest = sm3_hash.get_hash();
 
-        let mut input = [0u8; 32];
-        input.copy_from_slice(&digest);
-
         let mut ripemd160 = JRipemd160::new();
-        ripemd160.input(&input);
-        let ret: &mut [u8] = &mut [0u8;20];
-        ripemd160.result(ret);
+        ripemd160.input(&digest);
+        let ripemd160_hash: &mut [u8] = &mut [0u8;20];
+        ripemd160.result(ripemd160_hash);
 
-        let prefix_public_key: Vec<u8> = PREFIX_PUBLIC_KEY.to_vec();
-
-        let mut hash = Sm3Hash::new(&digest);
+        // 对 0 + 20 进行 hash
+        let mut vec = Vec::new();
+        vec.extend_from_slice(PREFIX_PUBLIC_KEY);
+        vec.extend_from_slice(&ripemd160_hash);
+    
+        let mut hash = Sm3Hash::new(&vec);
         let hash1 = hash.get_hash();
         let mut hash2 = Sm3Hash::new(&hash1);
         let digest = hash2.get_hash();
     
         let checksum = digest.get(..4).unwrap().to_vec();
 
-        //add
+        //add: 0 + 20 + 4
         let mut vec: Vec<u8> = Vec::new();
-        vec.extend_from_slice(&prefix_public_key);
-        vec.extend_from_slice(&ret);
+        vec.extend_from_slice(PREFIX_PUBLIC_KEY);
+        vec.extend_from_slice(&ripemd160_hash);
         vec.extend_from_slice(&checksum);
 
         BaseX::new(SKYWELL).encode(&vec)
