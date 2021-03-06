@@ -48,7 +48,7 @@ impl <'a> KeypairBuilder <'a> {
                 }
             }
             &WalletType::SM2P256V1 => {
-                println!("这是国密算法。");
+                println!("#############开始生成国密版本的 private key  / public key 对。");
 
                 if let Ok(x) = SM2P256V1::build_keypair_str(&self.seed) {
                     private_key = x.0;

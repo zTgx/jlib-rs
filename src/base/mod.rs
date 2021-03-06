@@ -13,6 +13,7 @@ pub mod base_config;
 pub mod parse_tx;
 
 pub mod seed;
+pub mod keypair;
 
 //Serialize
 use std::collections::HashMap;

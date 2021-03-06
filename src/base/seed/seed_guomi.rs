@@ -1,11 +1,14 @@
 #![allow(unused)]
-use crate::base::seed::seed_trait::SeedI;
 use libsm::sm3::hash::Sm3Hash; 
 use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::misc::brorand::Brorand;
+use crate::base::seed::seed_trait::SeedI;
 
+// ----------------------------------------------------------------
+// 生成国密版本seed需要的常量
 static PREFIX_SEED  : [u8; 1] = [0x21];
 static PHRASE_LENGTH: usize   = 16;
+// ----------------------------------------------------------------
 
 pub struct SeedGuomi {
     seed_prefix: [u8; 1],

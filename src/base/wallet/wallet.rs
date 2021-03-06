@@ -22,7 +22,8 @@ impl <'a> WalletBuilder <'a> {
     pub fn build(&self) -> Wallet {
         //seed
         let seed = Seed::build(&self.config.key_type);
-
+        println!("生成seed: {}", seed);
+        
         //keypair
         let key_pair = KeypairBuilder::new(&seed, &self.config.key_type).build().unwrap();
 

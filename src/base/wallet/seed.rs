@@ -2,29 +2,21 @@ use crate::base::misc::brorand::Brorand;
 use crate::base::data::constants::PASSWORD_LEN;
 use crate::WalletType;
 use crate::base::wallet::{
-    generate_str,
-    generate_guomi
+    generate_str
 };
 use crate::base::wallet::keypair::*;
+use crate::base::seed::seed_guomi::SeedGuomi;
 
 // 33 = 0x21
 static H_SECP256K1: &[u8] = &[33];
 static H_ED25519:   &[u8] = &[33];
-static PREFIX_SEED: &[u8] = &[33];
 
 pub struct Seed {}
 impl Seed {
 
     pub fn build(wtype: &WalletType) -> String {
         //1. Generete PASSWORD_LEN random data
-        let _u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
-        let u = "Masterphrase".as_bytes().to_vec();
-
-        // let seed = Seed::generate_seed(Some("Masterphrase"));
-        // let seed_readable = Seed::human_readable_seed(&seed);
-        // println!("readable seed : {}", seed_readable);
-
-        // return seed_readable;
+        let u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
 
         // let u: Vec<u8> = [30, 231, 104, 55, 135, 220, 64, 82, 229, 64, 178, 68, 30, 175, 96, 164].to_vec();
         // key_type: SECP256K1,
@@ -48,9 +40,11 @@ impl Seed {
                 return generate_str(&mut version, &u);
             },
             &WalletType::SM2P256V1 => {
-                let version = PREFIX_SEED.to_vec();
-                let seed = generate_guomi(&version, &u);
-                println!("------------------seed: {}", seed);
+                let seed_guomi = SeedGuomi::new();
+    
+                let passphrase = Some("Masterphrase");
+                let seed = seed_guomi.build(passphrase);
+                
                 return seed;
             }
         }
