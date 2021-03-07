@@ -1,24 +1,23 @@
-/*
-trait SeedI 接口说明
-* generate_masterphrase
-用来生成seed所需要的种子， 输出为masterphrase。
-
-* human_readable_seed
-生成十六进制的seed
-
-* is_valid
-验证seed是否有效
-*/
-
 pub trait SeedI {
-    fn generate_masterphrase(&self, passphrase: Option<&str>) -> Vec<u8>;
-    fn human_readable_seed(&self, seed: &Vec<u8>) -> String;
-    // fn checksum(&self, digest: &Vec<u8>) -> Vec<u8>;
+    /*
+        需要passphrase(可选)
+
+        1、如果passphrase没有指定， 则随机生成16个字节的bytes。
+        2、【摘要计算】，得32字节的bytes。
+        3、取前128位。
+        4、全部大写的hex编码。
+    */
+    fn get_seed(&self, passphrase: Option<&str>) -> Vec<u8>;
+
+    /*
+        需要seed
+
+        1、SEEDPREFIX(0x21) 追加到 seed 前，共17字节，【摘要计算】。
+        2、计算checksum。
+        3、SEEDPREFIX(0x21)，seed，checksum合并, 做base58计算。
+        4、结果为29字节字符串。（如：shQRzBzq9akA2C2o4MKt1fM51WWs9）
+    */
+    fn human_seed(&self, seed: &Vec<u8>) -> String;
+
     fn is_valid(&self, readable_seed: &String) -> bool;
 }
- 
-// master_seed
-// humanSeed()
-
-// // master_seed_hex
-// getSeed

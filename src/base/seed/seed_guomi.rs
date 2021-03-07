@@ -26,21 +26,17 @@ impl SeedGuomi {
 
     pub fn build(&self, passphrase: Option<&str>) -> String {
         //第一步： 生成masterphrase
-        let masterphrase = self.generate_masterphrase(passphrase);
+        let masterphrase = self.get_seed(passphrase);
         println!("masterphrase seed: {:?}", masterphrase);
         println!("master_seed_hex: {:?}", hex::encode_upper(&masterphrase));
 
         //第二步： 生成base58后的seed
-        self.human_readable_seed(&masterphrase)
+        self.human_seed(&masterphrase)
     } 
 }
 
 impl SeedI for SeedGuomi {
-    /*
-    生成seed算法：
-    sm3(passphrase) 的结果取128位。
-    */
-    fn generate_masterphrase(&self, passphrase: Option<&str>) -> Vec<u8> {
+    fn get_seed(&self, passphrase: Option<&str>) -> Vec<u8> {
         // TOOD: warning: value assigned to `phrase_bytes` is never read
         let mut phrase_bytes: Vec<u8> = vec![0; 16];
         if let Some(phrase) = passphrase  {
@@ -58,14 +54,7 @@ impl SeedI for SeedGuomi {
         return seed.to_vec();
     }
 
-    /*
-    算法说明：
-    第一步： SEEDPREFIX(0x21) 追加到 seed 前，共17字节，对该数据进行 sm3计算出 hash。
-    第二步： 计算checksum。
-    第三步： SEEDPREFIX(0x21)，seed，checksum合并, 做base58计算。
-    第四步： 结果为29字节字符串。（如：shQRzBzq9akA2C2o4MKt1fM51WWs9）
-    */
-    fn human_readable_seed(&self, seed: &Vec<u8>) -> String {
+    fn human_seed(&self, seed: &Vec<u8>) -> String {
         //第一步
         let mut prefix_and_seed = Vec::new();
         prefix_and_seed.extend(&self.seed_prefix);
