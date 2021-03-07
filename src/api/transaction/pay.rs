@@ -67,7 +67,6 @@ impl PaymentI for Payment {
 
         // Get Account Seq
         let seq_rc = get_account_sequence(&self.config, self.account.clone());
-        
         if memo.is_some() {
             let upper_hex_memo = hex::encode(&memo.unwrap()).to_ascii_uppercase();
             let memos = MemosBuilder::new( upper_hex_memo ).build();
@@ -85,6 +84,8 @@ impl PaymentI for Payment {
             let memo   = memo_rc.clone();
 
             let sequence = seq_rc;
+            println!("sequence : {}", sequence);
+
             let tx_json = TxJson::new(from.take(), to.take(), amount.take(), sequence, memo.take());
             if self.config.local_sign {
                 let blob = SignTx::with_params(sequence, &secret.take()).pay(&tx_json);
@@ -93,12 +94,15 @@ impl PaymentI for Payment {
                 }
             } else {
                 if let Ok(command) = TransactionTx::new(secret.take(), tx_json).to_string() {
+                    println!("command: {:?}", command);
                     out.send(command).unwrap()
                 }
             }
 
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
+
+                println!("msg: {:?}", c);
                 copy.set(c.to_string());
 
                 out.close(CloseCode::Normal)
