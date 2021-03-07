@@ -8,7 +8,7 @@ use crate::WalletType;
 use crate::message::common::amount::Amount;
 use crate::base::base_config::*;
 use crate::base::wallet::address::{WalletAddress};
-use crate::base::wallet::seed::Seed;
+use crate::base::wallet::seed_builder::SeedBuilder;
 use hex;
 
 pub fn get_keypair_from_secret(secret: &String) -> Result<Keypair, &'static str> {
@@ -24,7 +24,7 @@ pub fn fetch_wtype_from_secret(_secret: &String) -> WalletType {
 
 /////////////////////////////////////////////////////////////////////////
 pub fn check_secret(secret: &String) -> Option<bool> {
-    Seed::check_secret(secret)
+    SeedBuilder::check_secret(secret)
 }
 
 pub fn check_address(address: &String) -> Option<bool> {

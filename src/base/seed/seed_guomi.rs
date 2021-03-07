@@ -23,16 +23,6 @@ impl SeedGuomi {
             phrase_length: PHRASE_LENGTH
         }
     }
-
-    pub fn build(&self, passphrase: Option<&str>) -> String {
-        //第一步： 生成masterphrase
-        let masterphrase = self.get_seed(passphrase);
-        println!("masterphrase seed: {:?}", masterphrase);
-        println!("master_seed_hex: {:?}", hex::encode_upper(&masterphrase));
-
-        //第二步： 生成base58后的seed
-        self.human_seed(&masterphrase)
-    } 
 }
 
 impl SeedI for SeedGuomi {
