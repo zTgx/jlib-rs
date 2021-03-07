@@ -6,20 +6,14 @@ use crate::base::seed::seed_trait::SeedI;
 use hex;
 use crate::base::crypto::traits::checksum::ChecksumI;
 use crate::base::address::constants::VersionEncoding;
-
-// ----------------------------------------------------------------
-// 生成国密版本seed需要的常量
-static PHRASE_LENGTH: usize   = 16;
-// ----------------------------------------------------------------
+use crate::base::address::constants::PASS_PHRASE_LENGTH;
 
 pub struct SeedGuomi {
-    phrase_length: usize
 }
 
 impl SeedGuomi {
     pub fn new() -> Self {
         SeedGuomi {
-            phrase_length: PHRASE_LENGTH
         }
     }
 }
@@ -33,7 +27,7 @@ impl SeedI for SeedGuomi {
             phrase_bytes = phrase.as_bytes().to_vec();
         } else {
             // 使用16字节的随机数作为种子， 生成seed
-            phrase_bytes = Brorand::brorand(self.phrase_length);
+            phrase_bytes = Brorand::brorand(PASS_PHRASE_LENGTH);
         }
         
         let mut hash = Sm3Hash::new(&phrase_bytes);
