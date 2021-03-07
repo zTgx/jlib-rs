@@ -5,21 +5,20 @@ use crate::base::misc::brorand::Brorand;
 use crate::base::seed::seed_trait::SeedI;
 use hex;
 use crate::base::crypto::traits::checksum::ChecksumI;
+use crate::base::address::constants::VersionEncoding;
 
 // ----------------------------------------------------------------
 // 生成国密版本seed需要的常量
-static PREFIX_SEED  : [u8; 1] = [0x21];
 static PHRASE_LENGTH: usize   = 16;
 // ----------------------------------------------------------------
 
 pub struct SeedGuomi {
-    seed_prefix: [u8; 1],
     phrase_length: usize
 }
+
 impl SeedGuomi {
     pub fn new() -> Self {
         SeedGuomi {
-            seed_prefix  : PREFIX_SEED,
             phrase_length: PHRASE_LENGTH
         }
     }
@@ -47,7 +46,7 @@ impl SeedI for SeedGuomi {
     fn human_seed(&self, seed: &Vec<u8>) -> String {
         //第一步
         let mut prefix_and_seed = Vec::new();
-        prefix_and_seed.extend(&self.seed_prefix);
+        prefix_and_seed.extend(&(VersionEncoding::VerFamilySeed as u8).to_be_bytes());
         prefix_and_seed.extend(seed);
     
         //第二步
@@ -55,7 +54,7 @@ impl SeedI for SeedGuomi {
 
         //第三步
         let mut target = Vec::new();
-        target.extend(&self.seed_prefix);  // 0x21
+        target.extend(&(VersionEncoding::VerFamilySeed as u8).to_be_bytes());  // 0x21
         target.extend(seed);         // seed
         target.extend(checksum);     // checksum
     

@@ -6,8 +6,7 @@ use libsm::sm2::ecc::EccCtx;
 use basex_rs::{BaseX, SKYWELL, Encode}; 
 use crate::base::crypto::traits::generator::GeneratorI;
 use crate::base::address::traits::address::AddressI;
-
-static PREFIX_PUBLIC_KEY: &[u8] = &[0];
+use crate::base::address::constants::VersionEncoding;
 
 // TODO:: 三个接口都在重复计算 GeneratorI中的数据！！！
 pub struct Address {
@@ -44,14 +43,14 @@ impl AddressI for Address {
         // println!("public_key_hex : {:?}", hex::encode(&public_key));
 
         let mut vec = Vec::new();
-        vec.extend_from_slice(&[35]);
+        vec.extend_from_slice(&(VersionEncoding::VerAccountPublic as u8).to_be_bytes());
         vec.extend_from_slice(&public_key);
     
         let checksum = self.checksum(&vec);
 
         //add: 0 + 20 + 4
         let mut vec: Vec<u8> = Vec::new();
-        vec.extend_from_slice(&[35]);
+        vec.extend_from_slice(&(VersionEncoding::VerAccountPublic as u8).to_be_bytes());
         vec.extend_from_slice(&public_key);
         vec.extend_from_slice(&checksum);
 
@@ -217,7 +216,7 @@ impl GeneratorI for Address {
 
         // 对 0 + 20 进行 hash
         let mut vec = Vec::new();
-        vec.extend_from_slice(PREFIX_PUBLIC_KEY);
+        vec.extend_from_slice(&(VersionEncoding::VerAccountId as u8).to_be_bytes());
         vec.extend_from_slice(&ripemd160_hash);
     
         let mut hash = Sm3Hash::new(&vec);
@@ -229,7 +228,7 @@ impl GeneratorI for Address {
 
         //add: 0 + 20 + 4
         let mut vec: Vec<u8> = Vec::new();
-        vec.extend_from_slice(PREFIX_PUBLIC_KEY);
+        vec.extend_from_slice(&(VersionEncoding::VerAccountId as u8).to_be_bytes());
         vec.extend_from_slice(&ripemd160_hash);
         vec.extend_from_slice(&checksum);
 
