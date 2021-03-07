@@ -103,6 +103,7 @@ impl GeneratorI for Address {
 
             let privx = Seckey::from_bytes_be(&digest);
 
+            //TODO:: 对 zero 值还需要进行判断！！！
             if privx < n {
                 let ret = privx.to_bytes_be();
 
@@ -140,6 +141,7 @@ impl GeneratorI for Address {
 
             let privx = Seckey::from_bytes_be(&digest);
 
+            //TODO:: 对 zero 值还需要进行判断！！！
             if privx < n {
                 let ret = privx.to_bytes_be();
 

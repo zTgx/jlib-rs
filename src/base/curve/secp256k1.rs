@@ -3,6 +3,7 @@ use crate::base::secp256k1::Secp256k1;
 use crate::base::curve::{entropy, scalar_multiple};
 use hex;
 
+//TODO::需要进行重构！！！
 static PRE_PRIVATE_KEY: &'static str = "00";
 
 pub struct J256k1 {}
