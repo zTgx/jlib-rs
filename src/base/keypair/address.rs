@@ -9,40 +9,46 @@ use crate::base::crypto::traits::generator::GeneratorI;
 static PREFIX_PUBLIC_KEY: &[u8] = &[0];
 
 pub struct Address {
-    public_key: Vec<u8>,
+    seed: Vec<u8>,
 }
 impl Address {
-    pub fn new() -> Self {
+    pub fn new(seed: &Vec<u8>) -> Self {
         Address {
-            public_key: Vec::new(),
+            seed: seed.to_vec(),
         }
     }
 
     // account id
-    pub fn human_account_id(&mut self, seed: &Vec<u8>) -> String {
-        let private_generator   = self.private_generator(&seed);
+    pub fn human_account_id(&mut self) -> String {
+        let private_generator   = self.private_generator(&self.seed);
         let public_generator    = self.public_generator(&private_generator);
         let public_key          = self.generate_public_key(&public_generator);
-        let account_id          = self.human_readable_public_key(&public_key);
+        // println!("第一遍public_key: {:?}", public_key);
+        // println!("public_key_hex : {:?}", hex::encode(&public_key));
 
-        self.public_key = public_key;
+        let account_id          = self.human_readable_public_key(&public_key);
 
         account_id
     }
 
     // public_key
     pub fn public_key(&self) -> String {
+        let private_generator   = self.private_generator(&self.seed);
+        let public_generator    = self.public_generator(&private_generator);
+        let public_key          = self.generate_public_key(&public_generator);
+        // println!("第3遍public_key: {:?}", public_key);
+        // println!("public_key_hex : {:?}", hex::encode(&public_key));
 
         let mut vec = Vec::new();
         vec.extend_from_slice(&[35]);
-        vec.extend_from_slice(&self.public_key);
+        vec.extend_from_slice(&public_key);
     
         let checksum = self.checksum(&vec);
 
         //add: 0 + 20 + 4
         let mut vec: Vec<u8> = Vec::new();
         vec.extend_from_slice(&[35]);
-        vec.extend_from_slice(&self.public_key);
+        vec.extend_from_slice(&public_key);
         vec.extend_from_slice(&checksum);
 
         //public key。
@@ -53,7 +59,13 @@ impl Address {
 
     // public_key_hex
     pub fn public_key_hex(&self) -> String {
-        hex::encode(&self.public_key)
+        let private_generator   = self.private_generator(&self.seed);
+        let public_generator    = self.public_generator(&private_generator);
+        let public_key          = self.generate_public_key(&public_generator);
+        // println!("第4遍public_key: {:?}", public_key);
+        // println!("public_key_hex : {:?}", hex::encode(&public_key));
+
+        hex::encode_upper(public_key)
     }
 }
 
@@ -128,9 +140,9 @@ impl GeneratorI for Address {
             if privx < n {
                 let ret = privx.to_bytes_be();
 
-                println!("ret: {:?}, seq = {}", ret, seq);
+                // println!("ret: {:?}, seq = {}", ret, seq);
 
-                println!("public_key_hash_generator = {:02X?}", ret);
+                // println!("public_key_hash_generator = {:02X?}", ret);
 
                 return ret;
             }
@@ -158,7 +170,7 @@ impl GeneratorI for Address {
 
     fn generate_private_key(&self, private_generator: &Vec<u8>, public_generator: &Vec<u8>) -> Vec<u8> {
         let private_key_hash_generator = self.public_key_hash_generator(&public_generator);
-        println!("private_key_hash_generator: {:?}", private_key_hash_generator);
+        // println!("private_key_hash_generator: {:?}", private_key_hash_generator);
 
         let a: Seckey = Seckey::from_bytes_be(&private_key_hash_generator);
         let b: Seckey = Seckey::from_bytes_be(&private_generator);
@@ -175,14 +187,14 @@ impl GeneratorI for Address {
         let m = Seckey::from_bytes_be(&public_key_hash_generator);
         let a: Pubkey = ecc_ctx.g_mul(&m);
 
-        println!("a: {:?}", ecc_ctx.point_to_bytes(&a, true));
+        // println!("a: {:?}", ecc_ctx.point_to_bytes(&a, true));
         let b = ecc_ctx.bytes_to_point(&public_generator).unwrap();
 
-        println!("b: {:?}", ecc_ctx.point_to_bytes(&b, true));
+        // println!("b: {:?}", ecc_ctx.point_to_bytes(&b, true));
 
         let c = ecc_ctx.add(&a, &b);
 
-        println!("c: {:?}", ecc_ctx.point_to_bytes(&c, true));
+        // println!("c: {:?}", ecc_ctx.point_to_bytes(&c, true));
 
         let public_key = ecc_ctx.point_to_bytes(&c, true);
         return public_key;
@@ -197,7 +209,7 @@ impl GeneratorI for Address {
         let ripemd160_hash: &mut [u8] = &mut [0u8;20];
         ripemd160.result(ripemd160_hash);
 
-        println!("ripp: {:?}", ripemd160_hash);
+        // println!("ripp: {:?}", ripemd160_hash);
 
         // 对 0 + 20 进行 hash
         let mut vec = Vec::new();

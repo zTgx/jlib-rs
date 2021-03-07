@@ -1,7 +1,7 @@
 
 use crate::base::wallet::config::*;
-use crate::base::wallet::keypair::*;
-use crate::base::wallet::address::WalletAddress;
+// use crate::base::wallet::keypair::*;
+// use crate::base::wallet::address::WalletAddress;
 use crate::base::wallet::seed_builder::SeedBuilder;
 
 use crate::WalletType;
@@ -35,14 +35,14 @@ impl WalletBuilder {
         // println!("master_seed: {:?}", master_seed);
         // println!("master_seed_hex: {:?}", hex::encode_upper(master_seed_hex));
 
-        let mut address = Address::new();
-        let account_id = address.human_account_id(&master_seed_hex);
+        let mut address = Address::new(&master_seed_hex.to_vec());
+        let account_id = address.human_account_id();
 
         let public_key = address.public_key();
         let public_key_hex = address.public_key_hex();
 
         //keypair
-        let key_pair = KeypairBuilder::new(&master_seed, &self.config.key_type).build().unwrap();
+        // let key_pair = KeypairBuilder::new(&master_seed, &self.config.key_type).build().unwrap();
 
         //address
         // let address = WalletAddress::build(&key_pair);
@@ -53,7 +53,7 @@ impl WalletBuilder {
             master_seed     : master_seed,
             master_seed_hex : hex::encode_upper(master_seed_hex),
             public_key      : public_key,
-            public_key_hex  : hex::encode_upper(public_key_hex),
+            public_key_hex  : public_key_hex,
         }
     }
 }
