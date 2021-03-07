@@ -2,7 +2,7 @@
 use libsm::sm3::hash::Sm3Hash; 
 use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::misc::brorand::Brorand;
-use crate::base::seed::seed_trait::SeedI;
+use crate::base::seed::traits::seed::SeedI;
 use hex;
 use crate::base::crypto::traits::checksum::ChecksumI;
 use crate::base::address::constants::VersionEncoding;

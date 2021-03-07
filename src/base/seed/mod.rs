@@ -1,2 +1,2 @@
-pub mod seed_trait;
-pub mod seed_guomi;
+pub mod traits;
+pub mod guomi;
