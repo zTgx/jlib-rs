@@ -2,9 +2,9 @@ use libsm::sm3::hash::Sm3Hash;
 use libsm::sm2::signature::{Pubkey, Seckey};
 use libsm::sm2::ecc::EccCtx;
 use basex_rs::{BaseX, SKYWELL, Encode}; 
-use crate::base::curve::ripemd160::JRipemd160;
 use hex;
 use crate::base::crypto::traits::generator::GeneratorI;
+use crate::base::curve::ripemd160::JRipemd160;
 
 // The order of the sm2p256v1 curve
 pub const CURVE_ORDER_SM2P256V1: &[u8; 32] = &[
