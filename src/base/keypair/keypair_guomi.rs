@@ -1,10 +1,10 @@
-use crate::base::keypair::keypair_trait::KeypairI;
 use libsm::sm3::hash::Sm3Hash; 
 use libsm::sm2::signature::{Pubkey, Seckey};
 use libsm::sm2::ecc::EccCtx;
 use basex_rs::{BaseX, SKYWELL, Encode}; 
 use crate::base::curve::ripemd160::JRipemd160;
 use hex;
+use crate::base::crypto::traits::generator::GeneratorI;
 
 // The order of the sm2p256v1 curve
 pub const CURVE_ORDER_SM2P256V1: &[u8; 32] = &[
@@ -41,11 +41,43 @@ impl KeypairGuomi {
         let public_generator  = self.public_generator(&private_generator);
         println!("public_generator: {:?}", public_generator);
 
-        let _private_key = self.generate_private_key(&private_generator, &public_generator);
+        let private_key = self.generate_private_key(&private_generator, &public_generator);
+        println!("private key: {:?}", hex::encode(private_key));
 
         let public_key  = self.generate_public_key(&public_generator);
         println!("public key: {:?}", public_key);
         println!("public_key_hex : {:?}", hex::encode(&public_key));
+
+        //public key
+        {
+            {
+                let mut vec = Vec::new();
+                vec.extend_from_slice(&[35]);
+                vec.extend_from_slice(&public_key);
+
+                println!("vec: {:?}", vec);
+                let mut hash = Sm3Hash::new(&vec);
+                let hash1 = hash.get_hash();
+                println!("hash1: {:?}", hash1);
+                let mut hash2 = Sm3Hash::new(&hash1);
+                let digest = hash2.get_hash();
+                println!("hash2: {:?}", digest);
+            
+                let checksum = digest.get(..4).unwrap().to_vec();
+                println!("checksum: {:?}", checksum);
+        
+                //add: 0 + 20 + 4
+                let mut vec: Vec<u8> = Vec::new();
+                vec.extend_from_slice(&[35]);
+                vec.extend_from_slice(&public_key);
+                vec.extend_from_slice(&checksum);
+        
+                //public key。
+                let pk = BaseX::new(SKYWELL).encode(&vec);
+                println!("------pk: {:?}", pk);
+    
+            }
+        }
         
 
         let human_readable_public_key = self.human_readable_public_key(&public_key);
@@ -60,7 +92,7 @@ impl KeypairGuomi {
     }
 }
 
-impl KeypairI for KeypairGuomi {
+impl GeneratorI for KeypairGuomi {
     fn private_generator(&self, masterphrase: &Vec<u8>)  -> Vec<u8> {
         // println!("xxx: {:?}", masterphrase);
 
@@ -120,7 +152,8 @@ impl KeypairI for KeypairGuomi {
                 let ret = privx.to_bytes_be();
 
                 println!("ret: {:?}, seq = {}", ret, seq);
-                // println!("hex: {}", hex::decode(&ret));
+
+                println!("public_key_hash_generator = {:02X?}", ret);
 
                 return ret;
             }
@@ -147,32 +180,15 @@ impl KeypairI for KeypairGuomi {
     }
 
     fn generate_private_key(&self, private_generator: &Vec<u8>, public_generator: &Vec<u8>) -> Vec<u8> {
-        let (seq, mut sub_seq) = (0u32, 0u32);
+        let private_key_hash_generator = self.public_key_hash_generator(&public_generator);
+        println!("private_key_hash_generator: {:?}", private_key_hash_generator);
 
-        let mut vec = Vec::new();
+        let a: Seckey = Seckey::from_bytes_be(&private_key_hash_generator);
+        let b: Seckey = Seckey::from_bytes_be(&private_generator);
+        let c = a + b;
 
-        loop {
-            vec.extend_from_slice(&public_generator);
-            vec.extend_from_slice(&seq.to_be_bytes());
-            vec.extend_from_slice(&sub_seq.to_be_bytes());
-    
-            let mut sm3_hash =  Sm3Hash::new(&vec);
-            let digest = sm3_hash.get_hash();
-    
-            if digest < *CURVE_ORDER_SM2P256V1 && digest > *ZERO_ORDER_SM2P256V1 {
-                let hash = digest.to_vec();
-
-                //与private generator相加，获得结果，32字节
-                let hash = Seckey::from_bytes_be(&hash);
-                let prg  = Seckey::from_bytes_be(&private_generator);
-
-                let add = hash + prg;
-                return add.to_bytes_be();
-            }
-
-            vec.clear();
-            sub_seq += 1;
-        }
+        let private_key = c.to_bytes_be();
+        return private_key;
     }
 
     fn generate_public_key(&self, public_generator: &Vec<u8>) -> Vec<u8> {
@@ -181,8 +197,16 @@ impl KeypairI for KeypairGuomi {
         let ecc_ctx = EccCtx::new();
         let m = Seckey::from_bytes_be(&public_key_hash_generator);
         let a: Pubkey = ecc_ctx.g_mul(&m);
+
+        println!("a: {:?}", ecc_ctx.point_to_bytes(&a, true));
         let b = ecc_ctx.bytes_to_point(&public_generator).unwrap();
+
+        println!("b: {:?}", ecc_ctx.point_to_bytes(&b, true));
+
         let c = ecc_ctx.add(&a, &b);
+
+        println!("c: {:?}", ecc_ctx.point_to_bytes(&c, true));
+
         let public_key = ecc_ctx.point_to_bytes(&c, true);
         return public_key;
     }
@@ -195,6 +219,8 @@ impl KeypairI for KeypairGuomi {
         ripemd160.input(&digest);
         let ripemd160_hash: &mut [u8] = &mut [0u8;20];
         ripemd160.result(ripemd160_hash);
+
+        println!("ripp: {:?}", ripemd160_hash);
 
         // 对 0 + 20 进行 hash
         let mut vec = Vec::new();

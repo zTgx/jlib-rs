@@ -1,5 +1,4 @@
 extern crate secp256k1;
-extern crate crypto;
 extern crate ring;
 
 pub mod data;
@@ -14,6 +13,7 @@ pub mod parse_tx;
 
 pub mod seed;
 pub mod keypair;
+pub mod crypto;
 
 //Serialize
 use std::collections::HashMap;

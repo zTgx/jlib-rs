@@ -51,6 +51,7 @@ extern crate basex_rs;
 extern crate hex;
 extern crate phf;
 extern crate libsm;
+extern crate crypto;
 
 // exports
 pub mod api;

@@ -19,3 +19,9 @@ pub trait SeedI {
     fn checksum(&self, digest: &Vec<u8>) -> Vec<u8>;
     fn is_valid(&self, readable_seed: &String) -> bool;
 }
+ 
+// master_seed
+// humanSeed()
+
+// // master_seed_hex
+// getSeed

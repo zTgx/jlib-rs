@@ -1,5 +1,5 @@
-use crate::base::crypto::ripemd160::Ripemd160 ;
-use crate::base::crypto::digest::Digest;
+use crypto::ripemd160::Ripemd160 ;
+use crypto::digest::Digest;
 
 pub struct JRipemd160 {
     pub jripemd160x: Ripemd160,

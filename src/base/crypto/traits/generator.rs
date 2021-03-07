@@ -1,4 +1,5 @@
-pub trait KeypairI {
+
+pub trait GeneratorI {
     /*
         需要：seed
         1.	seed (16bytes)+ seq (4bytes) seq=0
