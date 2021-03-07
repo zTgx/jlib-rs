@@ -4,6 +4,7 @@ use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::misc::brorand::Brorand;
 use crate::base::seed::seed_trait::SeedI;
 use hex;
+use crate::base::crypto::traits::checksum::ChecksumI;
 
 // ----------------------------------------------------------------
 // 生成国密版本seed需要的常量
@@ -83,23 +84,19 @@ impl SeedI for SeedGuomi {
         BaseX::new(SKYWELL).encode(target.as_mut_slice())
     }
 
-    /*
-    计算checksum
-    输入参数： PREFIX_SEED + seed
-    步骤： 连续2次sm3操作， 取前四个字节， 作为checksum。
-    */
+    fn is_valid(&self, _readable_seed: &String) -> bool {
+        true
+    }
+}
+
+impl ChecksumI for SeedGuomi {
     fn checksum(&self, digest: &Vec<u8>) -> Vec<u8> {
         let mut hash = Sm3Hash::new(digest.as_slice());
         let hash1 = hash.get_hash();
         let mut hash2 = Sm3Hash::new(&hash1);
         let digest = hash2.get_hash();
 
-    
         let checksum = digest.get(..4).unwrap().to_vec();
         return checksum;
-    }
-
-    fn is_valid(&self, _readable_seed: &String) -> bool {
-        true
     }
 }
