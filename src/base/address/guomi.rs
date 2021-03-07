@@ -9,6 +9,27 @@ use crate::base::address::traits::address::AddressI;
 use crate::base::address::constants::VersionEncoding;
 
 // TODO:: 三个接口都在重复计算 GeneratorI中的数据！！！
+// 用内置一个Data来缓存计算的generator.
+type Blob = Vec<u8>;
+struct InnerData {
+    data: Blob,
+}
+impl InnerData {
+    pub fn new() -> Self {
+        InnerData {
+            data: Blob::new()
+        }
+    }
+
+    pub fn set(&mut self, data: Blob) {
+
+    }
+
+    pub fn get(&self) -> Blob {
+        vec![]
+    }
+}
+
 pub struct Address {
     seed: Vec<u8>,
 }
