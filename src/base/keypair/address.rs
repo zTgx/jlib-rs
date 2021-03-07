@@ -119,7 +119,7 @@ impl GeneratorI for Address {
         } // end while    
     }
 
-    fn public_key_hash_generator(&self, public_generator: &Vec<u8>)  -> Vec<u8> {
+    fn public_key_root_generator(&self, public_generator: &Vec<u8>)  -> Vec<u8> {
         let seq = 0u32;
         let mut sub_seq = 0u32;
 
@@ -142,7 +142,7 @@ impl GeneratorI for Address {
 
                 // println!("ret: {:?}, seq = {}", ret, seq);
 
-                // println!("public_key_hash_generator = {:02X?}", ret);
+                // println!("public_key_root_generator = {:02X?}", ret);
 
                 return ret;
             }
@@ -169,7 +169,7 @@ impl GeneratorI for Address {
     }
 
     fn generate_private_key(&self, private_generator: &Vec<u8>, public_generator: &Vec<u8>) -> Vec<u8> {
-        let private_key_hash_generator = self.public_key_hash_generator(&public_generator);
+        let private_key_hash_generator = self.public_key_root_generator(&public_generator);
         // println!("private_key_hash_generator: {:?}", private_key_hash_generator);
 
         let a: Seckey = Seckey::from_bytes_be(&private_key_hash_generator);
@@ -181,10 +181,10 @@ impl GeneratorI for Address {
     }
 
     fn generate_public_key(&self, public_generator: &Vec<u8>) -> Vec<u8> {
-        let public_key_hash_generator = self.public_key_hash_generator(&public_generator);
+        let public_key_root_generator = self.public_key_root_generator(&public_generator);
 
         let ecc_ctx = EccCtx::new();
-        let m = Seckey::from_bytes_be(&public_key_hash_generator);
+        let m = Seckey::from_bytes_be(&public_key_root_generator);
         let a: Pubkey = ecc_ctx.g_mul(&m);
 
         // println!("a: {:?}", ecc_ctx.point_to_bytes(&a, true));

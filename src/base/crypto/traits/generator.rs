@@ -55,5 +55,12 @@ pub trait GeneratorI {
     */
     fn human_readable_public_key(&self, public_key: &Vec<u8>) -> String;
 
-    fn public_key_hash_generator(&self, public_generator: &Vec<u8>)  -> Vec<u8>;
+    /*
+        需要：public generator
+        1.	Public generator + 4字节seq + 4 字节 subseq， seq=subseq=0
+        2.	SHA512Half
+        3.	与椭圆最大数比，如果大于，subseq+1，重复步骤1
+        4.	获得hash，32字节
+    */
+    fn public_key_root_generator(&self, public_generator: &Vec<u8>)  -> Vec<u8>;
 }
