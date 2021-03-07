@@ -7,12 +7,9 @@ use basex_rs::{BaseX, SKYWELL, Decode};
 use crate::base::ring::{digest};
 use crate::base::data::constants::{
     CURVE_ORDER, 
-    CURVE_ZERO,
-
-    CURVE_SM2_ORDER
+    CURVE_ZERO
 };
 
-use libsm::sm3::hash::Sm3Hash;
 use libsm::sm2::ecc::EccCtx;
 use libsm::sm2::signature::Seckey;
 
@@ -52,33 +49,6 @@ pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
         zero.extend_from_slice(CURVE_ZERO);
         if key.as_slice() < CURVE_ORDER && key > zero {
             return key;
-        }
-
-        i += 1;
-    } // end while
-}
-
-// 生成Private generator
-pub fn scalar_sm2(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
-    let mut i = 0u32;
-    loop {
-        // We hash the bytes to find a 256 bit number, looping until we are sure it
-        // is less than the order of the curve.
-
-        let mut vec = Vec::new();
-        vec.extend_from_slice(&bytes);
-        vec.extend_from_slice(&i.to_be_bytes());
-
-        if let Some(x) = discrim {
-            //as i32
-            vec.extend_from_slice(&(x as i32).to_be_bytes());
-        }
-
-        let mut ctx = Sm3Hash::new(&vec);
-        let key = ctx.get_hash();
-
-        if key < *CURVE_SM2_ORDER && key > *CURVE_ZERO {
-            return key.to_vec();
         }
 
         i += 1;
