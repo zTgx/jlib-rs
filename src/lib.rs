@@ -52,6 +52,7 @@ extern crate hex;
 extern crate phf;
 extern crate libsm;
 extern crate crypto;
+extern crate rfc1751;
 
 // exports
 pub mod api;

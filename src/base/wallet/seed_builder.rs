@@ -66,6 +66,13 @@ impl SeedBuilder {
             }
         }
     }
+
+    pub fn human_seed_rfc1751(&self, seed: &Vec<u8>) -> String {
+        let seed_guomi = SeedGuomi::new();
+        let human_seed_rfc1751 = seed_guomi.human_seed_rfc1751(&seed);
+
+        return human_seed_rfc1751;
+    }
 }
 
 impl SeedBuilder {

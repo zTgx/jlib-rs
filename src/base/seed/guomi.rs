@@ -7,6 +7,7 @@ use hex;
 use crate::base::crypto::traits::checksum::ChecksumI;
 use crate::base::address::constants::VersionEncoding;
 use crate::base::address::constants::PASS_PHRASE_LENGTH;
+use rfc1751::ToRfc1751;
 
 pub struct SeedGuomi {
 }
@@ -54,6 +55,11 @@ impl SeedI for SeedGuomi {
     
         //第四步
         BaseX::new(SKYWELL).encode(target.as_mut_slice())
+    }
+
+    fn human_seed_rfc1751(&self, seed: &Vec<u8>) -> String {
+        let human_seed_rfc1751 = seed.to_rfc1751().unwrap();
+        return human_seed_rfc1751;
     }
 
     fn is_valid(&self, _readable_seed: &String) -> bool {

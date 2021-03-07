@@ -19,5 +19,13 @@ pub trait SeedI {
     */
     fn human_seed(&self, seed: &Vec<u8>) -> String;
 
+    /*
+        需要seed
+
+        1、计算rfc1751
+        2、结果为大写字符串
+    */
+    fn human_seed_rfc1751(&self, seed: &Vec<u8>) -> String;
+
     fn is_valid(&self, readable_seed: &String) -> bool;
 }

@@ -32,6 +32,8 @@ impl WalletBuilder {
         
         let master_seed_hex = seed_builder.get_seed(passphrase);
         let master_seed     = seed_builder.human_seed(&master_seed_hex);
+        let human_seed_rfc1751 = seed_builder.human_seed_rfc1751(&master_seed_hex);
+        println!("human_seed_rfc1751: {:?}", human_seed_rfc1751);
 
         // println!("master_seed: {:?}", master_seed);
         // println!("master_seed_hex: {:?}", hex::encode_upper(master_seed_hex));
@@ -51,6 +53,7 @@ impl WalletBuilder {
         Wallet {
             key_type        : self.config.key_type,
             account_id      : account_id,
+            master_key      : human_seed_rfc1751,
             master_seed     : master_seed,
             master_seed_hex : hex::encode_upper(master_seed_hex),
             public_key      : public_key,
@@ -63,8 +66,10 @@ impl WalletBuilder {
 pub struct Wallet {
     pub key_type    : WalletType,
     account_id      : String,
+    master_key      : String,
     master_seed     : String,
     master_seed_hex : String,
+
     public_key      : String,
     public_key_hex  : String,
 }
