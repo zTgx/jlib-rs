@@ -7,6 +7,7 @@ use crate::base::wallet::seed_builder::SeedBuilder;
 use crate::WalletType;
 use hex;
 use crate::base::keypair::address::Address;
+use crate::base::address::traits::address::AddressI;
 
 //WalletBuilder
 #[derive(Debug)]
@@ -35,7 +36,7 @@ impl WalletBuilder {
         // println!("master_seed: {:?}", master_seed);
         // println!("master_seed_hex: {:?}", hex::encode_upper(master_seed_hex));
 
-        let mut address = Address::new(&master_seed_hex.to_vec());
+        let address = Address::new(&master_seed_hex.to_vec());
         let account_id = address.human_account_id();
 
         let public_key = address.public_key();

@@ -5,9 +5,11 @@ use libsm::sm2::signature::{Pubkey, Seckey};
 use libsm::sm2::ecc::EccCtx;
 use basex_rs::{BaseX, SKYWELL, Encode}; 
 use crate::base::crypto::traits::generator::GeneratorI;
+use crate::base::address::traits::address::AddressI;
 
 static PREFIX_PUBLIC_KEY: &[u8] = &[0];
 
+// TODO:: 三个接口都在重复计算 GeneratorI中的数据！！！
 pub struct Address {
     seed: Vec<u8>,
 }
@@ -17,9 +19,11 @@ impl Address {
             seed: seed.to_vec(),
         }
     }
+}
 
+impl AddressI for Address {
     // account id
-    pub fn human_account_id(&mut self) -> String {
+    fn human_account_id(&self) -> String {
         let private_generator   = self.private_generator(&self.seed);
         let public_generator    = self.public_generator(&private_generator);
         let public_key          = self.generate_public_key(&public_generator);
@@ -32,7 +36,7 @@ impl Address {
     }
 
     // public_key
-    pub fn public_key(&self) -> String {
+    fn public_key(&self) -> String {
         let private_generator   = self.private_generator(&self.seed);
         let public_generator    = self.public_generator(&private_generator);
         let public_key          = self.generate_public_key(&public_generator);
@@ -58,7 +62,7 @@ impl Address {
     }
 
     // public_key_hex
-    pub fn public_key_hex(&self) -> String {
+    fn public_key_hex(&self) -> String {
         let private_generator   = self.private_generator(&self.seed);
         let public_generator    = self.public_generator(&private_generator);
         let public_key          = self.generate_public_key(&public_generator);
