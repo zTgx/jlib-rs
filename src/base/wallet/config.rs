@@ -1,4 +1,4 @@
-use crate::WalletType;
+use crate::base::wallet::wallet::WalletType;
 
 #[derive(Debug, Copy, Clone)]
 pub struct WalletConfig {

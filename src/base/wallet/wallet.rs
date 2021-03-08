@@ -4,7 +4,6 @@ use crate::base::wallet::config::*;
 // use crate::base::wallet::address::WalletAddress;
 
 use hex;
-use crate::WalletType;
 // use crate::base::address::guomi::Address;
 use crate::base::address::traits::address::AddressI;
 use crate::base::seed::builder::SeedBuilder;
@@ -77,4 +76,15 @@ impl Wallet {
         let config = WalletConfig::new(wtype);
         WalletBuilder::new(config).build()
     }
+}
+
+#[derive(Debug, Copy, Clone)]
+pub enum WalletType {
+    SECP256K1,
+    ED25519,
+    SM2P256V1, // sm2p256v1
+}
+
+pub fn generate_wallet(wtype: WalletType) -> Wallet {
+    Wallet::new(wtype)
 }

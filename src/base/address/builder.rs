@@ -1,5 +1,5 @@
 use crate::base::address::traits::address::AddressI;
-use crate::WalletType;
+use crate::base::wallet::wallet::WalletType;
 use crate::base::address::guomi::AddressGuomi;
 
 pub struct AddressBuilder {

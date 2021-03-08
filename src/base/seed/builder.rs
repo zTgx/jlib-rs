@@ -1,6 +1,6 @@
 use crate::base::misc::brorand::Brorand;
 use crate::base::data::constants::PASSWORD_LEN;
-use crate::WalletType;
+use crate::base::wallet::wallet::WalletType;
 use crate::base::wallet::{
     generate_str
 };
