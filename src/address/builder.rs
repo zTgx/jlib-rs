@@ -1,5 +1,7 @@
-use crate::address::traits::address::AddressI;
 use crate::wallet::wallet::WalletType;
+
+use crate::address::traits::address::AddressI;
+use crate::address::traits::address::AddressCheckI;
 use crate::address::guomi::AddressGuomi;
 
 pub struct AddressBuilder {
@@ -31,6 +33,9 @@ impl AddressBuilder {
     }
 }
 
+// ----------------------------------------------------------------------------------------------------------
+// AddressBuilder 对 trait AddressI 的实现。
+// ----------------------------------------------------------------------------------------------------------
 impl AddressI for AddressBuilder {
     fn human_account_id(&self) -> String {
         self.address.human_account_id()
@@ -42,5 +47,14 @@ impl AddressI for AddressBuilder {
     
     fn public_key_hex(&self) -> String {
         self.address.public_key_hex()
+    }
+}
+
+// ----------------------------------------------------------------------------------------------------------
+// AddressBuilder 对 trait AddressCheckI 的实现。
+// ----------------------------------------------------------------------------------------------------------
+impl AddressCheckI for AddressBuilder {
+    fn check(&self, address: &String) -> bool {
+        true
     }
 }

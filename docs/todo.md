@@ -1,5 +1,5 @@
 
-- [ ] 30, 重构seed builder,参考address builder
+- [x] 30, 重构seed builder,参考address builder
 - [ ] 29, 椭圆点和zero的比较
 - [ ] 28, GeneratorI 重构下
 - [ ] 27, 代码设计文档写一下
