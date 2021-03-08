@@ -1,14 +1,8 @@
 use crate::base::address::traits::address::AddressI;
 use crate::WalletType;
-use crate::base::misc::brorand::Brorand;
-use crate::base::data::constants::PASSWORD_LEN;
-use crate::base::wallet::{
-    generate_str
-};
-use crate::base::address::guomi::Address;
+use crate::base::address::guomi::AddressGuomi;
 
 pub struct AddressBuilder {
-    seed_type : WalletType,
     address   : Box<dyn AddressI>,
 }
 
@@ -17,7 +11,6 @@ impl AddressBuilder {
         let address = AddressBuilder::build_address(seed_type, &seed);
         
         AddressBuilder {
-            seed_type: seed_type,
             address  : address,
         }
     }
@@ -25,14 +18,14 @@ impl AddressBuilder {
     fn build_address(seed_type: WalletType, seed: &Vec<u8>) -> Box<dyn AddressI> {
         match seed_type {
             WalletType::ED25519 => {
-                return Box::new(Address::new(&seed));
+                return Box::new(AddressGuomi::new(&seed));
             },
 
             WalletType::SECP256K1 => {
-                return Box::new(Address::new(&seed));
+                return Box::new(AddressGuomi::new(&seed));
             },
             WalletType::SM2P256V1 => {
-                return Box::new(Address::new(&seed));
+                return Box::new(AddressGuomi::new(&seed));
             }
         }
     }

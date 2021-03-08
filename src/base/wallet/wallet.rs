@@ -5,7 +5,7 @@ use crate::base::wallet::config::*;
 
 use hex;
 use crate::WalletType;
-use crate::base::address::guomi::Address;
+// use crate::base::address::guomi::Address;
 use crate::base::address::traits::address::AddressI;
 use crate::base::seed::builder::SeedBuilder;
 use crate::base::address::builder::AddressBuilder;

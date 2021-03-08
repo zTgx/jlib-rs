@@ -30,18 +30,18 @@ impl InnerData {
     }
 }
 
-pub struct Address {
+pub struct AddressGuomi {
     seed: Vec<u8>,
 }
-impl Address {
+impl AddressGuomi {
     pub fn new(seed: &Vec<u8>) -> Self {
-        Address {
+        AddressGuomi {
             seed: seed.to_vec(),
         }
     }
 }
 
-impl AddressI for Address {
+impl AddressI for AddressGuomi {
     // account id
     fn human_account_id(&self) -> String {
         let private_generator   = self.private_generator(&self.seed);
@@ -93,7 +93,7 @@ impl AddressI for Address {
     }
 }
 
-impl ChecksumI for Address {
+impl ChecksumI for AddressGuomi {
     fn checksum(&self, digest: &Vec<u8>) -> Vec<u8> {
         let mut hash = Sm3Hash::new(digest.as_slice());
         let hash1 = hash.get_hash();
@@ -105,7 +105,7 @@ impl ChecksumI for Address {
     }
 }
 
-impl GeneratorI for Address {
+impl GeneratorI for AddressGuomi {
     fn private_generator(&self, masterphrase: &Vec<u8>)  -> Vec<u8> {
         // println!("xxx: {:?}", masterphrase);
 
