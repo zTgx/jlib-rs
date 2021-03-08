@@ -6,7 +6,7 @@ use serde_json::{Value};
 use crate::message::query::order_book::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
-use crate::Config;
+use crate::api::config::Config;
 
 pub trait OrderBookI {
     fn request_order_book<F>(&self, config: Config, gets: OrderBookItem, pays: OrderBookItem, op: F)

@@ -3,7 +3,7 @@ use jlib::message::transaction::set_brokerage::{SetBrokerageTxResponse, SetBroke
 use jlib::api::transaction::set_brokerage::*;
 use jlib::message::common::amount::Amount;
 
-use jlib::Config;
+use jlib::api::config::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 fn main() {

@@ -7,7 +7,7 @@ use serde_json::{Value};
 
 use crate::message::common::command_trait::CommandConversion; 
 use crate::message::subscribe::message::{SubscribeResponse, SubscribeCommand};
-use crate::Config;
+use crate::api::config::Config;
 
 pub struct Client {
     out: Sender,

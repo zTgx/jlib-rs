@@ -1,7 +1,7 @@
 extern crate jlib;
 use jlib::api::query::account_tx::*;
 
-use jlib::Config;
+use jlib::api::config::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 //Ok && Err

@@ -3,7 +3,7 @@ use jlib::message::transaction::transaction::{TransactionTxResponse, PaymentSide
 use jlib::api::transaction::pay::*;
 use jlib::message::common::amount::Amount;
 
-use jlib::Config;
+use jlib::api::config::Config;
 pub static TEST_SERVER: &'static str = "ws://123.57.219.73:5040";
 
 fn main() {

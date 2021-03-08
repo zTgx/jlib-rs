@@ -3,7 +3,7 @@ extern crate jlib;
 use jlib::api::contracts::solidity::{SolidityCall, SolidityInvokeResponse};
 use jlib::api::contracts::message::Arg;
 
-use jlib::Config;
+use jlib::api::config::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 fn main() {

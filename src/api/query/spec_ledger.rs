@@ -6,7 +6,7 @@ use serde_json::{Value};
 use crate::message::query::spec_ledger::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
-use crate::Config;
+use crate::api::config::Config;
 
 pub trait SpecLedgerI {
     fn request_ledger<F>(&self, config: Config, ledger_index: Option<u64>, ledger_hash: Option<String>, transactions: bool, op: F)

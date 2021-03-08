@@ -19,7 +19,7 @@ use ws::{connect, CloseCode};
 use serde_json::Value;
 use message::common::command_trait::CommandConversion;
 use crate::base::misc::util::{downcast_to_string};
-use crate::Config;
+use crate::api::config::Config;
 
 pub struct SolidityDeploy <'a> {
     pub config  : Config,

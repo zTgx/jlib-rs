@@ -2,7 +2,7 @@ extern crate jlib;
 use jlib::api::transaction::cancel_offer::*;
 use jlib::message::transaction::offer_cancel::{OfferCancelTxResponse, OfferCancelSideKick};
 
-use jlib::Config;
+use jlib::api::config::Config;
 pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
 
 fn main() {

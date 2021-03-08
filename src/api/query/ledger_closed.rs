@@ -6,7 +6,7 @@ use serde_json::{Value};
 use crate::message::query::ledger_closed::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
-use crate::Config;
+use crate::api::config::Config;
 
 pub trait LedgerClosedI {
     fn request_ledger_closed<F>(&self, config: Config, op: F)

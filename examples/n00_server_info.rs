@@ -1,7 +1,7 @@
 extern crate jlib;
 use jlib::api::query::server_info::*;
 
-use jlib::Config;
+use jlib::api::config::Config;
 pub static TEST_SERVER: &'static str = "ws://47.104.108.255:5020";
 
 fn main() {

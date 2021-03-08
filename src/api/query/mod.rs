@@ -14,7 +14,7 @@ use crate::base::misc::util::{downcast_to_usize};
 use api::query::account_info::{AccountInfo, AccountInfoI};
 use std::cell::Cell;
 use std::rc::Rc;
-use crate::Config;
+use crate::api::config::Config;
 
 pub fn get_account_sequence(config: &Config, account: String) -> u32 {
     let seq_rc = Rc::new(Cell::new(0u64));

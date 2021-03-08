@@ -6,7 +6,7 @@ use serde_json::{Value};
 use crate::message::query::account_tums::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
-use crate::Config;
+use crate::api::config::Config;
 
 pub trait AccountTumsI {
     fn request_account_tums<F>(&self, config: Config, account: String, op: F)

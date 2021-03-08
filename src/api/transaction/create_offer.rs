@@ -3,7 +3,7 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::Config;
+use crate::api::config::Config;
 use crate::message::transaction::offer_create::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::Amount;

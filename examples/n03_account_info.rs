@@ -2,7 +2,7 @@ extern crate jlib;
 use jlib::api::query::account_info::*;
 use jlib::message::query::account_info::{RequestAccountInfoResponse, AccounInfoSideKick};
 
-use jlib::Config;
+use jlib::api::config::Config;
 pub static TEST_SERVER: &'static str = "ws://123.57.219.73:5040";
 
 fn main() {

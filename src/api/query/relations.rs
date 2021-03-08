@@ -6,7 +6,7 @@ use serde_json::{Value};
 use crate::message::query::relations::*;
 use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
-use crate::Config;
+use crate::api::config::Config;
 
 pub trait RelationsI {
     fn request_account_relations<F>(&self, config: Config, account: String, relation_type: Option<String>, op: F)
