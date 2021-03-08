@@ -1,3 +1,6 @@
+/*
+    生成seed必需要实现的trait
+*/
 pub trait SeedI {
     /*
         需要passphrase(可选)
@@ -28,4 +31,18 @@ pub trait SeedI {
     fn human_seed_rfc1751(&self, seed: &Vec<u8>) -> String;
 
     fn is_valid(&self, readable_seed: &String) -> bool;
+}
+
+//----------------------------------------------------------------------------------------------------------------
+/*
+    Seed的有效性检查trait
+*/
+pub trait SeedCheckI {
+    /*
+        需要seed
+        
+        * wallet数据结构中的 master_seed字段
+        * ssyMgBnugfGybuKvzwqnfTNE773Eo
+    */
+    fn check(seed: &String) -> bool;
 }

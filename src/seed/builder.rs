@@ -1,92 +1,74 @@
-use crate::base::misc::brorand::Brorand;
-use crate::base::data::constants::PASSWORD_LEN;
-use crate::wallet::wallet::WalletType;
-use crate::wallet::{
-    generate_str
-};
 use crate::wallet::keypair::*;
+
 use crate::seed::guomi::SeedGuomi;
 use crate::seed::traits::seed::SeedI;
+use crate::seed::traits::seed::SeedCheckI;
 
-
-// 33 = 0x21
-static H_SECP256K1: &[u8] = &[33];
-static H_ED25519:   &[u8] = &[33];
+use crate::wallet::wallet::WalletType;
 
 pub struct SeedBuilder {
-    seed_type : WalletType,
+    seed: Box<dyn SeedI>
 }
 impl SeedBuilder {
     pub fn new(seed_type: WalletType) -> Self {
+        let seed = SeedBuilder::build(seed_type);
+
         SeedBuilder {
-            seed_type : seed_type
+            seed : seed
         }
     }
 
-    pub fn get_seed(&self, passphrase: Option<&str>) -> Vec<u8> {
-        match &self.seed_type {
-            &WalletType::ED25519 => {
-                let mut version = H_ED25519.to_vec();
-                let u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
-                return generate_str(&mut version, &u).as_bytes().to_vec();
+    fn build(seed_type: WalletType) -> Box<dyn SeedI> {
+        match seed_type {
+            WalletType::ED25519 => {
+                return Box::new(SeedGuomi::new());
             },
-
-            &WalletType::SECP256K1 => {
-                let mut version = H_SECP256K1.to_vec();
-                let u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
-                return generate_str(&mut version, &u).as_bytes().to_vec();
+            WalletType::SECP256K1 => {
+                return Box::new(SeedGuomi::new());
             },
-            &WalletType::SM2P256V1 => {
-                let seed_guomi = SeedGuomi::new();
-                let seed = seed_guomi.get_seed(passphrase);
-
-                return seed;
+            WalletType::SM2P256V1 => {
+                return Box::new(SeedGuomi::new());
             }
         }
-    }
-
-    pub fn human_seed(&self, seed: &Vec<u8>) -> String {
-        match &self.seed_type {
-            &WalletType::ED25519 => {
-                let mut version = H_ED25519.to_vec();
-                let u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
-                return generate_str(&mut version, &u);
-            },
-
-            &WalletType::SECP256K1 => {
-                let mut version = H_SECP256K1.to_vec();
-                let u: Vec<u8> = Brorand::brorand(PASSWORD_LEN);
-                return generate_str(&mut version, &u);
-            },
-            &WalletType::SM2P256V1 => {
-                let seed_guomi = SeedGuomi::new();
-                let seed = seed_guomi.human_seed(&seed);
-
-                return seed;
-            }
-        }
-    }
-
-    pub fn human_seed_rfc1751(&self, seed: &Vec<u8>) -> String {
-        let seed_guomi = SeedGuomi::new();
-        let human_seed_rfc1751 = seed_guomi.human_seed_rfc1751(&seed);
-
-        return human_seed_rfc1751;
     }
 }
 
-impl SeedBuilder {
-    pub fn check_secret(seed: &String) -> Option<bool> {
+// ----------------------------------------------------------------------------------------------------------
+// SeedBuilder 对 trait SeedI的实现。
+// ----------------------------------------------------------------------------------------------------------
+impl SeedI for SeedBuilder {
+    fn get_seed(&self, passphrase: Option<&str>) -> Vec<u8> {
+        return self.seed.get_seed(passphrase);
+    }
+
+    fn human_seed(&self, seed: &Vec<u8>) -> String {
+        return self.seed.human_seed(&seed);
+    }
+
+    fn human_seed_rfc1751(&self, seed: &Vec<u8>) -> String {
+        return self.seed.human_seed_rfc1751(&seed);
+    }
+
+    fn is_valid(&self, _readable_seed: &String) -> bool {
+        true
+    }
+}
+
+// ----------------------------------------------------------------------------------------------------------
+// SeedBuilder 对 trait SeedCheckI的实现。
+// ----------------------------------------------------------------------------------------------------------
+impl SeedCheckI for SeedBuilder {
+    fn check(seed: &String) -> bool {
         let key_pair = KeypairBuilder::new(&seed, &WalletType::SECP256K1).build();
         if key_pair.is_ok() {
-            return Some(true);
+            return true;
         }
 
         let key_pair = KeypairBuilder::new(&seed, &WalletType::ED25519).build();
         if key_pair.is_ok() {
-            return Some(true);
+            return true;
         }
 
-        None
+        false
     }
 }
