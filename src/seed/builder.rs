@@ -48,10 +48,6 @@ impl SeedI for SeedBuilder {
     fn human_seed_rfc1751(&self, seed: &Vec<u8>) -> String {
         return self.seed.human_seed_rfc1751(&seed);
     }
-
-    fn is_valid(&self, _readable_seed: &String) -> bool {
-        true
-    }
 }
 
 // ----------------------------------------------------------------------------------------------------------

@@ -60,10 +60,6 @@ impl SeedI for SeedGuomi {
         let human_seed_rfc1751 = seed.to_rfc1751().unwrap();
         return human_seed_rfc1751;
     }
-
-    fn is_valid(&self, _readable_seed: &String) -> bool {
-        true
-    }
 }
 
 impl ChecksumI for SeedGuomi {

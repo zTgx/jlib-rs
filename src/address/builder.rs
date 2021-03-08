@@ -54,7 +54,7 @@ impl AddressI for AddressBuilder {
 // AddressBuilder 对 trait AddressCheckI 的实现。
 // ----------------------------------------------------------------------------------------------------------
 impl AddressCheckI for AddressBuilder {
-    fn check(&self, address: &String) -> bool {
+    fn check(&self, _address: &String) -> bool {
         true
     }
 }
