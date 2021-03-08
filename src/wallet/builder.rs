@@ -1,7 +1,7 @@
 use hex;
-use crate::base::address::traits::address::AddressI;
+use crate::address::traits::address::AddressI;
 use crate::base::seed::builder::SeedBuilder;
-use crate::base::address::builder::AddressBuilder;
+use crate::address::builder::AddressBuilder;
 use crate::wallet::wallet::{
     Wallet,
     WalletType

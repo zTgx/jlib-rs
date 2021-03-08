@@ -5,8 +5,8 @@ use libsm::sm2::signature::{Pubkey, Seckey};
 use libsm::sm2::ecc::EccCtx;
 use basex_rs::{BaseX, SKYWELL, Encode}; 
 use crate::base::crypto::traits::generator::GeneratorI;
-use crate::base::address::traits::address::AddressI;
-use crate::base::address::constants::VersionEncoding;
+use crate::address::traits::address::AddressI;
+use crate::address::constants::VersionEncoding;
 
 // TODO:: 三个接口都在重复计算 GeneratorI中的数据！！！
 // 用内置一个Data来缓存计算的generator.

@@ -1,6 +1,6 @@
-use crate::base::address::traits::address::AddressI;
+use crate::address::traits::address::AddressI;
 use crate::wallet::wallet::WalletType;
-use crate::base::address::guomi::AddressGuomi;
+use crate::address::guomi::AddressGuomi;
 
 pub struct AddressBuilder {
     address   : Box<dyn AddressI>,

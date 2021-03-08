@@ -11,7 +11,6 @@ pub mod parse_tx;
 pub mod seed;
 pub mod keypair;
 pub mod crypto;
-pub mod address;
 
 //Serialize
 use std::collections::HashMap;

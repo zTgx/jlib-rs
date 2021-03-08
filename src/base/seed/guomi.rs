@@ -4,8 +4,8 @@ use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::misc::brorand::Brorand;
 use crate::base::seed::traits::seed::SeedI;
 use crate::base::crypto::traits::checksum::ChecksumI;
-use crate::base::address::constants::VersionEncoding;
-use crate::base::address::constants::PASS_PHRASE_LENGTH;
+use crate::address::constants::VersionEncoding;
+use crate::address::constants::PASS_PHRASE_LENGTH;
 use rfc1751::ToRfc1751;
 
 pub struct SeedGuomi {
