@@ -74,10 +74,4 @@ impl Config {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
-pub enum WalletType {
-    SECP256K1,
-    ED25519,
-    SM2P256V1, // sm2p256v1
-}
 
