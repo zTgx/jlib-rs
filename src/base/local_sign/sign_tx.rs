@@ -1,4 +1,4 @@
-use crate::base::wallet::keypair::*;
+use crate::wallet::keypair::*;
 use crate::base::misc::util::{get_keypair_from_secret};
 use crate::base::serialize::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBuilder};
 use crate::base::local_sign::sign::SignatureX;

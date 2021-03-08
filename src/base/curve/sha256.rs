@@ -1,4 +1,4 @@
-use crate::base::ring::{digest};
+use ring::{digest};
 
 pub struct JSha256 {}
 

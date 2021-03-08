@@ -1,7 +1,7 @@
 use crate::base::curve::{
     secp256k1::J256k1
 };
-use crate::base::wallet::wallet::WalletType;
+use crate::wallet::wallet::WalletType;
 use crate::base::keypair::keypair_guomi::KeypairGuomi;
 
 #[derive(Debug, Clone)]

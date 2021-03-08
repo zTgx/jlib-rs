@@ -3,11 +3,11 @@ use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 use basex_rs::{BaseX, SKYWELL, Decode};
-use crate::base::wallet::keypair::{Keypair, KeypairBuilder};
-use crate::base::wallet::wallet::WalletType;
+use crate::wallet::keypair::{Keypair, KeypairBuilder};
+use crate::wallet::wallet::WalletType;
 use crate::message::common::amount::Amount;
 use crate::base::base_config::*;
-use crate::base::wallet::address::{WalletAddress};
+use crate::wallet::address::{WalletAddress};
 use crate::base::seed::builder::SeedBuilder;
 use hex;
 

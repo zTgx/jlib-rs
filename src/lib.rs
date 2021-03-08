@@ -53,11 +53,14 @@ extern crate phf;
 extern crate libsm;
 extern crate crypto;
 extern crate rfc1751;
+extern crate secp256k1;
+extern crate ring;
 
 // exports
 pub mod api;
 pub mod message;
 pub mod base;
+pub mod wallet;
 
 #[derive(Debug)]
 pub struct Config {

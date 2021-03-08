@@ -4,7 +4,7 @@ pub mod sha256;
 pub mod ripemd160;
 
 use basex_rs::{BaseX, SKYWELL, Decode};
-use crate::base::ring::{digest};
+use ring::{digest};
 use crate::base::data::constants::{
     CURVE_ORDER, 
     CURVE_ZERO

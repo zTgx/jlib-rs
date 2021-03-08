@@ -2,7 +2,7 @@ use hex;
 use crate::base::address::traits::address::AddressI;
 use crate::base::seed::builder::SeedBuilder;
 use crate::base::address::builder::AddressBuilder;
-use crate::base::wallet::wallet::{
+use crate::wallet::wallet::{
     Wallet,
     WalletType
 };

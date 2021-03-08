@@ -1,10 +1,10 @@
 use crate::base::misc::brorand::Brorand;
 use crate::base::data::constants::PASSWORD_LEN;
-use crate::base::wallet::wallet::WalletType;
-use crate::base::wallet::{
+use crate::wallet::wallet::WalletType;
+use crate::wallet::{
     generate_str
 };
-use crate::base::wallet::keypair::*;
+use crate::wallet::keypair::*;
 use crate::base::seed::guomi::SeedGuomi;
 use crate::base::seed::traits::seed::SeedI;
 

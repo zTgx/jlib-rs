@@ -1,9 +1,9 @@
 
-use crate::base::ring::{digest};
+use ring::{digest};
 
 use crate::base::curve::ripemd160::JRipemd160;
-use crate::base::wallet::keypair::*;
-use crate::base::wallet::generate_str;
+use crate::wallet::keypair::*;
+use crate::wallet::generate_str;
 
 use crate::base::xcodec::{is_valid_address};
 use hex;

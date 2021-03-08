@@ -19,7 +19,7 @@ use crate::base::data::constants::{
     TX_OFFER_SEQUENCE,
 };
 use std::rc::Rc;
-use crate::base::wallet::keypair::*;
+use crate::wallet::keypair::*;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::message::transaction::offer_cancel::OfferCancelTxJson;

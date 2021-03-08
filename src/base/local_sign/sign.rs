@@ -1,10 +1,10 @@
-use crate::base::secp256k1::key::{SecretKey, PublicKey};
-use crate::base::secp256k1::{Secp256k1, Message};
+use secp256k1::key::{SecretKey, PublicKey};
+use secp256k1::{Secp256k1, Message};
 
-use crate::base::ring::{digest};
+use ring::{digest};
 use hex;
 
-use crate::base::wallet::keypair::*;
+use crate::wallet::keypair::*;
 
 pub struct SignatureX <'a> {
     pub keypair: &'a Keypair,
