@@ -2,12 +2,12 @@
 use crate::base::wallet::config::*;
 // use crate::base::wallet::keypair::*;
 // use crate::base::wallet::address::WalletAddress;
-use crate::base::wallet::seed_builder::SeedBuilder;
 
-use crate::WalletType;
 use hex;
+use crate::WalletType;
 use crate::base::address::guomi::Address;
 use crate::base::address::traits::address::AddressI;
+use crate::base::seed::builder::SeedBuilder;
 
 //WalletBuilder
 #[derive(Debug)]
@@ -16,16 +16,13 @@ pub struct WalletBuilder {
 }
 
 impl WalletBuilder {
-    // impl <'a> WalletBuilder <'a> {
     pub fn new(config: WalletConfig) -> Self {
-        // pub fn new(config: &'a WalletConfig) -> Self {
         WalletBuilder {
             config: config,
         }
     }
 
     pub fn build(&self) -> Wallet {
-        //seed
         let passphrase = None;
         // let passphrase = Some("Masterphrase");
         let seed_builder = SeedBuilder::new(self.config.key_type);
@@ -33,10 +30,6 @@ impl WalletBuilder {
         let master_seed_hex = seed_builder.get_seed(passphrase);
         let master_seed     = seed_builder.human_seed(&master_seed_hex);
         let human_seed_rfc1751 = seed_builder.human_seed_rfc1751(&master_seed_hex);
-        println!("human_seed_rfc1751: {:?}", human_seed_rfc1751);
-
-        // println!("master_seed: {:?}", master_seed);
-        // println!("master_seed_hex: {:?}", hex::encode_upper(master_seed_hex));
 
         let address = Address::new(&master_seed_hex.to_vec());
         let account_id = address.human_account_id();

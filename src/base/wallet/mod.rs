@@ -2,7 +2,6 @@ pub mod wallet;
 pub mod config;
 pub mod keypair;
 pub mod address;
-pub mod seed_builder;
 
 use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::curve::sha256::JSha256;
