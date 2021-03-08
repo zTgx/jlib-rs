@@ -56,7 +56,6 @@ extern crate rfc1751;
 extern crate secp256k1;
 extern crate ring;
 
-// exports
 pub mod api;
 pub mod message;
 pub mod base;
@@ -64,10 +63,17 @@ pub mod wallet;
 pub mod address;
 pub mod seed;
 
+/*
+    Config数据结构
+
+    * addr       ：websocket协议的服务器地址。
+    * local_sign : 交易数据是否要本地签名后再发送。
+    * true -> 本地签名； false -> 不签名。
+*/
 #[derive(Debug)]
 pub struct Config {
-    pub addr        : &'static str, // server address 
-    pub local_sign  : bool,         // local sign flag
+    pub addr        : &'static str,
+    pub local_sign  : bool,
 }
 
 impl Config {
