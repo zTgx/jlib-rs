@@ -8,6 +8,7 @@ use crate::WalletType;
 use crate::base::address::guomi::Address;
 use crate::base::address::traits::address::AddressI;
 use crate::base::seed::builder::SeedBuilder;
+use crate::base::address::builder::AddressBuilder;
 
 //WalletBuilder
 #[derive(Debug)]
@@ -31,11 +32,15 @@ impl WalletBuilder {
         let master_seed     = seed_builder.human_seed(&master_seed_hex);
         let human_seed_rfc1751 = seed_builder.human_seed_rfc1751(&master_seed_hex);
 
-        let address = Address::new(&master_seed_hex.to_vec());
+        // let address = Address::new(&master_seed_hex.to_vec());
+
+        let address = AddressBuilder::new(self.config.key_type, &master_seed_hex);
         let account_id = address.human_account_id();
 
         let public_key = address.public_key();
         let public_key_hex = address.public_key_hex();
+
+
 
         //keypair
         // let key_pair = KeypairBuilder::new(&master_seed, &self.config.key_type).build().unwrap();
