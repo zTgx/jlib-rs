@@ -62,6 +62,7 @@ pub mod message;
 pub mod base;
 pub mod wallet;
 pub mod address;
+pub mod seed;
 
 #[derive(Debug)]
 pub struct Config {

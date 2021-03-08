@@ -5,8 +5,8 @@ use crate::wallet::{
     generate_str
 };
 use crate::wallet::keypair::*;
-use crate::base::seed::guomi::SeedGuomi;
-use crate::base::seed::traits::seed::SeedI;
+use crate::seed::guomi::SeedGuomi;
+use crate::seed::traits::seed::SeedI;
 
 
 // 33 = 0x21

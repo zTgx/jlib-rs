@@ -8,7 +8,6 @@ pub mod xcodec;
 pub mod base_config;
 pub mod parse_tx;
 
-pub mod seed;
 pub mod keypair;
 pub mod crypto;
 

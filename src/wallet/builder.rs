@@ -1,6 +1,6 @@
 use hex;
 use crate::address::traits::address::AddressI;
-use crate::base::seed::builder::SeedBuilder;
+use crate::seed::builder::SeedBuilder;
 use crate::address::builder::AddressBuilder;
 use crate::wallet::wallet::{
     Wallet,
