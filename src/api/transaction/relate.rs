@@ -10,7 +10,7 @@ use crate::message::common::amount::Amount;
 use crate::message::transaction::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{downcast_to_string};
-use crate::api::query::get_account_sequence;
+use crate::api::util::get_account_sequence;
 
 pub trait RelateI {
     fn set_relation<F>(&self, relation_type: RelationType, target: String, amount: Amount, op: F)

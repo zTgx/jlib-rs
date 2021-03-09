@@ -17,7 +17,7 @@ use crate::base::misc::util::{
     downcast_to_string,
     check_address, check_secret, check_amount,
 };
-use crate::api::query::get_account_sequence;
+use crate::api::util::get_account_sequence;
 
 pub trait PaymentI {
     fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F)

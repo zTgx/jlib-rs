@@ -9,7 +9,7 @@ use crate::message::common::command_trait::CommandConversion;
 use crate::message::transaction::local_sign_tx::LocalSignTx;
 use crate::base::misc::util::{downcast_to_string};
 use crate::base::local_sign::sign_tx::{SignTx};
-use crate::api::query::get_account_sequence;
+use crate::api::util::get_account_sequence;
 
 pub trait CancelOfferI {
     fn cancel_offer<F>(&self, offer_sequence: u64, op: F)

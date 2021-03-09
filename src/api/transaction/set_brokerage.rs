@@ -13,7 +13,7 @@ use crate::base::misc::util::{
     downcast_to_string,
     check_address, check_secret, check_amount,
 };
-use crate::api::query::get_account_sequence;
+use crate::api::util::get_account_sequence;
 
 pub trait BrokerageManageI {
     fn set_rate<F>(&self, den: u64, num: u64, amount: Amount, op: F)

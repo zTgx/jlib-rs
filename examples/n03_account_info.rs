@@ -1,15 +1,15 @@
 extern crate jlib;
-use jlib::api::query::account_info::*;
-use jlib::message::query::account_info::{RequestAccountInfoResponse, AccounInfoSideKick};
+use jlib::api::account_info::api::request;
+use jlib::api::account_info::data::{RequestAccountInfoResponse, AccounInfoSideKick};
 
 use jlib::api::config::Config;
-pub static TEST_SERVER: &'static str = "ws://123.57.219.73:5040";
+static TEST_SERVER: &'static str = "ws://101.200.176.249:5040";
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);
-    let account = "jP7G6Ue5AcQ5GZ71LkMxXvf5Reg44EKrjy".to_string();
+    let account = "j9syYwWgtmjchcbqhVB18pmFqXUYahZvvg".to_string();
 
-    AccountInfo::new().request_account_info(&config, account, |x| match x {
+    request(&config, account, |x| match x {
         Ok(response) => {
             let res: RequestAccountInfoResponse = response;
             println!("account info: \n{:?}", &res);
