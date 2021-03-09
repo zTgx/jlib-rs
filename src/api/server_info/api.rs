@@ -3,11 +3,12 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::Value;
 
-use crate::message::common::command_trait::CommandConversion;
-use crate::base::misc::util::downcast_to_string;
 use crate::api::config::Config;
 use api::server_info::data::ServerInfoCommand;
 use crate::api::server_info::data::ServerInfoResponse;
+
+//TODO::这个方法想办法重构一下， 太讨厌。
+use crate::base::misc::util::downcast_to_string;
 
 pub fn request<F> (config: Config, op: F)
     where F: Fn(Result<ServerInfoResponse, serde_json::error::Error>) {
@@ -33,6 +34,7 @@ pub fn request<F> (config: Config, op: F)
     
     let resp = downcast_to_string(info);
 
+    //TODO:: 太乱了， 连false的都没有考虑？
     if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
         if let Some(status) = x["status"].as_str() {
             if status == "success" {
