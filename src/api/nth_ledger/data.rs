@@ -1,11 +1,6 @@
-#![allow(unused)]
-
-use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
-use std::any::Any;
 
-use crate::message::common::command_trait::CommandConversion;
 use std::error::Error;
 use std::fmt;
 
@@ -49,11 +44,8 @@ impl RequestLedgerCommand {
             }
         )
     }
-}
 
-impl CommandConversion for RequestLedgerCommand {
-    type T = RequestLedgerCommand;
-    fn to_string(&self) -> Result<String> {
+    pub fn to_string(&self) -> Result<String> {
         // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
         // let compact = format!("{}", json);
 
@@ -64,31 +56,7 @@ impl CommandConversion for RequestLedgerCommand {
         // Print, write to a file, or send to an HTTP server.
         Ok(j)
     }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
-    }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
 }
-
-//实现default方法, 此command不提供default方法~
-// impl Default for RequestLedgerCommand {
-//     fn default() -> Self {
-//         RequestLedgerCommand {
-//             id: 1,
-//             command: "ledger".to_string(),
-//         }
-//     }
-// }
 
 /////////////////////////
 /*
