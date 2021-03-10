@@ -15,3 +15,4 @@ pub mod nth_tx;
 pub mod account_tums;
 pub mod account_relations;
 pub mod account_offers;
+pub mod account_txs;

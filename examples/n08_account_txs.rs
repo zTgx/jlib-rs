@@ -1,16 +1,17 @@
 extern crate jlib;
-use jlib::api::query::account_tx::*;
 
 use jlib::api::config::Config;
-pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+static TEST_SERVER: &'static str = "ws://101.200.176.249:5040";
 
 //Ok && Err
-use jlib::message::query::account_tx::{RequestAccountTxResponse, AccounTxSideKick};
+use jlib::api::account_txs::api::request;
+use jlib::api::account_txs::data::{RequestAccountTxResponse, AccounTxSideKick};
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);
-    let account = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string();
-    AccountTx::new().request_account_tx(config, account, Some(1), |x| match x {
+    let account = "j9syYwWgtmjchcbqhVB18pmFqXUYahZvvg".to_string();
+
+    request(config, account, Some(1), |x| match x {
         Ok(response) => {
             let res: RequestAccountTxResponse = response;
             println!("account tx: \n{:?}", &res);
