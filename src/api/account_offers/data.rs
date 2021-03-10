@@ -1,11 +1,5 @@
-#![allow(unused)]
-
-use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
-use std::any::Any;
-
-use crate::message::common::command_trait::CommandConversion;
 use std::error::Error;
 use std::fmt;
 use crate::message::common::amount::{Amount, string_or_struct};
@@ -49,46 +43,12 @@ impl RequestAccountOfferCommand {
             }
         )
     }
-}
 
-impl CommandConversion for RequestAccountOfferCommand {
-    type T = RequestAccountOfferCommand;
-    fn to_string(&self) -> Result<String> {
-        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-        // let compact = format!("{}", json);
-
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
-        let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
-        Ok(j)
+    pub fn to_string(&self) -> Result<String> {
+       let j = serde_json::to_string(&self)?;
+       Ok(j)
     }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
-    }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
 }
-
-//实现default方法, 此command不提供default方法~
-// impl Default for RequestLedgerCommand {
-//     fn default() -> Self {
-//         RequestLedgerCommand {
-//             id: 1,
-//             command: "ledger".to_string(),
-//         }
-//     }
-// }
 
 /////////////////////////
 /*
@@ -139,10 +99,10 @@ pub struct RequestAccountOfferResponse {
     #[serde(rename="account")]
     pub account: String,
 
-    #[serde(rename="ledger_hash")]
-    pub ledger_hash: String,
+    // #[serde(rename="ledger_hash")]
+    // pub ledger_hash: String,
 
-    #[serde(rename="ledger_index")]
+    #[serde(rename="ledger_current_index")]
     pub ledger_index: u64,
 
     #[serde(rename="offers")]
