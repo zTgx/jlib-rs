@@ -3,29 +3,19 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::message::query::brokerage::*;
-use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
 use crate::api::config::Config;
 
-pub trait BrokerageI {
-    fn request_brokerage<F>(&self, config: Config, account: String, op: F)
-    where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) ;
-}
+use crate::api::fee_info::data::{
+    RequestBrokerageCommand,
+    RequestBrokerageResponse,
+    BrokerageSideKick
+};
 
-pub struct Brokerage {}
-impl Brokerage {
-    pub fn new() -> Self {
-        Brokerage {
-        }
-    }
-}
-
-impl BrokerageI for Brokerage {
-    fn request_brokerage<F>(&self, config: Config, account: String, op: F)
+pub fn request<F>(config: Config, account: String, op: F)
     where F: Fn(Result<RequestBrokerageResponse, BrokerageSideKick>) {
 
-        let info = Rc::new(Cell::new("".to_string()));
+        let info = Rc::new(Cell::new(String::new()));
 
         let account_rc = Rc::new(Cell::new(account));
 
@@ -40,6 +30,7 @@ impl BrokerageI for Brokerage {
 
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
+
                 copy.set(c.to_string());
 
                 out.close(CloseCode::Normal)
@@ -61,5 +52,4 @@ impl BrokerageI for Brokerage {
                 }
             }
         }
-    }
 }

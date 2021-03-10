@@ -1,4 +1,3 @@
-pub mod query;
 pub mod transaction;
 pub mod subscribe;
 pub mod contracts;
@@ -17,3 +16,4 @@ pub mod account_relations;
 pub mod account_offers;
 pub mod account_txs;
 pub mod order_books;
+pub mod fee_info;

@@ -1,14 +1,17 @@
 extern crate jlib;
-use jlib::api::query::brokerage::*;
-use jlib::message::query::brokerage::{RequestBrokerageResponse, BrokerageSideKick};
+
+use jlib::api::fee_info::api::request;
+use jlib::api::fee_info::data::{RequestBrokerageResponse, BrokerageSideKick};
 
 use jlib::api::config::Config;
-pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+
+static TEST_SERVER: &'static str = "ws://101.200.176.249:5040";
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);
-    let account = "jHb9CJAWyB4jr91VRWn96DkukG4bwdtyTh".to_string();
-    Brokerage::new().request_brokerage(config, account, |x| match x {
+    let account = "j9syYwWgtmjchcbqhVB18pmFqXUYahZvvg".to_string();
+    
+    request(config, account, |x| match x {
         Ok(response) => {
             let res: RequestBrokerageResponse = response;
             println!("brokerage response: {:?}", &res);
