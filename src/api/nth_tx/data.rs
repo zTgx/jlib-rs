@@ -1,9 +1,5 @@
 
-#![allow(unused)]
-
-use serde_json::json;
 use serde_json::Result;
-use std::any::Any;
 
 use std::fmt; //fmt METHOD
 use std::marker::PhantomData;
@@ -15,7 +11,6 @@ use serde::de::{self, Visitor, MapAccess};
 extern crate void;
 use void::Void;
 
-use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::meta::*;
 use crate::message::common::amount::{Amount, string_or_struct};
 use crate::message::tx_flags::*;
@@ -44,17 +39,10 @@ impl RequestTxCommand {
             }
         )
     }
-}
 
-impl CommandConversion for RequestTxCommand {
-    type T = RequestTxCommand;
-    fn to_string(&self) -> Result<String> {
+    pub fn to_string(&self) -> Result<String> {
         let j = serde_json::to_string(&self)?;
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
     }
 }
 
