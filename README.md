@@ -2,17 +2,16 @@
 
 Lightweight blockchain lib for Skywelld write in [Rust](http://www.rust-lang.org).
 ```rust
+    let config = Config::new(TEST_SERVER, true);
 
-/// Request blockchain server status
-let config = Config::new(TEST_SERVER, true);
-ServerInfo::new().request_server_info(config.clone(), |x| match x {
-    Ok(response) => {
-        println!("build_version : {:?}", response.build_version);
-    }
-
-    Err(_) => {
-    }
-});
+    request(config, |x| match x {
+        Ok(response) => {
+            println!("build_version : {:?}", response.build_version);
+        },
+        Err(_) => {
+            println! ("error occured.");
+        }
+    });
 ```
 
 Introduction
