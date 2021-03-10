@@ -2,18 +2,11 @@
 use serde_json::Result;
 
 use std::fmt; //fmt METHOD
-use std::marker::PhantomData;
-use std::str::FromStr;
 
-use serde::{Deserialize, Serialize, Deserializer};
-use serde::de::{self, Visitor, MapAccess};
-
-extern crate void;
-use void::Void;
+use serde::{Deserialize, Serialize};
 
 use crate::message::common::meta::*;
 use crate::message::common::amount::{Amount, string_or_struct};
-use crate::message::tx_flags::*;
 
 use std::error::Error;
 

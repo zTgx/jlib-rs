@@ -55,7 +55,6 @@ extern crate crypto;
 extern crate rfc1751;
 extern crate secp256k1;
 extern crate ring;
-extern crate url;
 
 pub mod api;
 pub mod message;

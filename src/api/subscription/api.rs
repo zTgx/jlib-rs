@@ -2,9 +2,7 @@
 
 use ws::{connect, Handler, Sender, Handshake, Message, CloseCode};
 
-use std::rc::Rc;
 use serde_json::{Value};
-use std::cell::Cell;
 
 use std::sync::Arc;
 use crate::api::config::Config;
