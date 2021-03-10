@@ -3,26 +3,17 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::message::query::order_book::*;
-use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
 use crate::api::config::Config;
 
-pub trait OrderBookI {
-    fn request_order_book<F>(&self, config: Config, gets: OrderBookItem, pays: OrderBookItem, op: F)
-    where F: Fn(Result<RequestOrderBookResponse, OrderBookSideKick>) ;
-}
+use crate::api::order_books::data::{
+    RequestOrderBookCommand,
+    RequestOrderBookResponse,
+    OrderBookSideKick,
+    OrderBookItem
+};
 
-pub struct OrderBook {}
-impl OrderBook {
-    pub fn new() -> Self {
-        OrderBook {
-        }
-    }
-}
-
-impl OrderBookI for OrderBook {
-    fn request_order_book<F>(&self, config: Config, gets: OrderBookItem, pays: OrderBookItem, op: F)
+pub fn request<F>(config: Config, gets: OrderBookItem, pays: OrderBookItem, op: F)
     where F: Fn(Result<RequestOrderBookResponse, OrderBookSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));
@@ -41,6 +32,7 @@ impl OrderBookI for OrderBook {
 
             move |msg: ws::Message| {
                 let c = msg.as_text()?;
+
                 copy.set(c.to_string());
 
                 out.close(CloseCode::Normal)
@@ -49,6 +41,7 @@ impl OrderBookI for OrderBook {
         }).unwrap();
 
         let resp = downcast_to_string(info);
+
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             if let Some(status) = x["status"].as_str() {
                 if status == "success" {
@@ -63,5 +56,4 @@ impl OrderBookI for OrderBook {
                 }
             }
         }
-    }
 }

@@ -1,12 +1,6 @@
-#![allow(unused)]
-
-use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
-use std::any::Any;
 
-use crate::message::common::command_trait::CommandConversion;
-use crate::message::tx_flags::*;
 use crate::message::common::amount::{Amount, string_or_struct};
 use std::error::Error;
 use std::fmt;
@@ -59,18 +53,11 @@ impl RequestOrderBookCommand {
             }
         )
     }
-}
 
-impl CommandConversion for RequestOrderBookCommand {
-    type T = RequestOrderBookCommand;
-    fn to_string(&self) -> Result<String> {
+    pub fn to_string(&self) -> Result<String> {
         let j = serde_json::to_string(&self)?;
 
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
     }
 }
 
