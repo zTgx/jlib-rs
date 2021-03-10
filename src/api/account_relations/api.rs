@@ -3,29 +3,19 @@ use std::rc::Rc;
 use std::cell::Cell;
 use serde_json::{Value};
 
-use crate::message::query::relations::*;
-use crate::message::common::command_trait::CommandConversion;
 use crate::base::misc::util::downcast_to_string;
 use crate::api::config::Config;
 
-pub trait RelationsI {
-    fn request_account_relations<F>(&self, config: Config, account: String, relation_type: Option<String>, op: F)
-    where F: Fn(Result<RequestAccountRelationsResponse, RelationsSideKick>);
-}
+use crate::api::account_relations::data::{
+    RequestAccountRelationsCommand,
+    RequestAccountRelationsResponse,
+    RelationsSideKick
+};
 
-pub struct Relations {}
-impl Relations {
-    pub fn new() -> Self {
-        Relations {
-        }
-    }
-}
-
-impl RelationsI for Relations {
-    fn request_account_relations<F>(&self, config: Config, account: String, relation_type: Option<String>, op: F)
+pub fn request<F>(config: Config, account: String, relation_type: Option<String>, op: F)
     where F: Fn(Result<RequestAccountRelationsResponse, RelationsSideKick>) {
 
-        let info = Rc::new(Cell::new("".to_string()));
+        let info = Rc::new(Cell::new(String::new()));
 
         let account_rc = Rc::new(Cell::new(account));
         let relation_type_rc = Rc::new(Cell::new(relation_type));
@@ -41,6 +31,7 @@ impl RelationsI for Relations {
             move |msg: ws::Message| {
 
                 let c = msg.as_text()?;
+
                 copy.set(c.to_string());
 
                 out.close(CloseCode::Normal)
@@ -49,10 +40,12 @@ impl RelationsI for Relations {
         }).unwrap();
 
         let resp = downcast_to_string(info);
+
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             if let Some(status) = x["status"].as_str() {
                 if status == "success" {
                     let x: String = x["result"].to_string();
+
                     if let Ok(v) = serde_json::from_str(&x) as Result<RequestAccountRelationsResponse, serde_json::error::Error> {
                         op(Ok(v))
                     }
@@ -63,5 +56,4 @@ impl RelationsI for Relations {
                 }
             }
         }
-    }
 }

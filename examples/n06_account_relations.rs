@@ -1,15 +1,17 @@
 extern crate jlib;
-use jlib::api::query::relations::*;
-use jlib::message::query::relations::{RequestAccountRelationsResponse, RelationsSideKick};
+
+use jlib::api::account_relations::api::request;
+use jlib::api::account_relations::data::{RequestAccountRelationsResponse, RelationsSideKick};
 
 use jlib::api::config::Config;
-pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+static TEST_SERVER: &'static str = "ws://101.200.176.249:5040";
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);
-    let account = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
+    let account = "j9syYwWgtmjchcbqhVB18pmFqXUYahZvvg".to_string();
     let rtype = Some("trust".to_string());
-    Relations::new().request_account_relations(config, account, rtype, |x| match x {
+
+    request(config, account, rtype, |x| match x {
         Ok(response) => {
             let res: RequestAccountRelationsResponse = response;
             println!("account relations: {:?}", &res);
