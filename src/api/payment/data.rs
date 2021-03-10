@@ -79,17 +79,12 @@ impl TxJson {
             memo: memo,
         }
     }
-}
-impl CommandConversion for TxJson {
-    type T = TxJson;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
+    
+    pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
         let j = serde_json::to_string(&self)?;
         Ok(j)
     }
 
-    fn box_to_raw(&self) -> &dyn Any {
-        self
-    }
 }
 
 
@@ -117,17 +112,10 @@ impl TransactionTx {
             tx_json: tx_json,
         })
     }
-}
 
-impl CommandConversion for TransactionTx {
-    type T = TransactionTx;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
+    pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
         let j = serde_json::to_string(&self)?;
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
     }
 }
 

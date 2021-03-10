@@ -12,7 +12,7 @@ use crate::base::data::constants::{
 use std::rc::Rc;
 use crate::base::serialize::signed_obj::*;
 use crate::wallet::keypair::Keypair;
-use crate::message::transaction::transaction::TxJson;
+use crate::api::payment::data::{TxJson};
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 

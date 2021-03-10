@@ -4,7 +4,7 @@ use crate::base::serialize::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder
 use crate::base::local_sign::sign::SignatureX;
 use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
 
-use crate::message::transaction::transaction::{TxJson};
+use crate::api::payment::data::{TxJson};
 use crate::message::transaction::relation::{RelationTxJson};
 use crate::message::transaction::offer_create::{OfferCreateTxJson};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};

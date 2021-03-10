@@ -4,8 +4,9 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::api::config::Config;
-use crate::message::transaction::transaction::*;
-use crate::message::common::command_trait::CommandConversion;
+
+use crate::api::payment::data::*;
+
 use crate::message::common::memo::*;
 use crate::message::common::amount::Amount;
 
@@ -19,18 +20,8 @@ use crate::base::misc::util::{
 };
 use crate::api::util::get_account_sequence;
 
-pub trait PaymentI {
-    fn payment<F>(&self, to: String, amount: Amount, memo: Option<String>, op: F)
-    where F: Fn(Result<TransactionTxResponse, PaymentSideKick>);
-}
-
-pub struct Payment {
-    pub config : Config,
-    pub account: String,
-    pub secret : String,
-}
-impl Payment {
-    pub fn with_params(config: Config, account: String, secret: String) -> Self {
+pub fn request<F>(config: Config, account: String, secret: String, to: String, amount: Amount, memo: Option<String>, op: F)
+    where F: Fn(Result<TransactionTxResponse, PaymentSideKick>) {
         if check_address(&account).is_none() {
             panic!("invalid account.");
         }
@@ -38,17 +29,6 @@ impl Payment {
             panic!("invalid secret");
         }
 
-        Payment {
-            config: config,
-            account: account,
-            secret: secret,
-        }
-    }
-}
-
-impl PaymentI for Payment {
-    fn payment<F>(&self,  to: String, amount: Amount, memo: Option<String>, op: F)
-    where F: Fn(Result<TransactionTxResponse, PaymentSideKick>) {
         if check_address(&to).is_none() {
             panic!("invalid destination.");
         }
@@ -56,24 +36,24 @@ impl PaymentI for Payment {
             panic!("invalid Amount.");
         }
 
-        let info = Rc::new(Cell::new("".to_string()));
+        let info = Rc::new(Cell::new(String::new()));
 
-        let from_rc   = Rc::new(Cell::new(String::from(self.account.as_str())));
-        let secret_rc = Rc::new(Cell::new(String::from(self.secret.as_str())));
+        let from_rc   = Rc::new(Cell::new(String::from(account.as_str())));
+        let secret_rc = Rc::new(Cell::new(String::from(secret.as_str())));
 
         let to_rc     = Rc::new(Cell::new(to));
         let amount_rc = Rc::new(Cell::new(amount));
         let memo_rc   = Rc::new(Cell::new(None));
 
         // Get Account Seq
-        let seq_rc = get_account_sequence(&self.config, self.account.clone());
+        let seq_rc = get_account_sequence(&config, account.clone());
         if memo.is_some() {
             let upper_hex_memo = hex::encode(&memo.unwrap()).to_ascii_uppercase();
             let memos = MemosBuilder::new( upper_hex_memo ).build();
             memo_rc.set(Some(vec![memos]));
         }
 
-        connect(self.config.addr, |out| {
+        connect(config.addr, |out| {
             let copy = info.clone();
 
             let from   = from_rc.clone();
@@ -87,7 +67,7 @@ impl PaymentI for Payment {
             println!("sequence : {}", sequence);
 
             let tx_json = TxJson::new(from.take(), to.take(), amount.take(), sequence, memo.take());
-            if self.config.local_sign {
+            if config.local_sign {
                 let blob = SignTx::with_params(sequence, &secret.take()).pay(&tx_json);
                 if let Ok(command) = LocalSignTx::new(blob).to_string() {
                     out.send(command).unwrap()
@@ -111,6 +91,7 @@ impl PaymentI for Payment {
         }).unwrap();
 
         let resp = downcast_to_string(info);
+
         if let Ok(x) = serde_json::from_str(&resp) as Result<Value, serde_json::error::Error> {
             if let Some(status) = x["status"].as_str() {
                 if status == "success" {
@@ -125,5 +106,4 @@ impl PaymentI for Payment {
                 }
             }
         }
-    }
 }

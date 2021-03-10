@@ -2,7 +2,6 @@
 use serde::{Deserialize, Serialize};
 use std::any::Any;
 use serde::ser::{Serializer, SerializeStruct};
-use crate::message::common::command_trait::CommandConversion;
 
 #[derive(Deserialize, Debug, Default)]
 pub struct LocalSignTx {
@@ -41,20 +40,9 @@ impl LocalSignTx {
             tx_blob: tx_blob,
         }
     }
-}
 
-impl CommandConversion for LocalSignTx {
-    type T = LocalSignTx;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
+    pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
         let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
     }
 }
