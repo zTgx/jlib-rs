@@ -4,14 +4,19 @@ use ws::{connect, Handler, Sender, Handshake, Message, CloseCode};
 
 use std::rc::Rc;
 use serde_json::{Value};
+use std::cell::Cell;
 
-use crate::message::common::command_trait::CommandConversion; 
-use crate::message::subscribe::message::{SubscribeResponse, SubscribeCommand};
+use std::sync::Arc;
 use crate::api::config::Config;
+
+use crate::api::subscription::data::{
+    SubscribeResponse, 
+    SubscribeCommand
+};
 
 pub struct Client {
     out: Sender,
-    op: Rc<dyn Fn(Result<SubscribeResponse, serde_json::error::Error>)>,
+    op: Arc<dyn Fn(Result<SubscribeResponse, serde_json::error::Error>)>,
 }
 
 impl Handler for Client {
@@ -52,24 +57,11 @@ impl Handler for Client {
     }
 }
 
-pub trait SubscribeI {
-    fn with_config<F>(&self, config: Config, op: F)
-    where F: 'static + Fn(Result<SubscribeResponse, serde_json::error::Error>);
-}
 
-pub struct Subscribe {}
-impl Subscribe {
-    pub fn new() -> Self {
-        Subscribe {
-        }
-    }
-}
+pub fn on<F>(config: Config, op: F)
+    where F: 'static + Fn(Result<SubscribeResponse, serde_json::error::Error>) + std::marker::Send {
 
-impl SubscribeI for Subscribe {
-    fn with_config<F>(&self, config: Config, op: F)
-    where F: 'static + Fn(Result<SubscribeResponse, serde_json::error::Error>) {
-
-        let op_rc = Rc::new(op);
+        let op_rc = Arc::new(op);
 
         connect(config.addr, |out| {
 
@@ -81,5 +73,4 @@ impl SubscribeI for Subscribe {
             }
 
         }).unwrap();
-    }
 }    

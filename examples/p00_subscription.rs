@@ -1,13 +1,15 @@
 extern crate jlib;
-use jlib::api::subscribe::{SUBSCRIBE, SubscribeI};
-use jlib::message::subscribe::message::SubscribeResponse;
+
+use jlib::api::subscription::data::SubscribeResponse;
+use jlib::api::subscription::api::on;
 
 use jlib::api::config::Config;
-pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+// static TEST_SERVER: &'static str = "ws://101.200.176.249:5040";
+static TEST_SERVER: &'static str = "ws://59.175.148.101:5020";
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);
-    SUBSCRIBE.with_config(config, |x| {
+    on(config, |x| {
         match x {
             Ok(response) => {
                 let res: SubscribeResponse = response;

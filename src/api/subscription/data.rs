@@ -1,8 +1,5 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
-use std::any::Any;
-
-use crate::message::common::command_trait::CommandConversion;
 
 #[derive(Serialize, Deserialize)]
 pub struct SubscribeCommand {
@@ -24,20 +21,10 @@ impl SubscribeCommand {
             streams: streams,
         } )
     }
-}
 
-impl CommandConversion for SubscribeCommand {
-    type T = SubscribeCommand;
-    fn to_string(&self) -> Result<String> {
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
+    pub fn to_string(&self) -> Result<String> {
         let j = serde_json::to_string(&self)?;
-
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
     }
 }
 

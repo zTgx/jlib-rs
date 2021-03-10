@@ -1,11 +1,15 @@
 pub mod transaction;
-pub mod subscribe;
 pub mod contracts;
 
-
+// --------------------------------------------
+// API模块用到的工具类
+// --------------------------------------------
 pub mod util;
 pub mod config;
 
+// --------------------------------------------
+// 查询类接口
+// --------------------------------------------
 pub mod server_info;
 pub mod ledger_closed;
 pub mod nth_ledger;
@@ -17,3 +21,8 @@ pub mod account_offers;
 pub mod account_txs;
 pub mod order_books;
 pub mod fee_info;
+
+// --------------------------------------------
+// 订阅消息接口
+// --------------------------------------------
+pub mod subscription;
