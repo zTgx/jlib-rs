@@ -1,4 +1,3 @@
-pub mod account_tums;
 pub mod relations;
 pub mod offer;
 pub mod account_tx;

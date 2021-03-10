@@ -1,14 +1,16 @@
 extern crate jlib;
-use jlib::api::query::account_tums::*;
-use jlib::message::query::account_tums::{RequestAccountTumsResponse, AccounTumSideKick};
+
+use jlib::api::account_tums::api::request;
+use jlib::api::account_tums::data::{RequestAccountTumsResponse, AccounTumSideKick};
 
 use jlib::api::config::Config;
-pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+static TEST_SERVER: &'static str = "ws://101.200.176.249:5040";
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);
-    let account = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
-    AccountTums::new().request_account_tums(config, account, |x| match x {
+    let account = "j9syYwWgtmjchcbqhVB18pmFqXUYahZvvg".to_string();
+
+    request(config, account, |x| match x {
         Ok(response) => {
             let res: RequestAccountTumsResponse = response;
             println!("account tums: \n{:?}", &res);
