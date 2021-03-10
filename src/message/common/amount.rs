@@ -1,20 +1,19 @@
 use std::marker::PhantomData;
 use std::str::FromStr;
-// use serde_json::{Value};
-use serde::{Deserialize, Serialize, Deserializer};
+use serde::{Deserialize, Deserializer};
+use serde::ser::{Serialize, Serializer, SerializeStruct};
+
 use serde::de::{self, Visitor, MapAccess};
 
 extern crate void;
 use void::Void;
 use std::fmt;
-use crate::message::common::command_trait::CommandConversion;
 use std::any::Any;
 
 use crate::base::base_config::{CURRENCY};
 
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Deserialize, Debug, Default)]
 pub struct Amount {
-
     #[serde(rename="value")]
     pub value: String,   //0.5
 
@@ -64,6 +63,11 @@ impl Amount {
         (ret as u64).to_string()
     }
 
+    // pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
+    //     let j = serde_json::to_string(&self)?;
+    //     Ok(j)
+    // }
+
     //TODO::
     // pub fn decorate(&mut self) -> Self {
     //     if self.is_string() {
@@ -76,6 +80,28 @@ impl Amount {
     //         issuer: self.issuer,
     //     }
     // }
+}
+
+impl Serialize for Amount {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        // 3 is the number of fields in the struct.
+        let mut state = serializer.serialize_struct("Amount", 3)?;
+
+        state.serialize_field("value", &Amount::mul_million(&self.value))?;
+
+        if self.currency.is_some() {
+            state.serialize_field("currency", &self.currency)?;
+        }
+
+        if self.issuer.is_some() {
+            state.serialize_field("issuer", &self.issuer)?; 
+        }
+
+        state.end()
+    }
 }
 
 impl FromStr for Amount {
@@ -126,33 +152,5 @@ where
     deserializer.deserialize_any(StringOrStruct(PhantomData))
 }
 
-impl CommandConversion for Amount {
-    type T = Amount;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        // let json = json!({ "id": "0", "command": "subscribe" , "streams" : ["ledger","server","transactions"]});
-        // let compact = format!("{}", json);
-
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
-        let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
-        Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
-    }
-
-    // fn to_concrete<T>(&self) -> T {
-    //     let def: Box<dyn CommandConversion> = self;
-    //     let b: &SubscribeCommand = match def.box_to_raw().downcast_ref::<SubscribeCommand>() {
-    //         Some(b) => b,
-    //         None => panic!("&a isn't a B!"),
-    //     };
-
-    //     b
-    // }
-}
 //End Amount
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////

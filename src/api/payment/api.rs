@@ -32,9 +32,9 @@ pub fn request<F>(config: Config, account: String, secret: String, to: String, a
         if check_address(&to).is_none() {
             panic!("invalid destination.");
         }
-        if check_amount(&amount) == false {
-            panic!("invalid Amount.");
-        }
+        // if check_amount(&amount) == false {
+        //     panic!("invalid Amount.");
+        // }
 
         let info = Rc::new(Cell::new(String::new()));
 

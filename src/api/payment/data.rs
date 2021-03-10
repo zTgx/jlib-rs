@@ -48,18 +48,23 @@ impl Serialize for TxJson {
     where
         S: Serializer,
     {
-        // 6 is the number of fields in the struct.
-        let mut state = serializer.serialize_struct("OfferCreateTxJson", 6)?;
+        // 8 is the number of fields in the struct.
+        let mut state = serializer.serialize_struct("TxJson", 8)?;
 
         state.serialize_field("Flags", &self.flags)?;
         state.serialize_field("Fee", &self.fee)?;
         state.serialize_field("TransactionType", &self.transaction_type)?;
         state.serialize_field("Account", &self.account)?;
+        
+        if self.amount.is_native() {
+            state.serialize_field("Amount", &Amount::mul_million(&self.amount.value))?;
+        } else {
+            state.serialize_field("Amount", &self.amount)?;
+        }
 
-        state.serialize_field("Amount", &self.amount)?;
-        //state.serialize_field("Amount", &Amount::mul_million(&self.amount))?;
         state.serialize_field("Destination", &self.destination)?;
         state.serialize_field("Memos", &self.memo)?;
+        state.serialize_field("Sequence", &self.sequence)?;
 
         state.end()
     }
