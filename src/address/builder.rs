@@ -48,6 +48,10 @@ impl AddressI for AddressBuilder {
     fn public_key_hex(&self) -> String {
         self.address.public_key_hex()
     }
+
+    fn private_key(&self) -> String {
+        self.address.private_key()
+    }
 }
 
 // ----------------------------------------------------------------------------------------------------------

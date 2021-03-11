@@ -5,7 +5,9 @@ use jlib::api::payment::api::request;
 use jlib::message::common::amount::Amount;
 
 use jlib::api::config::Config;
-pub static TEST_SERVER: &'static str = "ws://101.200.176.249:5040"; //国密服务器
+
+pub static TEST_SERVER: &'static str = "ws://123.57.219.73:5040"; //dev11 国密服务器
+// pub static TEST_SERVER: &'static str = "ws://101.200.176.249:5040"; //dev12 国密服务器
 // static TEST_SERVER: &'static str = "ws://59.175.148.101:5020";
 
 fn main() {
@@ -31,3 +33,9 @@ fn main() {
             }
     });
 }
+
+/*
+3397 2021-Mar-11 06:49:48 GUOMI:ERR unsigned tx: 120000220000000024000000012F27DC7A0C614000000013D92D40684000000000002710732103CE9FFB99A4125592C43FFCC47959641B4DE59C5B093F1BE5BCDEC49DA9B1C52681145851087D6ADD52AA35ED9D9AA1B57D3D96D26EA88314F67B19217887AE4C78B2FE39EA3C20A911CF5BE4F9F1
+3398 2021-Mar-11 06:49:48 GUOMI:ERR tx_signing_hash: DC6BC35EDF066A550CC87B3344D16C1FD989F9847EBDF1FD3F5B2F1DDA393609
+
+*/

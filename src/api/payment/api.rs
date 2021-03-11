@@ -64,7 +64,6 @@ pub fn request<F>(config: Config, account: String, secret: String, to: String, a
             let memo   = memo_rc.clone();
 
             let sequence = seq_rc;
-            println!("sequence : {}", sequence);
 
             let tx_json = TxJson::new(from.take(), to.take(), amount.take(), sequence, memo.take());
             if config.local_sign {

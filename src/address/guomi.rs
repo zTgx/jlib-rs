@@ -46,6 +46,8 @@ impl AddressI for AddressGuomi {
     fn human_account_id(&self) -> String {
         let private_generator   = self.private_generator(&self.seed);
         let public_generator    = self.public_generator(&private_generator);
+        println!("public_generator: {:?}", public_generator);
+        
         let public_key          = self.generate_public_key(&public_generator);
         // println!("第一遍public_key: {:?}", public_key);
         // println!("public_key_hex : {:?}", hex::encode(&public_key));
@@ -90,6 +92,15 @@ impl AddressI for AddressGuomi {
         // println!("public_key_hex : {:?}", hex::encode(&public_key));
 
         hex::encode_upper(public_key)
+    }
+
+    // private key
+    fn private_key(&self) -> String {
+        let private_generator = self.private_generator(&self.seed);
+        let public_generator = self.public_generator(&private_generator);
+        let generate_private_key = self.generate_private_key(&private_generator, &public_generator);
+
+        hex::encode(generate_private_key)
     }
 }
 

@@ -1,7 +1,8 @@
 use crate::wallet::keypair::*;
-use crate::base::misc::util::{get_keypair_from_secret};
+
 use crate::base::serialize::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBuilder};
-use crate::base::local_sign::sign::SignatureX;
+use crate::base::crypto::signature::guomi::SignatureX;
+// use crate::base::local_sign::sign::SignatureX;
 use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
 
 use crate::api::payment::data::{TxJson};
@@ -20,17 +21,37 @@ use crate::base::local_sign::sign_cancel_offer::{SignTxCancelOffer};
 use crate::base::local_sign::sign_create_offer::{SignTxCreateOffer};
 use crate::base::local_sign::sign_brokerage::{SignTxBrokerage};
 
+use crate::seed::builder::SeedBuilder;
+
+use crate::address::traits::address::AddressI;
+use crate::address::builder::AddressBuilder;
+use crate::wallet::wallet::{
+    Wallet,
+    WalletType
+};
+
+//---
 pub const PRE_FIELDS: [&'static str; 6] = ["Flags", "Fee", "TransactionType", "Account", "SigningPubKey", "Sequence"];
 
 pub struct SignTx {
     pub sequence: u32, //account seq
-    pub keypair: Keypair,
+    pub keypair: Keypair, 
 }
 impl SignTx {
     pub fn with_params(sequence: u32, secret: &str) -> Self {
+        let seed = SeedBuilder::secret_to_seed(&secret.to_string());
+        println!("测试： secret -> seed: {:?}", seed);
+        
+        let address = AddressBuilder::new(WalletType::SM2P256V1, &seed);
+
+        let keypair = Keypair {
+            public_key: address.public_key_hex(),
+            private_key: address.private_key(),
+        };
+
         SignTx {
             sequence: sequence,
-            keypair : get_keypair_from_secret(&secret.to_string()).unwrap(),
+            keypair : keypair,
         }
     }
 }
@@ -68,13 +89,14 @@ impl SignTx {
     pub fn get_txn_signature(&self, fields: &mut Vec<&str>, signed_tx_json: &mut SignedTxJson) {
 
         let output: Vec<u8> = signed_tx_json.serialize();
+        println!("output: {:?}", output);
 
         let signature_x = SignatureX::new(&self.keypair);
         let txn_signature = signature_x.sign_txn_signature(&output);
 
         self.update(fields, TX_SIGNATURE);
 
-        let mut index = 0;
+        let mut index = 0; 
         for x in fields {
             if *x == TX_SIGNATURE {
                 break;

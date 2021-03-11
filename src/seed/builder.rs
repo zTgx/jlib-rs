@@ -5,6 +5,7 @@ use crate::seed::traits::seed::SeedI;
 use crate::seed::traits::seed::SeedCheckI;
 
 use crate::wallet::wallet::WalletType;
+use basex_rs::{BaseX, SKYWELL, Decode};
 
 pub struct SeedBuilder {
     seed: Box<dyn SeedI>
@@ -18,6 +19,12 @@ impl SeedBuilder {
         }
     }
 
+    pub fn secret_to_seed(secret: &String) -> Vec<u8> {
+        let seed = BaseX::new(SKYWELL).decode((&secret).to_string()).unwrap();
+        
+        seed[1..17].to_vec()
+    }
+    
     fn build(seed_type: WalletType) -> Box<dyn SeedI> {
         match seed_type {
             WalletType::ED25519 => {

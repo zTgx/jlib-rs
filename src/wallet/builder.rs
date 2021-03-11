@@ -28,6 +28,8 @@ impl WalletBuilder {
         let seed_builder = SeedBuilder::new(wallet_type);
         
         let master_seed_hex = seed_builder.get_seed(passphrase);
+        // println!("master_seed_hex: {:?}", master_seed_hex);
+        
         let master_seed     = seed_builder.human_seed(&master_seed_hex);
         let human_seed_rfc1751 = seed_builder.human_seed_rfc1751(&master_seed_hex);
 

@@ -1,4 +1,3 @@
-pub mod sign;
 pub mod sign_tx;
 pub mod sign_pay;
 pub mod sign_relate;
