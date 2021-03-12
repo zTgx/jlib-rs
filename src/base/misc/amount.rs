@@ -2,7 +2,7 @@ use num::Zero;
 use std::str::FromStr;
 use num::bigint::{BigInt};
 use crate::base::misc::exponent;
-use crate::message::common::amount::Amount as RAmount;
+use crate::api::message::amount::Amount as RAmount;
 use phf::phf_map;
 
 static BI_XNS_MAX: &'static str = "9000000000000000000"; //"9e18";  //new BigInteger('9000000000000000000'), // Json wire limit.

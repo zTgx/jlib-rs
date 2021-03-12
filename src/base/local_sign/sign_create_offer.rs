@@ -22,7 +22,7 @@ use crate::base::data::constants::{
 };
 use std::rc::Rc;
 use crate::wallet::keypair::*;
-use crate::message::common::amount::Amount;
+use crate::api::message::amount::Amount;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::api::create_offer::data::{OfferCreateTxJson};

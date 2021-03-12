@@ -1,7 +1,7 @@
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 
-use crate::message::common::amount::*;
+use crate::api::message::amount::*;
 use serde::ser::{Serializer, SerializeStruct};
 
 use crate::api::utils::tx_flags::*;

@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Result;
 use std::error::Error;
 use std::fmt;
-use crate::message::common::amount::{Amount, string_or_struct};
+use crate::api::message::amount::{Amount, string_or_struct};
 
 /*
 @4.11 获得账号挂单

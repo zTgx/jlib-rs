@@ -5,8 +5,8 @@ use std::fmt; //fmt METHOD
 
 use serde::{Deserialize, Serialize};
 
-use crate::message::common::meta::*;
-use crate::message::common::amount::{Amount, string_or_struct};
+use crate::api::message::meta::*;
+use crate::api::message::amount::{Amount, string_or_struct};
 
 use std::error::Error;
 

@@ -36,6 +36,6 @@ pub mod set_fee_rate;
 pub mod set_relation;
 
 // --------------------------------------------
-// 交易接口的本地签名数据结构
+// 接口的公共数据结构
 // --------------------------------------------
-pub mod local_sign_tx;
+pub mod message;

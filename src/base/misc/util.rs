@@ -5,7 +5,7 @@ use std::cell::Cell;
 use basex_rs::{BaseX, SKYWELL, Decode};
 use crate::wallet::keypair::{Keypair, KeypairBuilder};
 use crate::wallet::wallet::WalletType;
-use crate::message::common::amount::Amount;
+use crate::api::message::amount::Amount;
 use crate::base::base_config::*;
 use crate::wallet::address::{WalletAddress};
 

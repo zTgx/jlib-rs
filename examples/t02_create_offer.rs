@@ -1,5 +1,5 @@
 extern crate jlib;
-use jlib::message::common::amount::Amount;
+use jlib::api::message::amount::Amount;
 
 use jlib::api::create_offer::api::CreateOffer;
 use jlib::api::create_offer::data::{OfferType, OfferCreateTxResponse, OfferCreateSideKick};

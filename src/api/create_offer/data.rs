@@ -17,7 +17,7 @@ use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 
-use crate::message::common::amount::*;
+use crate::api::message::amount::*;
 use crate::api::utils::tx_flags::*;
 
 //Offer Type

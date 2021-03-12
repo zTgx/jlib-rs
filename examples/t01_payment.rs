@@ -2,7 +2,7 @@ extern crate jlib;
 use jlib::api::payment::data::{TransactionTxResponse, PaymentSideKick};
 use jlib::api::payment::api::request;
 
-use jlib::message::common::amount::Amount;
+use jlib::api::message::amount::Amount;
 
 use jlib::api::config::Config;
 

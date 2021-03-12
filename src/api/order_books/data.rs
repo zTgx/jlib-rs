@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Result;
 
-use crate::message::common::amount::{Amount, string_or_struct};
+use crate::api::message::amount::{Amount, string_or_struct};
 use std::error::Error;
 use std::fmt;
 

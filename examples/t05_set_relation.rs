@@ -3,7 +3,7 @@ extern crate jlib;
 use jlib::api::set_relation::data::{RelationType, RelationTxResponse, RelationSideKick};
 use jlib::api::set_relation::api::Relation;
 
-use jlib::message::common::amount::Amount;
+use jlib::api::message::amount::Amount;
 
 use jlib::api::config::Config;
 pub static TEST_SERVER: &'static str = "ws://101.200.176.249:5040"; //dev12 国密服务器

@@ -15,7 +15,7 @@ use crate::base::data::constants::{
 };
 use crate::base::serialize::serialized_type::*;
 use crate::base::misc::amount::*;
-use crate::message::common::amount::Amount as RAmount;
+use crate::api::message::amount::Amount as RAmount;
 use std::marker::PhantomData;
 
 //序列化接口

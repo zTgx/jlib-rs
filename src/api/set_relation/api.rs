@@ -6,8 +6,8 @@ use serde_json::{Value};
 use crate::api::config::Config;
 use crate::api::set_relation::data::*;
 
-use crate::message::common::amount::Amount;
-use crate::api::local_sign_tx::{LocalSignTx};
+use crate::api::message::amount::Amount;
+use crate::api::message::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{downcast_to_string};
 use crate::api::utils::cast::get_account_sequence;

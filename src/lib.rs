@@ -57,7 +57,6 @@ extern crate secp256k1;
 extern crate ring;
 
 pub mod api;
-pub mod message;
 pub mod base;
 pub mod wallet;
 pub mod address;

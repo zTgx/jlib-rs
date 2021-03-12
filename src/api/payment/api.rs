@@ -7,12 +7,12 @@ use crate::api::config::Config;
 
 use crate::api::payment::data::*;
 
-use crate::message::common::memo::*;
-use crate::message::common::amount::Amount;
+use crate::api::message::memo::*;
+use crate::api::message::amount::Amount;
 
 use hex;
 
-use crate::api::local_sign_tx::{LocalSignTx};
+use crate::api::message::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{
     downcast_to_string,

@@ -2,7 +2,7 @@ use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 use serde::ser::{Serializer, SerializeStruct};
 
-use crate::message::common::amount::{Amount, string_or_struct};
+use crate::api::message::amount::{Amount, string_or_struct};
 use crate::api::utils::tx_flags::*;
 use std::error::Error;
 use std::fmt;
