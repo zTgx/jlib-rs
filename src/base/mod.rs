@@ -6,7 +6,6 @@ pub mod serialize;
 pub mod curve;
 pub mod xcodec;
 pub mod base_config;
-pub mod parse_tx;
 
 pub mod keypair;
 pub mod crypto;

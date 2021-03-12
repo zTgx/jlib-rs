@@ -18,4 +18,3 @@ pub fn get_account_sequence(config: &Config, account: String) -> u32 {
 
    downcast_to_usize(seq_rc)
 } 
-
