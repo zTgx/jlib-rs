@@ -6,7 +6,7 @@ use serde_json::{Value};
 use crate::api::config::Config;
 use crate::message::transaction::offer_cancel::*;
 use crate::message::common::command_trait::CommandConversion;
-use crate::message::transaction::local_sign_tx::LocalSignTx;
+use crate::api::local_sign_tx::{LocalSignTx};
 use crate::base::misc::util::{downcast_to_string};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::api::util::get_account_sequence;

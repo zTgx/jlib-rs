@@ -6,8 +6,8 @@ use jlib::message::common::amount::Amount;
 
 use jlib::api::config::Config;
 
-pub static TEST_SERVER: &'static str = "ws://123.57.219.73:5040"; //dev11 国密服务器
-// pub static TEST_SERVER: &'static str = "ws://101.200.176.249:5040"; //dev12 国密服务器
+// pub static TEST_SERVER: &'static str = "ws://123.57.219.73:5040"; //dev11 国密服务器
+pub static TEST_SERVER: &'static str = "ws://101.200.176.249:5040"; //dev12 国密服务器
 // static TEST_SERVER: &'static str = "ws://59.175.148.101:5020";
 
 fn main() {
