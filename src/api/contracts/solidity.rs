@@ -17,7 +17,7 @@ use std::rc::Rc;
 use std::cell::Cell;
 use ws::{connect, CloseCode};
 use serde_json::Value;
-use message::common::command_trait::CommandConversion;
+
 use crate::base::misc::util::{downcast_to_string};
 use crate::api::config::Config;
 

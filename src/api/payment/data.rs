@@ -8,7 +8,6 @@ use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 
-use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::{Amount, string_or_struct};
 use crate::message::common::memo::*;
 use crate::message::tx_flags::*;

@@ -4,7 +4,6 @@ use std::any::Any;
 use std::cell::Cell;
 use std::cell::RefCell;
 
-use crate::message::common::command_trait::CommandConversion;
 use serde_json::json;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value};
@@ -82,20 +81,10 @@ impl SolidityInitMessage {
             tx_json: SolidityInitTxJson::new(account, payload),
         }
     }
-}
 
-impl CommandConversion for SolidityInitMessage {
-    type T = SolidityInitMessage;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
+    pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
         let j = serde_json::to_string(&self)?;
-
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
     }
 }
 
@@ -199,24 +188,12 @@ impl SolidityInvokeMessage {
             tx_json: SolidityInvokeTxJson::new(account, address, hex::encode(hex_method), v)
         }
     }
-}
 
-impl CommandConversion for SolidityInvokeMessage {
-    type T = SolidityInvokeMessage;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
-        //https://crates.io/crates/serde_json
-        // Serialize it to a JSON string.
+    pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
         let j = serde_json::to_string(&self)?;
-
-        // Print, write to a file, or send to an HTTP server.
         Ok(j)
     }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
-    }
 }
-
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Args {
