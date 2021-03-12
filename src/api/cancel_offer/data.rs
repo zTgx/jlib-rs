@@ -1,13 +1,6 @@
-#![allow(unused)]
-
-use serde_json::json;
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
-use std::rc::Rc;
-use std::any::Any;
-use std::cell::Cell;
 
-use crate::message::common::command_trait::CommandConversion;
 use crate::message::tx_flags::*;
 use std::error::Error;
 use std::fmt;
@@ -66,17 +59,10 @@ impl OfferCancelTx {
             tx_json: tx_json,
         })
     }
-}
-
-impl CommandConversion for OfferCancelTx {
-    type T = OfferCancelTx;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
+    
+    pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
         let j = serde_json::to_string(&self)?;
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
     }
 }
 

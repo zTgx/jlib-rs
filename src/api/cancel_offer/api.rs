@@ -4,17 +4,12 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::api::config::Config;
-use crate::message::transaction::offer_cancel::*;
-use crate::message::common::command_trait::CommandConversion;
+use crate::api::cancel_offer::data::*;
+
 use crate::api::local_sign_tx::{LocalSignTx};
 use crate::base::misc::util::{downcast_to_string};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::api::util::get_account_sequence;
-
-pub trait CancelOfferI {
-    fn cancel_offer<F>(&self, offer_sequence: u64, op: F)
-    where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>);
-}
 
 pub struct CancelOffer {
     pub config : Config,
@@ -29,10 +24,8 @@ impl CancelOffer {
             secret  : secret,
         }
     }
-}
-
-impl CancelOfferI for CancelOffer {
-    fn cancel_offer<F>(&self, offer_sequence: u64, op: F)
+    
+    pub fn cancel_offer<F>(&self, offer_sequence: u64, op: F)
     where F: Fn(Result<OfferCancelTxResponse, OfferCancelSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));

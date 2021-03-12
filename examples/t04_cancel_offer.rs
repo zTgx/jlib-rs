@@ -1,16 +1,17 @@
 extern crate jlib;
-use jlib::api::transaction::cancel_offer::*;
-use jlib::message::transaction::offer_cancel::{OfferCancelTxResponse, OfferCancelSideKick};
+
+use jlib::api::cancel_offer::api::CancelOffer;
+use jlib::api::cancel_offer::data::{OfferCancelTxResponse, OfferCancelSideKick};
 
 use jlib::api::config::Config;
-pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+pub static TEST_SERVER: &'static str = "ws://101.200.176.249:5040"; //dev12 国密服务器
 
 fn main() {
     let config = Config::new(TEST_SERVER, true);
 
-    let account: String = "jB7rxgh43ncbTX4WeMoeadiGMfmfqY2xLZ".to_string();
-    let secret : String= "sn37nYrQ6KPJvTFmaBYokS3FjXUWd".to_string();
-    let offer_sequence: u64 = 688_u64;
+    let account: String = "j9syYwWgtmjchcbqhVB18pmFqXUYahZvvg".to_string();
+    let secret : String= "shstwqJpVJbsqFA5uYJJw1YniXcDF".to_string();
+    let offer_sequence: u64 = 1_u64;
 
     CancelOffer::with_params(config, account, secret).cancel_offer( offer_sequence,
                                         |x| match x {
