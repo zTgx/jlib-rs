@@ -18,7 +18,7 @@ use std::any::Any;
 use std::cell::Cell;
 
 use crate::message::common::amount::*;
-use crate::message::tx_flags::*;
+use crate::api::utils::tx_flags::*;
 
 //Offer Type
 #[derive(PartialEq)]

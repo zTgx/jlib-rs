@@ -1,16 +1,10 @@
-#![allow(unused)]
-
-use serde_json::json;
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
-use std::rc::Rc;
-use std::any::Any;
-use std::cell::Cell;
 
 use crate::message::common::amount::*;
 use serde::ser::{Serializer, SerializeStruct};
 
-use crate::message::tx_flags::*;
+use crate::api::utils::tx_flags::*;
 use std::error::Error;
 use std::fmt;
 

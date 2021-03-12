@@ -1,7 +1,7 @@
 use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 
-use crate::message::tx_flags::*;
+use crate::api::utils::tx_flags::*;
 use std::error::Error;
 use std::fmt;
 

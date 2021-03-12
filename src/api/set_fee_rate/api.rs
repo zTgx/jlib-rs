@@ -12,7 +12,7 @@ use crate::base::misc::util::{
     downcast_to_string,
     check_address, check_secret, check_amount,
 };
-use crate::api::util::get_account_sequence;
+use crate::api::utils::cast::get_account_sequence;
 use crate::api::set_fee_rate::data::{
     SetBrokerageTx,
     SetBrokerageTxJson,

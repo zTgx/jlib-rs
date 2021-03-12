@@ -18,7 +18,7 @@ use crate::base::misc::util::{
     downcast_to_string,
     check_address, check_secret, check_amount,
 };
-use crate::api::util::get_account_sequence;
+use crate::api::utils::cast::get_account_sequence;
 
 pub fn request<F>(config: Config, account: String, secret: String, to: String, amount: Amount, memo: Option<String>, op: F)
     where F: Fn(Result<TransactionTxResponse, PaymentSideKick>) {

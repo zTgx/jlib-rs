@@ -1,5 +1,5 @@
 extern crate jlib;
-use jlib::api::parse_tx::parse;
+use jlib::api::utils::parse_tx::parse;
 
 fn main() {
     let tx = r#"

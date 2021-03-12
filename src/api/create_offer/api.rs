@@ -7,7 +7,7 @@ use crate::api::config::Config;
 
 use crate::api::create_offer::data::*;
 use crate::message::common::amount::Amount;
-use crate::api::util::get_account_sequence;
+use crate::api::utils::cast::get_account_sequence;
 use crate::api::local_sign_tx::{LocalSignTx};
 use crate::base::misc::util::{downcast_to_string};
 
