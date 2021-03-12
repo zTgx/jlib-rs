@@ -15,7 +15,7 @@ use crate::base::serialize::signed_obj::*;
 use crate::wallet::keypair::Keypair;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
-use crate::message::transaction::set_brokerage::SetBrokerageTxJson;
+use crate::api::set_fee_rate::data::SetBrokerageTxJson;
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);

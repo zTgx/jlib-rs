@@ -4,8 +4,7 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::api::config::Config;
-use crate::message::transaction::set_brokerage::*;
-use crate::message::common::command_trait::CommandConversion;
+
 use crate::message::common::amount::Amount;
 use crate::api::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
@@ -14,19 +13,20 @@ use crate::base::misc::util::{
     check_address, check_secret, check_amount,
 };
 use crate::api::util::get_account_sequence;
+use crate::api::set_fee_rate::data::{
+    SetBrokerageTx,
+    SetBrokerageTxJson,
+    FeeRateResponse,
+    SetBrokerageSideKick
+};
 
-pub trait BrokerageManageI {
-    fn set_rate<F>(&self, den: u64, num: u64, amount: Amount, op: F)
-    where F: Fn(Result<SetBrokerageTxResponse, SetBrokerageSideKick>);
-}
-
-pub struct BrokerageManage {
+pub struct FeeRate {
     pub config  : Config,
     pub account : String,
     pub secret  : String,
     pub fee_account: String,
 }
-impl BrokerageManage {
+impl FeeRate {
     pub fn with_params(config: Config, account: String, secret: String, fee_account: String) -> Self {
         if check_address(&account).is_none() {
             panic!("invalid account.");
@@ -40,18 +40,16 @@ impl BrokerageManage {
             panic!("invalid fee_account");
         }
 
-        BrokerageManage {
+        FeeRate {
             config: config,
             account: account,
             secret: secret,
             fee_account: fee_account,
         }
     }
-}
 
-impl BrokerageManageI for BrokerageManage {
-    fn set_rate<F>(&self, den: u64, num: u64, amount: Amount, op: F)
-    where F: Fn(Result<SetBrokerageTxResponse, SetBrokerageSideKick>) {
+    pub fn set_rate<F>(&self, den: u64, num: u64, amount: Amount, op: F)
+    where F: Fn(Result<FeeRateResponse, SetBrokerageSideKick>) {
         if num <= 0 {
             panic!("invalid num.");
         }
@@ -112,7 +110,7 @@ impl BrokerageManageI for BrokerageManage {
             let status = x["status"].to_string();
             if status == "\"success\"" {
                 let x: String = x["result"].to_string();
-                if let Ok(v) = serde_json::from_str(&x) as Result<SetBrokerageTxResponse, serde_json::error::Error> {
+                if let Ok(v) = serde_json::from_str(&x) as Result<FeeRateResponse, serde_json::error::Error> {
                     op(Ok(v))
                 }
             } else {

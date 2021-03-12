@@ -11,7 +11,8 @@ use crate::api::payment::data::{TxJson};
 use crate::message::transaction::relation::{RelationTxJson};
 use crate::message::transaction::offer_create::{OfferCreateTxJson};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
-use crate::message::transaction::set_brokerage::{SetBrokerageTxJson};
+
+use crate::api::set_fee_rate::data::SetBrokerageTxJson;
 
 use hex;
 
