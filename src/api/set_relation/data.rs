@@ -5,11 +5,6 @@ use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 use serde::ser::{Serializer, SerializeStruct};
 
-use std::rc::Rc;
-use std::any::Any;
-use std::cell::Cell;
-
-use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::{Amount, string_or_struct};
 use crate::message::tx_flags::*;
 use std::error::Error;
@@ -125,17 +120,10 @@ impl RelationTx {
             tx_json: tx_json,
         })
     }
-}
 
-impl CommandConversion for RelationTx {
-    type T = RelationTx;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
+    pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
         let j = serde_json::to_string(&self)?;
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
     }
 }
 

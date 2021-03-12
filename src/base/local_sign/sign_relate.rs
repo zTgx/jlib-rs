@@ -26,7 +26,7 @@ use std::rc::Rc;
 use crate::wallet::keypair::*;
 use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
-use crate::message::transaction::relation::RelationTxJson;
+use crate::api::set_relation::data::RelationTxJson;
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);

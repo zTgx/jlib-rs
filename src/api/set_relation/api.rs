@@ -4,36 +4,29 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::api::config::Config;
-use crate::message::transaction::relation::*;
-use crate::message::common::command_trait::CommandConversion;
+use crate::api::set_relation::data::*;
+
 use crate::message::common::amount::Amount;
 use crate::api::local_sign_tx::{LocalSignTx};
 use crate::base::local_sign::sign_tx::{SignTx};
 use crate::base::misc::util::{downcast_to_string};
 use crate::api::util::get_account_sequence;
 
-pub trait RelateI {
-    fn set_relation<F>(&self, relation_type: RelationType, target: String, amount: Amount, op: F)
-    where F: Fn(Result<RelationTxResponse, RelationSideKick>);
-}
-
-pub struct Relate {
+pub struct Relation {
     pub config : Config,
     pub account: String,
     pub secret : String,
 }
-impl Relate {
+impl Relation {
     pub fn with_params(config: Config, account: String, secret: String) -> Self {
-        Relate {
+        Relation {
             config : config,
             account: account,
             secret : secret,
         }
     }
-}
 
-impl RelateI for Relate {
-    fn set_relation<F>(&self, rtype: RelationType, target: String, amount: Amount, op: F)
+    pub fn set_relation<F>(&self, rtype: RelationType, target: String, amount: Amount, op: F)
     where F: Fn(Result<RelationTxResponse, RelationSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));

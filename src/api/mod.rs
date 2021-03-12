@@ -1,4 +1,3 @@
-pub mod transaction;
 pub mod contracts;
 
 // --------------------------------------------
@@ -31,9 +30,10 @@ pub mod subscription;
 // 交易类接口
 // --------------------------------------------
 pub mod payment;
-pub mod set_fee_rate;
 pub mod create_offer;
 pub mod cancel_offer;
+pub mod set_fee_rate;
+pub mod set_relation;
 
 // --------------------------------------------
 // 交易接口的本地签名数据结构

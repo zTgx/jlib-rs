@@ -8,7 +8,7 @@ use crate::base::crypto::signature::builder::SignatureBuilder;
 use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
 
 use crate::api::payment::data::{TxJson};
-use crate::message::transaction::relation::{RelationTxJson};
+use crate::api::set_relation::data::{RelationTxJson};
 use crate::api::create_offer::data::{OfferCreateTxJson};
 use crate::api::cancel_offer::data::OfferCancelTxJson;
 
