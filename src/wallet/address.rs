@@ -1,7 +1,7 @@
 
 use ring::{digest};
 
-use crate::base::curve::ripemd160::JRipemd160;
+use crate::base::crypto::ripemd160::JRipemd160;
 use crate::wallet::keypair::*;
 use crate::wallet::generate_str;
 

@@ -1,7 +1,7 @@
 #![allow(unused)]
 use libsm::sm3::hash::Sm3Hash; 
 use basex_rs::{BaseX, SKYWELL, Encode};
-use crate::base::misc::brorand::Brorand;
+use crate::base::crypto::brorand::Brorand;
 use crate::seed::traits::seed::SeedI;
 use crate::base::crypto::traits::checksum::ChecksumI;
 use crate::address::constants::VersionEncoding;

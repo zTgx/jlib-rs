@@ -1,5 +1,5 @@
 
-use crate::base::curve::sha256::JSha256;
+use crate::base::crypto::sha256::JSha256;
 use crate::base::xcodec::util::{is_set, concat_args, seq_equal};
 use crate::base::data::base_data::{BaseDataI};
 use basex_rs::{BaseX, SKYWELL, Decode, Encode};

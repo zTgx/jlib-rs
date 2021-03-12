@@ -1,6 +1,6 @@
 use crate::base::crypto::traits::checksum::ChecksumI;
 use libsm::sm3::hash::Sm3Hash; 
-use crate::base::curve::ripemd160::JRipemd160;
+use crate::base::crypto::ripemd160::JRipemd160;
 use libsm::sm2::signature::{Pubkey, Seckey};
 use libsm::sm2::ecc::EccCtx;
 use basex_rs::{BaseX, SKYWELL, Encode}; 

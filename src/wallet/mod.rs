@@ -4,7 +4,7 @@ pub mod address;
 pub mod builder;
 
 use basex_rs::{BaseX, SKYWELL, Encode};
-use crate::base::curve::sha256::JSha256;
+use crate::base::crypto::sha256::JSha256;
 
 //generate seed && address
 pub fn generate_str(version: &mut Vec<u8>, so: &Vec<u8>) -> String {

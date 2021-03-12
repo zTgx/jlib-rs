@@ -1,7 +1,4 @@
 pub mod secp256k1;
-pub mod ed25519;
-pub mod sha256;
-pub mod ripemd160;
 
 use basex_rs::{BaseX, SKYWELL, Decode};
 use ring::{digest};
@@ -9,9 +6,6 @@ use crate::base::data::constants::{
     CURVE_ORDER, 
     CURVE_ZERO
 };
-
-use libsm::sm2::ecc::EccCtx;
-use libsm::sm2::signature::Seckey;
 
 //entropy的生成方式: 取值index范围，1 ~ 倒数第5
 pub fn entropy(secret: &String) -> Option<Vec<u8>> {
@@ -54,21 +48,3 @@ pub fn scalar_multiple(bytes: &[u8], discrim: Option<u8>) -> Vec<u8> {
         i += 1;
     } // end while
 }
-
-// 生成 public generator
-/*
-需要：private generator，椭圆常数G
-1.	Private generator与椭圆常数G进行乘法运算
-2.	获得椭圆点（x，y）
-3.	压缩成(02+X 如Y 偶), 或(03+X 如 Y 奇)
-4.	获得public generator 33字节
-*/
-pub fn public_generator(private_generator: &[u8]) -> Vec<u8> {
-    let ctx = EccCtx::new();
-
-    let src = Seckey::from_bytes_be(&private_generator);
-    let ret = ctx.g_mul(&src);
-
-    return ctx.point_to_bytes(&ret, true).to_vec();
-}
- 
