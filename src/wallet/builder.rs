@@ -49,6 +49,11 @@ impl WalletBuilder {
             public_key_hex  : public_key_hex,
         }
     }
+
+    // secret =》 wallet type
+    pub fn get_wallet_type_from_seed(_master_seed: &str) -> WalletType {
+        WalletType::SM2P256V1
+    }
 }
 
 /*

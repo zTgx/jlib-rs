@@ -1,11 +1,12 @@
 
+- [ ] 31, 通过一个方法来判断secret是那种类型的WalletType
 - [x] 30, 重构seed builder,参考address builder
 - [ ] 29, 椭圆点和zero的比较
 - [ ] 28, GeneratorI 重构下
 - [ ] 27, 代码设计文档写一下
 - [ ] 26, docs下文档更新
 - [ ] 25, 重构国标算法生成
-- [ ] 24, api模块不要分了，直接在api下
+- [x] 24, api模块不要分了，直接在api下
 - [ ] 23, 拆分base模块
 - [x] 22, 国密sm2/sm3算法生成address算法
 - [ ] 21, 多重签名
