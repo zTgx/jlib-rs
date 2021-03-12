@@ -1,8 +1,12 @@
 use crate::wallet::keypair::*;
 
 use crate::base::serialize::signed_obj::{SignedTxJson, TxJsonTxnSignatureBuilder, TxJsonBuilder};
-use crate::base::crypto::signature::guomi::SignatureX;
+
+// use crate::base::crypto::signature::guomi::SignatureX;
 // use crate::base::local_sign::sign::SignatureX;
+use crate::base::crypto::signature::traits::signature::SignatureI;
+use crate::base::crypto::signature::builder::SignatureBuilder;
+
 use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
 
 use crate::api::payment::data::{TxJson};
@@ -91,8 +95,14 @@ impl SignTx {
         let output: Vec<u8> = signed_tx_json.serialize();
         println!("output: {:?}", output);
 
-        let signature_x = SignatureX::new(&self.keypair);
-        let txn_signature = signature_x.sign_txn_signature(&output);
+        // let signature_x = SignatureX::new(&self.keypair);
+        // let txn_signature = signature_x.sign_txn_signature(&output);
+
+        let signature_builder = SignatureBuilder::new(WalletType::SM2P256V1, Keypair {
+            private_key: self.keypair.private_key.to_owned(),
+            public_key : self.keypair.public_key.to_owned()
+        });
+        let txn_signature = signature_builder.sign_txn_signature(&output);
 
         self.update(fields, TX_SIGNATURE);
 
