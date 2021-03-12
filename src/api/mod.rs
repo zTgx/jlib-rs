@@ -32,6 +32,7 @@ pub mod subscription;
 // --------------------------------------------
 pub mod payment;
 pub mod set_fee_rate;
+pub mod create_offer;
 
 // --------------------------------------------
 // 交易接口的本地签名数据结构

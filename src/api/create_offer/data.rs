@@ -17,7 +17,6 @@ use std::rc::Rc;
 use std::any::Any;
 use std::cell::Cell;
 
-use crate::message::common::command_trait::CommandConversion;
 use crate::message::common::amount::*;
 use crate::message::tx_flags::*;
 
@@ -134,18 +133,11 @@ impl OfferCreateTx {
             tx_json: tx_json,
         })
     }
-}
-
-impl CommandConversion for OfferCreateTx {
-    type T = OfferCreateTx;
-    fn to_string(&self) -> Result<String, serde_json::error::Error> {
+    
+    pub fn to_string(&self) -> Result<String, serde_json::error::Error> {
         let j = serde_json::to_string(&self)?;
         Ok(j)
-    }
-
-    fn box_to_raw(&self) -> &dyn Any {
-        self
-    }
+    }   
 }
 
 #[derive(Serialize, Deserialize, Debug)]

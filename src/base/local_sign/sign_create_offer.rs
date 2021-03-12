@@ -25,7 +25,7 @@ use crate::wallet::keypair::*;
 use crate::message::common::amount::Amount;
 use crate::base::{G_TRANSACTION_TYPE_MAP, TWHashMap};
 use crate::base::local_sign::sign_tx::{SignTx, PRE_FIELDS};
-use crate::message::transaction::offer_create::{OfferCreateTxJson};
+use crate::api::create_offer::data::{OfferCreateTxJson};
 
 pub trait FormatSignTxJson {
     fn prepare(&mut self, sign_tx: &SignTx);

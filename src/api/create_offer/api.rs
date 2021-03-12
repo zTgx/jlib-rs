@@ -4,19 +4,14 @@ use std::cell::Cell;
 use serde_json::{Value};
 
 use crate::api::config::Config;
-use crate::message::transaction::offer_create::*;
-use crate::message::common::command_trait::CommandConversion;
+
+use crate::api::create_offer::data::*;
 use crate::message::common::amount::Amount;
 use crate::api::util::get_account_sequence;
 use crate::api::local_sign_tx::{LocalSignTx};
 use crate::base::misc::util::{downcast_to_string};
 
 use crate::base::local_sign::sign_tx::{SignTx};
-
-pub trait CreateOfferI {
-    fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F)
-    where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>);
-}
 
 pub struct CreateOffer {
     pub config : Config,
@@ -31,10 +26,8 @@ impl CreateOffer {
             secret  : secret,
         }
     }
-}
-
-impl CreateOfferI for CreateOffer {
-    fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F)
+    
+    pub fn create_offer<F>(&self, offer_type: OfferType, taker_gets: Amount, taker_pays: Amount, op: F)
     where F: Fn(Result<OfferCreateTxResponse, OfferCreateSideKick>) {
 
         let info = Rc::new(Cell::new("".to_string()));

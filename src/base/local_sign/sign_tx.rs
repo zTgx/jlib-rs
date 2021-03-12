@@ -9,7 +9,7 @@ use crate::base::data::inverse_fields_map::INVERSE_FIELDS_MAP;
 
 use crate::api::payment::data::{TxJson};
 use crate::message::transaction::relation::{RelationTxJson};
-use crate::message::transaction::offer_create::{OfferCreateTxJson};
+use crate::api::create_offer::data::{OfferCreateTxJson};
 use crate::message::transaction::offer_cancel::{OfferCancelTxJson};
 
 use crate::api::set_fee_rate::data::SetBrokerageTxJson;
