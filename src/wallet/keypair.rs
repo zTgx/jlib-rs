@@ -2,7 +2,6 @@ use crate::base::curve::{
     secp256k1::J256k1
 };
 use crate::wallet::wallet::WalletType;
-use crate::base::keypair::keypair_guomi::KeypairGuomi;
 
 #[derive(Debug, Clone)]
 pub struct Keypair {
@@ -57,7 +56,7 @@ impl <'a> KeypairBuilder <'a> {
                 //     return Err("invalid seed, can't generate keypair.");
                 // }
 
-                let _key_pair = KeypairGuomi::new().build(&self.seed);
+                // let _key_pair = KeypairGuomi::new().build(&self.seed);
                 // println!("----pair: {:?}", key_pair);
             }
         }
