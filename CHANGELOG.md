@@ -1,3 +1,10 @@
+### v0.4.0 (2021-3-13)
+* 重构了代码架构
+* 重构了api实现
+* 修改了example
+* 相关文档
+* 适配了国密算法
+
 ### v0.3.7(2020-5-12)
 * refactor base mod
 * remove dead codes
