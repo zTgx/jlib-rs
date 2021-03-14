@@ -1,4 +1,3 @@
-use serde_json::{Value};
 use serde::{Deserialize, Serialize};
 
 use crate::api::utils::tx_flags::*;
