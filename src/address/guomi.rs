@@ -91,3 +91,10 @@ impl AddressI for AddressGuomi {
 // ---------------------------------------------------------------------------------------------------------
 impl ChecksumGuomiI for AddressGuomi {}
 
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn guomi_public_key() {
+        assert_eq!(2 + 2, 4);
+    }
+}

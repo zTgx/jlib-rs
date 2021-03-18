@@ -15,13 +15,13 @@
 //! current server info is to use [`request_server_info`]; 
 //!
 //! ```
-//! use jlib::api::query::server_info::*;
 //! use jlib::api::config::Config;
-//! pub static TEST_SERVER: &'static str = "ws://42.81.160.87:5020";
+//! use jlib::api::server_info::api::request;
+//! pub static TEST_SERVER: &'static str = "ws://101.200.176.249:5040";
 //! 
 //! fn main() {
 //!     let config = Config::new(TEST_SERVER, true);
-//!     ServerInfo::new().request_server_info(config, |x| match x {
+//!     request(config, |x| match x {
 //!         Ok(response) => {
 //!             println!("build_version : {:?}", response.build_version);
 //!         }
