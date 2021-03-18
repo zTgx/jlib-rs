@@ -1,7 +1,7 @@
 // TODO:: 三个接口都在重复计算 GeneratorI中的数据！！！
 // 用内置一个Data来缓存计算的generator.
 
-use crate::base::crypto::traits::generator::GeneratorI;
+use crate::address::traits::generator::GeneratorI;
 use libsm::sm3::hash::Sm3Hash; 
 use libsm::sm2::signature::{Pubkey, Seckey};
 use libsm::sm2::ecc::EccCtx;

@@ -3,7 +3,7 @@ use libsm::sm3::hash::Sm3Hash;
 use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::crypto::brorand::Brorand;
 use crate::seed::traits::seed::SeedI;
-use crate::base::crypto::traits::checksum::ChecksumGuomiI;
+use crate::address::traits::checksum::{ChecksumGuomiI};
 use crate::address::constants::VersionEncoding;
 use crate::address::constants::PASS_PHRASE_LENGTH;
 use rfc1751::ToRfc1751;

@@ -1,6 +1,6 @@
-use crate::base::crypto::traits::checksum::{ChecksumGuomiI};
+use crate::address::traits::checksum::{ChecksumGuomiI};
 use basex_rs::{BaseX, SKYWELL, Encode}; 
-use crate::base::crypto::traits::generator::GeneratorI;
+use crate::address::traits::generator::GeneratorI;
 use crate::address::traits::address::AddressI;
 use crate::address::constants::VersionEncoding;
 
