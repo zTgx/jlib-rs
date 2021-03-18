@@ -1,6 +1,5 @@
 
 use serde::{Deserialize, Serialize};
-use std::any::Any;
 use serde::ser::{Serializer, SerializeStruct};
 
 #[derive(Deserialize, Debug, Default)]
