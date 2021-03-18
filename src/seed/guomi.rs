@@ -3,7 +3,7 @@ use libsm::sm3::hash::Sm3Hash;
 use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::crypto::brorand::Brorand;
 use crate::seed::traits::seed::SeedI;
-use crate::base::crypto::traits::checksum::ChecksumI;
+use crate::base::crypto::traits::checksum::ChecksumGuomiI;
 use crate::address::constants::VersionEncoding;
 use crate::address::constants::PASS_PHRASE_LENGTH;
 use rfc1751::ToRfc1751;
@@ -62,14 +62,14 @@ impl SeedI for SeedGuomi {
     }
 }
 
-impl ChecksumI for SeedGuomi {
-    fn checksum(&self, digest: &Vec<u8>) -> Vec<u8> {
-        let mut hash = Sm3Hash::new(digest.as_slice());
-        let hash1 = hash.get_hash();
-        let mut hash2 = Sm3Hash::new(&hash1);
-        let digest = hash2.get_hash();
+impl ChecksumGuomiI for SeedGuomi {
+    // fn checksum(&self, digest: &Vec<u8>) -> Vec<u8> {
+    //     let mut hash = Sm3Hash::new(digest.as_slice());
+    //     let hash1 = hash.get_hash();
+    //     let mut hash2 = Sm3Hash::new(&hash1);
+    //     let digest = hash2.get_hash();
 
-        let checksum = digest.get(..4).unwrap().to_vec();
-        return checksum;
-    }
+    //     let checksum = digest.get(..4).unwrap().to_vec();
+    //     return checksum;
+    // }
 }

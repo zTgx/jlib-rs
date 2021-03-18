@@ -1,5 +1,4 @@
-use crate::base::crypto::traits::checksum::ChecksumI;
-use libsm::sm3::hash::Sm3Hash; 
+use crate::base::crypto::traits::checksum::{ChecksumGuomiI};
 use basex_rs::{BaseX, SKYWELL, Encode}; 
 use crate::base::crypto::traits::generator::GeneratorI;
 use crate::address::traits::address::AddressI;
@@ -20,6 +19,9 @@ impl AddressGuomi {
     }
 }
 
+// ---------------------------------------------------------------------------------------------------------
+// 实现 trait AddressI
+// ---------------------------------------------------------------------------------------------------------
 impl AddressI for AddressGuomi {
     // account id
     fn human_account_id(&self) -> String {
@@ -83,15 +85,9 @@ impl AddressI for AddressGuomi {
     }
 }
 
-impl ChecksumI for AddressGuomi {
-    fn checksum(&self, digest: &Vec<u8>) -> Vec<u8> {
-        let mut hash = Sm3Hash::new(digest.as_slice());
-        let hash1 = hash.get_hash();
-        let mut hash2 = Sm3Hash::new(&hash1);
-        let digest = hash2.get_hash();
-
-        let checksum = digest.get(..4).unwrap().to_vec();
-        return checksum;
-    }
-}
+// ---------------------------------------------------------------------------------------------------------
+// 1、实现 trait ChecksumGuomiI。
+// 2、使用 ChecksumGuomiI 的 checksum 函数
+// ---------------------------------------------------------------------------------------------------------
+impl ChecksumGuomiI for AddressGuomi {}
 
