@@ -3,7 +3,10 @@ use libsm::sm3::hash::Sm3Hash;
 use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::crypto::brorand::Brorand;
 use crate::seed::traits::seed::SeedI;
-use crate::address::traits::checksum::{ChecksumGuomiI};
+
+use crate::address::traits::checksum::{ChecksumI};
+use crate::address::impls::checksum::sm2p256v1::ChecksumSM2P256V1;
+
 use crate::address::constants::VersionEncoding;
 use crate::address::constants::PASS_PHRASE_LENGTH;
 use rfc1751::ToRfc1751;
@@ -44,7 +47,7 @@ impl SeedI for SeedGuomi {
         prefix_and_seed.extend(seed);
     
         //第二步
-        let checksum = self.checksum(&prefix_and_seed);
+        let checksum = ChecksumSM2P256V1::new().checksum(&prefix_and_seed);
 
         //第三步
         let mut target = Vec::new();
@@ -60,16 +63,4 @@ impl SeedI for SeedGuomi {
         let human_seed_rfc1751 = seed.to_rfc1751().unwrap();
         return human_seed_rfc1751;
     }
-}
-
-impl ChecksumGuomiI for SeedGuomi {
-    // fn checksum(&self, digest: &Vec<u8>) -> Vec<u8> {
-    //     let mut hash = Sm3Hash::new(digest.as_slice());
-    //     let hash1 = hash.get_hash();
-    //     let mut hash2 = Sm3Hash::new(&hash1);
-    //     let digest = hash2.get_hash();
-
-    //     let checksum = digest.get(..4).unwrap().to_vec();
-    //     return checksum;
-    // }
 }
