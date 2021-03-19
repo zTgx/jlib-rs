@@ -2,7 +2,7 @@ use crate::wallet::wallet::WalletType;
 
 use crate::address::traits::address::AddressI;
 use crate::address::traits::address::AddressCheckI;
-use crate::address::guomi::AddressGuomi;
+use crate::address::types::sm2p256v1::AddressSM2P256V1;
 
 pub struct AddressBuilder {
     address   : Box<dyn AddressI>,
@@ -20,14 +20,14 @@ impl AddressBuilder {
     fn build_address(seed_type: WalletType, seed: &Vec<u8>) -> Box<dyn AddressI> {
         match seed_type {
             WalletType::ED25519 => {
-                return Box::new(AddressGuomi::new(&seed));
+                return Box::new(AddressSM2P256V1::new(&seed));
             },
 
             WalletType::SECP256K1 => {
-                return Box::new(AddressGuomi::new(&seed));
+                return Box::new(AddressSM2P256V1::new(&seed));
             },
             WalletType::SM2P256V1 => {
-                return Box::new(AddressGuomi::new(&seed));
+                return Box::new(AddressSM2P256V1::new(&seed));
             }
         }
     }

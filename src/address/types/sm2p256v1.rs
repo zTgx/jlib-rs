@@ -6,13 +6,13 @@ use crate::address::constants::VersionEncoding;
 
 use crate::address::impls::guomi::GeneratorGuomi;
 
-pub struct AddressGuomi {
+pub struct AddressSM2P256V1 {
     seed: Vec<u8>,
     generator: GeneratorGuomi,
 }
-impl AddressGuomi {
+impl AddressSM2P256V1 {
     pub fn new(seed: &Vec<u8>) -> Self {
-        AddressGuomi {
+        AddressSM2P256V1 {
             seed: seed.to_vec(),
             generator: GeneratorGuomi::new(),
         }
@@ -22,7 +22,7 @@ impl AddressGuomi {
 // ---------------------------------------------------------------------------------------------------------
 // 实现 trait AddressI
 // ---------------------------------------------------------------------------------------------------------
-impl AddressI for AddressGuomi {
+impl AddressI for AddressSM2P256V1 {
     // account id
     fn human_account_id(&self) -> String {
         let private_generator   = self.generator.private_generator(&self.seed);
@@ -89,8 +89,13 @@ impl AddressI for AddressGuomi {
 // 1、实现 trait ChecksumGuomiI。
 // 2、使用 ChecksumGuomiI 的 checksum 函数
 // ---------------------------------------------------------------------------------------------------------
-impl ChecksumGuomiI for AddressGuomi {}
+impl ChecksumGuomiI for AddressSM2P256V1 {}
 
+// ---------------------------------------------------------------------------------------------------------
+//
+// 测试用例
+//
+// ---------------------------------------------------------------------------------------------------------
 #[cfg(test)]
 mod tests {
     #[test]
