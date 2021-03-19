@@ -11,18 +11,18 @@ use crate::base::crypto::ripemd160::JRipemd160;
 
 
 // type Blob = Vec<u8>;
-pub struct GeneratorGuomi {
+pub struct GeneratorSM2P256V1 {
     // data: Blob,
 }
-impl GeneratorGuomi {
+impl GeneratorSM2P256V1 {
     pub fn new() -> Self {
-        GeneratorGuomi {
+        GeneratorSM2P256V1 {
             // data: Blob::new()
         }
     }
 }
 
-impl GeneratorI for GeneratorGuomi {
+impl GeneratorI for GeneratorSM2P256V1 {
     fn private_generator(&self, masterphrase: &Vec<u8>)  -> Vec<u8> {
         // println!("xxx: {:?}", masterphrase);
 

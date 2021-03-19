@@ -4,17 +4,17 @@ use crate::address::traits::generator::GeneratorI;
 use crate::address::traits::address::AddressI;
 use crate::address::constants::VersionEncoding;
 
-use crate::address::impls::guomi::GeneratorGuomi;
+use crate::address::impls::generator::sm2p256v1::GeneratorSM2P256V1;
 
 pub struct AddressSM2P256V1 {
     seed: Vec<u8>,
-    generator: GeneratorGuomi,
+    generator: GeneratorSM2P256V1,
 }
 impl AddressSM2P256V1 {
     pub fn new(seed: &Vec<u8>) -> Self {
         AddressSM2P256V1 {
             seed: seed.to_vec(),
-            generator: GeneratorGuomi::new(),
+            generator: GeneratorSM2P256V1::new(),
         }
     }
 }
