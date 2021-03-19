@@ -2,7 +2,7 @@
 use libsm::sm3::hash::Sm3Hash; 
 use basex_rs::{BaseX, SKYWELL, Encode};
 use crate::base::crypto::brorand::Brorand;
-use crate::seed::traits::seed::SeedI;
+use crate::address::traits::seed::SeedI;
 
 use crate::address::traits::checksum::{ChecksumI};
 use crate::address::impls::checksum::sm2p256v1::ChecksumSM2P256V1;
@@ -11,17 +11,17 @@ use crate::address::constants::VersionEncoding;
 use crate::address::constants::PASS_PHRASE_LENGTH;
 use rfc1751::ToRfc1751;
 
-pub struct SeedGuomi {
+pub struct SeedSM2P256V1 {
 }
 
-impl SeedGuomi {
+impl SeedSM2P256V1 {
     pub fn new() -> Self {
-        SeedGuomi {
+        SeedSM2P256V1 {
         }
     }
 }
 
-impl SeedI for SeedGuomi {
+impl SeedI for SeedSM2P256V1 {
     fn get_seed(&self, passphrase: Option<&str>) -> Vec<u8> {
         // TOOD: warning: value assigned to `phrase_bytes` is never read
         let mut phrase_bytes: Vec<u8> = vec![0; 16];

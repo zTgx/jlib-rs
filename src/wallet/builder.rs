@@ -1,7 +1,7 @@
 use hex;
 
-use crate::seed::traits::seed::SeedI;
-use crate::seed::builder::SeedBuilder;
+use crate::address::traits::seed::SeedI;
+use crate::address::types::seed::SeedBuilder;
 
 use crate::address::traits::address::AddressI;
 use crate::address::builder::AddressBuilder;

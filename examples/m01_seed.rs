@@ -1,7 +1,7 @@
 extern crate jlib;
 
-use jlib::seed::traits::seed::SeedI;
-use jlib::seed::builder::SeedBuilder;
+use jlib::address::traits::seed::SeedI;
+use jlib::address::types::seed::SeedBuilder;
 
 use jlib::wallet::wallet::{
     WalletType

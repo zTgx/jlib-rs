@@ -24,7 +24,7 @@ use crate::base::local_sign::sign_cancel_offer::{SignTxCancelOffer};
 use crate::base::local_sign::sign_create_offer::{SignTxCreateOffer};
 use crate::base::local_sign::sign_brokerage::{SignTxBrokerage};
 
-use crate::seed::builder::SeedBuilder;
+use crate::address::types::seed::SeedBuilder;
 
 use crate::address::traits::address::AddressI;
 use crate::address::builder::AddressBuilder;

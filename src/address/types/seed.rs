@@ -1,8 +1,7 @@
 use crate::wallet::keypair::*;
 
-use crate::seed::guomi::SeedGuomi;
-use crate::seed::traits::seed::SeedI;
-use crate::seed::traits::seed::SeedCheckI;
+use crate::address::impls::seed::sm2p256v1::SeedSM2P256V1;
+use crate::address::traits::seed::{SeedI, SeedCheckI};
 
 use crate::wallet::wallet::WalletType;
 use basex_rs::{BaseX, SKYWELL, Decode};
@@ -28,13 +27,13 @@ impl SeedBuilder {
     fn build(seed_type: WalletType) -> Box<dyn SeedI> {
         match seed_type {
             WalletType::ED25519 => {
-                return Box::new(SeedGuomi::new());
+                return Box::new(SeedSM2P256V1::new());
             },
             WalletType::SECP256K1 => {
-                return Box::new(SeedGuomi::new());
+                return Box::new(SeedSM2P256V1::new());
             },
             WalletType::SM2P256V1 => {
-                return Box::new(SeedGuomi::new());
+                return Box::new(SeedSM2P256V1::new());
             }
         }
     }
