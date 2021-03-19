@@ -18,6 +18,12 @@ impl SeedBuilder {
         }
     }
 
+    /*
+        需要 secret
+
+        1、secret 的 base58 解码。
+        2、截取 1..17 区间的16个字节
+    */
     pub fn secret_to_seed(secret: &String) -> Vec<u8> {
         let seed = BaseX::new(SKYWELL).decode((&secret).to_string()).unwrap();
         

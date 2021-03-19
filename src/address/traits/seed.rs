@@ -23,6 +23,17 @@ pub trait SeedI {
     fn human_seed(&self, seed: &Vec<u8>) -> String;
 
     /*
+        需要 secret
+
+        1、secret 的 base58 解码。
+        2、截取 1..17 区间的16个字节
+    */
+    // fn secret_to_seed(secret: &String) -> Vec<u8> {
+    //     let seed = BaseX::new(SKYWELL).decode((&secret).to_string()).unwrap();
+    //     seed[1..17].to_vec()
+    // }
+
+    /*
         需要seed
 
         1、计算rfc1751
