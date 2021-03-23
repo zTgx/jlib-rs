@@ -21,3 +21,23 @@ pub fn only_hash(digest : &Vec<u8>) -> Option<String> {
 
     None
 }
+
+
+// ---------------------------------------------------------------------------------------------------------
+//
+// ipfs 测试用例
+//
+// ---------------------------------------------------------------------------------------------------------
+// cargo test api::ipfs::hash::tests::only_hash_test
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn only_hash_test() {
+        let target = "Qmf412jQZiuVUtdgnB36FXFX7xg5V6KEbSJ4dpQuhkLyfD".to_owned();
+        let digest = "hello world".as_bytes().to_vec();
+        let hash = only_hash( &digest ).unwrap();
+        assert_eq!(hash, target);
+    }
+}
