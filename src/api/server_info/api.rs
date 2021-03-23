@@ -4,7 +4,7 @@ use std::cell::Cell;
 use serde_json::Value;
 
 use crate::api::config::Config;
-use api::server_info::data::ServerInfoCommand;
+use crate::api::server_info::data::ServerInfoCommand;
 use crate::api::server_info::data::ServerInfoResponse;
 
 //TODO::这个方法想办法重构一下， 太讨厌。

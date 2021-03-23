@@ -10,18 +10,18 @@ categories = [ "cryptography" ]
 license = "MIT/Apache-2.0"
 exclude = [ "/.travis.yml" ]
 description = "A lightweight blockchain lib."
+edition = "2018"
 
 [dependencies]
 num = "0.2"
 rand = "0.6"
 ws = { version = "0.8.1", features = ["ssl"]}
-log = "0.4.0"
-sha2 = "0.8.0"
+# log = "0.4.0"
+# env_logger = "0.6.1"
 void = "1.0.2"
 ring = "0.14.6"
 serde_json = "1.0"
 typename = "0.1.1"
-env_logger = "0.6.1"
 secp256k1 = "0.13.0"
 rust-crypto = "^0.2"
 lazy_static = "1.3.0"
@@ -33,3 +33,6 @@ phf = { version = "0.8", features = ["macros"] }
 libsm = "0.3.0"
 hex = "0.4.3"
 rfc1751 = "0.1.0"
+bs58 = "0.4.0"
+ipfs-unixfs = "0.2.0"
+multihash = "0.13.2"
