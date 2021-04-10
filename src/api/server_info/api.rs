@@ -10,8 +10,10 @@ use crate::api::server_info::data::ServerInfoResponse;
 //TODO::这个方法想办法重构一下， 太讨厌。
 use crate::base::misc::util::downcast_to_string;
 
-pub fn request<F> (config: Config, op: F)
-    where F: Fn(Result<ServerInfoResponse, serde_json::error::Error>) {
+type FnOnceType = Result<ServerInfoResponse, serde_json::error::Error>;
+
+pub fn request<F> (config: Config, mut op: F)
+    where F: FnMut(FnOnceType) {
 
     let info = Rc::new(Cell::new(String::new()));
 
